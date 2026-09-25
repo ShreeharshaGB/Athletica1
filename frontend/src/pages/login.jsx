@@ -17,6 +17,7 @@ function Icon({ name, size = 20 }) {
     eye: <><path d="M2.5 12C4.5 8.7 7.7 7 12 7s7.5 1.7 9.5 5-3.2 5-9.5 5-7.5-1.7-9.5-5Z" /><circle cx="12" cy="12" r="2.2" /></>,
     lock: <><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></>,
     user: <><circle cx="12" cy="8" r="3.2" /><path d="M5 20c.7-3.2 3-5 7-5s6.3 1.8 7 5" /></>,
+    building: <><path d="M3 21h18M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M10 9h4M10 13h4M10 17h4" /></>,
   }
 
   return (
@@ -50,6 +51,7 @@ export default function Login({ initialRole = 'student', onLogin }) {
   const [role, setRole] = useState(initialRole)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [institutionId, setInstitutionId] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [feedback, setFeedback] = useState('')
   const [feedbackType, setFeedbackType] = useState('error') // 'error' or 'success'
@@ -92,6 +94,12 @@ export default function Login({ initialRole = 'student', onLogin }) {
       return false
     }
 
+    if (isRegistering && (role === 'student' || role === 'teacher') && !institutionId.trim()) {
+      setFeedback('Please enter your Institution/College ID.')
+      setFeedbackType('error')
+      return false
+    }
+
     return true
   }
 
@@ -112,7 +120,13 @@ export default function Login({ initialRole = 'student', onLogin }) {
         method: 'POST',
         body: JSON.stringify(
           isRegistering
-            ? { name: name.trim(), email: email.trim().toLowerCase(), password, role }
+            ? {
+                name: name.trim(),
+                email: email.trim().toLowerCase(),
+                password,
+                role,
+                institutionId: institutionId.trim().toUpperCase(),
+              }
             : { email: email.trim().toLowerCase(), password, role }
         ),
       })
@@ -122,6 +136,7 @@ export default function Login({ initialRole = 'student', onLogin }) {
         setFeedback('Account created successfully! Please sign in with your password.')
         setFeedbackType('success')
         setPassword('')
+        setInstitutionId('')
         return
       }
 
@@ -253,15 +268,17 @@ export default function Login({ initialRole = 'student', onLogin }) {
 
             <div className="password-heading">
               <label className="field-label" htmlFor="password">Password</label>
-              <button
-                type="button"
-                onClick={() => {
-                  setFeedback('Password reset is available by contacting your school or coach.')
-                  setFeedbackType('info')
-                }}
-              >
-                Forgot password?
-              </button>
+              {!isRegistering && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFeedback('Password reset is available by contacting your school or coach.')
+                    setFeedbackType('info')
+                  }}
+                >
+                  Forgot password?
+                </button>
+              )}
             </div>
             <div className="input-field">
               <Icon name="lock" size={18} />
@@ -282,6 +299,22 @@ export default function Login({ initialRole = 'student', onLogin }) {
                 <Icon name="eye" size={18} />
               </button>
             </div>
+
+            {isRegistering && (role === 'student' || role === 'teacher') && (
+              <>
+                <label className="field-label" htmlFor="institutionId">Institution / College ID</label>
+                <div className="input-field">
+                  <Icon name="building" size={18} />
+                  <input
+                    id="institutionId"
+                    type="text"
+                    placeholder="e.g. COLLEGE-001"
+                    value={institutionId}
+                    onChange={(event) => { setInstitutionId(event.target.value.toUpperCase()); setFeedback('') }}
+                  />
+                </div>
+              </>
+            )}
 
             {feedback && (
               <p
@@ -317,6 +350,7 @@ export default function Login({ initialRole = 'student', onLogin }) {
               onClick={() => {
                 setIsRegistering(!isRegistering)
                 setFeedback('')
+                setInstitutionId('')
               }}
             >
               {isRegistering ? 'Sign in' : 'Create an account'}

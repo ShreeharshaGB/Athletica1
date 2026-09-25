@@ -4,7 +4,7 @@ import User from '../models/User.js';
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, institutionId } = req.body;
 
     if (
       !name ||
@@ -30,6 +30,14 @@ export const register = async (req, res) => {
       });
     }
 
+    if (role === 'student' || role === 'teacher') {
+      if (!institutionId || typeof institutionId !== 'string' || !institutionId.trim()) {
+        return res.status(400).json({
+          message: 'Institution/College ID is required for student and teacher registration'
+        });
+      }
+    }
+
     const normalizedEmail = email.trim().toLowerCase();
     if (!/^\S+@\S+\.\S+$/.test(normalizedEmail)) {
       return res.status(400).json({ message: 'A valid email address is required' });
@@ -45,11 +53,17 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const normalizedInstitutionId =
+      institutionId && typeof institutionId === 'string' && institutionId.trim()
+        ? institutionId.trim().toUpperCase()
+        : null;
+
     const user = await User.create({
       name: name.trim(),
       email: normalizedEmail,
       password: hashedPassword,
-      role
+      role,
+      institutionId: normalizedInstitutionId
     });
 
     return res.status(201).json({
@@ -58,7 +72,8 @@ export const register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        institutionId: user.institutionId || null
       }
     });
   } catch (error) {
@@ -132,7 +147,8 @@ export const login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        institutionId: user.institutionId || null
       }
     });
   } catch (error) {

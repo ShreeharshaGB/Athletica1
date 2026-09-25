@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema(
       enum: ['student', 'teacher', 'community'],
       default: 'student',
     },
+    institutionId: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      default: null,
+    },
   },
   {
     timestamps: true,
