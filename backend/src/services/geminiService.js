@@ -226,3 +226,337 @@ function normalizePhysiqueAnalysis(raw) {
       'This AI physique analysis is for general fitness and wellness guidance only. It is not medical advice, a diagnosis, or a measurement of exact body composition.',
   };
 }
+
+/**
+ * Schema for structured AI Food Scanner response
+ */
+export const foodAnalysisResponseSchema = {
+  type: 'OBJECT',
+  properties: {
+    isIdentified: {
+      type: 'BOOLEAN',
+      description:
+        'True if food or drink items are identifiable in the photograph. False if the image is non-food, blurry, or food cannot be recognized.',
+    },
+    unidentifiedReason: {
+      type: 'STRING',
+      description:
+        'If isIdentified is false, provide a concise explanation such as "Food could not be identified confidently. Try a clearer image." Empty string if food is identified.',
+    },
+    foods: {
+      type: 'ARRAY',
+      description: 'List of individual food or beverage dishes detected in the meal.',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          name: {
+            type: 'STRING',
+            description: 'Name of the dish or food item (e.g. Neer Dosa, Chicken Curry, Steamed Rice, Dal Tadka).',
+          },
+          estimatedPortion: {
+            type: 'STRING',
+            description: 'Estimated portion size based on visual plate reference (e.g. 2 pieces, 1 cup, 150g).',
+          },
+          estimatedCalories: {
+            type: 'INTEGER',
+            description: 'Estimated calories in kcal.',
+          },
+          proteinGrams: {
+            type: 'INTEGER',
+            description: 'Estimated protein content in grams.',
+          },
+          carbsGrams: {
+            type: 'INTEGER',
+            description: 'Estimated carbohydrates in grams.',
+          },
+          fatGrams: {
+            type: 'INTEGER',
+            description: 'Estimated dietary fat in grams.',
+          },
+        },
+        required: [
+          'name',
+          'estimatedPortion',
+          'estimatedCalories',
+          'proteinGrams',
+          'carbsGrams',
+          'fatGrams',
+        ],
+      },
+    },
+    totalEstimatedCalories: {
+      type: 'INTEGER',
+      description: 'Sum of estimated calories across all detected foods in the meal.',
+    },
+    totalProteinGrams: {
+      type: 'INTEGER',
+      description: 'Sum of estimated protein grams.',
+    },
+    totalCarbsGrams: {
+      type: 'INTEGER',
+      description: 'Sum of estimated carbohydrates grams.',
+    },
+    totalFatGrams: {
+      type: 'INTEGER',
+      description: 'Sum of estimated fat grams.',
+    },
+    summary: {
+      type: 'STRING',
+      description: 'A 1-2 sentence nutritional evaluation of macronutrient balance and athletic energy support.',
+    },
+    confidence: {
+      type: 'STRING',
+      description: 'Visual confidence: low, medium, or high.',
+    },
+  },
+  required: [
+    'isIdentified',
+    'unidentifiedReason',
+    'foods',
+    'totalEstimatedCalories',
+    'totalProteinGrams',
+    'totalCarbsGrams',
+    'totalFatGrams',
+    'summary',
+    'confidence',
+  ],
+};
+
+/**
+ * Retries a promise-based operation for transient 503 errors with exponential backoff.
+ */
+async function callGeminiWithRetry(fn, maxRetries = 2, baseDelayMs = 1000) {
+  let lastError;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      const is503 =
+        err?.status === 503 ||
+        err?.message?.includes('503') ||
+        err?.message?.includes('high demand') ||
+        err?.message?.includes('UNAVAILABLE');
+
+      if (is503 && attempt < maxRetries) {
+        const delay = baseDelayMs * Math.pow(2, attempt);
+        console.warn(
+          `Gemini 503 temporarily unavailable, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+}
+
+/**
+ * Multimodal analysis of a food photo for macronutrient and calorie estimation.
+ */
+export async function analyzeFoodImage({ imageBuffer, mimeType, studentContext = {} }) {
+  const ai = getGeminiClient();
+  const model = getGeminiModel();
+
+  const base64Data = imageBuffer.toString('base64');
+
+  let profileContext = '';
+  if (studentContext.dietPreference || studentContext.fitnessGoal) {
+    profileContext = `
+Student dietary context:
+- Diet Preference: ${studentContext.dietPreference || 'Not specified'}
+- Athletic Goal: ${studentContext.fitnessGoal || 'General Fitness'}
+`;
+  }
+
+  const promptText = `
+You are an expert sports nutritionist and culinary specialist with comprehensive knowledge of global cuisines and diverse Indian regional cooking (South, North, West, East, Northeast, and Coastal India).
+Analyze the attached meal photo to identify the food items and estimate macronutrients and total calories.
+
+CRITICAL GUARDRAILS & ACCURACY GUIDELINES:
+1. ESTIMATION DISCLOSURE: All calorie and macronutrient values from photographs are visual estimates.
+2. DISH IDENTIFICATION: Recognize traditional Indian regional dishes accurately (e.g., Neer Dosa, Pesarattu, Dalma, Thepla, Dhokla, Pakhala, Makki di Roti, Kori Gassi, Upma, Poha, Khichdi, Biryani, Roti, Dal, Paneer, Curd, etc.).
+3. UNCLEAR OR NON-FOOD IMAGES: If the photograph does not show food or drink, or is too blurry, dark, or distorted to identify with reasonable confidence, set "isIdentified": false and "unidentifiedReason": "Food could not be identified confidently. Try a clearer image." Set "foods": [], and totals to 0. Do NOT fabricate numbers for unidentifiable images.
+4. MACRO REASONABLENESS: Ensure estimated portions and macro grams are physiologically realistic for athletic fueling.
+5. NON-MEDICAL: Do not diagnose medical conditions or prescribe therapeutic diets.
+
+${profileContext}
+
+Respond strictly using the required JSON schema.
+`;
+
+  try {
+    const response = await callGeminiWithRetry(async () => {
+      return ai.models.generateContent({
+        model,
+        contents: [
+          {
+            inlineData: {
+              data: base64Data,
+              mimeType,
+            },
+          },
+          promptText,
+        ],
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: foodAnalysisResponseSchema,
+          temperature: 0.2,
+        },
+      });
+    });
+
+    if (!response || !response.text) {
+      throw new Error('Gemini API returned an empty response.');
+    }
+
+    let parsedResult;
+    try {
+      parsedResult = JSON.parse(response.text);
+    } catch (parseErr) {
+      console.error('Failed to parse Gemini food output:', response.text);
+      throw new Error('Invalid JSON format returned by Gemini.');
+    }
+
+    return normalizeFoodAnalysis(parsedResult);
+  } catch (error) {
+    console.error(`Gemini Food Analysis Error [${model}]:`, error);
+    throw new Error(`Gemini analysis error: ${error.message || 'Service unavailable'}`);
+  }
+}
+
+/**
+ * Normalizes food analysis output and guarantees integrity of all macro values.
+ */
+function normalizeFoodAnalysis(raw) {
+  const isIdentified = Boolean(raw.isIdentified);
+
+  if (!isIdentified) {
+    return {
+      isIdentified: false,
+      unidentifiedReason:
+        String(raw.unidentifiedReason || 'Food could not be identified confidently. Try a clearer image.').trim(),
+      foods: [],
+      totalEstimatedCalories: 0,
+      totalProteinGrams: 0,
+      totalCarbsGrams: 0,
+      totalFatGrams: 0,
+      summary: 'No identifiable food items detected.',
+      confidence: 'low',
+    };
+  }
+
+  const rawFoods = Array.isArray(raw.foods) ? raw.foods : [];
+  const foods = rawFoods
+    .map((item) => ({
+      name: String(item.name || 'Food item').trim(),
+      estimatedPortion: String(item.estimatedPortion || '1 serving').trim(),
+      estimatedCalories: Math.max(0, Math.round(Number(item.estimatedCalories) || 0)),
+      proteinGrams: Math.max(0, Math.round(Number(item.proteinGrams) || 0)),
+      carbsGrams: Math.max(0, Math.round(Number(item.carbsGrams) || 0)),
+      fatGrams: Math.max(0, Math.round(Number(item.fatGrams) || 0)),
+    }))
+    .filter((item) => item.name);
+
+  // Re-sum if Gemini totals are inconsistent
+  const calculatedCals = foods.reduce((acc, f) => acc + f.estimatedCalories, 0);
+  const calculatedProtein = foods.reduce((acc, f) => acc + f.proteinGrams, 0);
+  const calculatedCarbs = foods.reduce((acc, f) => acc + f.carbsGrams, 0);
+  const calculatedFat = foods.reduce((acc, f) => acc + f.fatGrams, 0);
+
+  const totalEstimatedCalories =
+    Number(raw.totalEstimatedCalories) > 0 ? Number(raw.totalEstimatedCalories) : calculatedCals;
+  const totalProteinGrams =
+    Number(raw.totalProteinGrams) > 0 ? Number(raw.totalProteinGrams) : calculatedProtein;
+  const totalCarbsGrams =
+    Number(raw.totalCarbsGrams) > 0 ? Number(raw.totalCarbsGrams) : calculatedCarbs;
+  const totalFatGrams =
+    Number(raw.totalFatGrams) > 0 ? Number(raw.totalFatGrams) : calculatedFat;
+
+  return {
+    isIdentified: foods.length > 0,
+    unidentifiedReason: foods.length > 0 ? '' : 'No dishes could be confidently recognized.',
+    foods,
+    totalEstimatedCalories: Math.round(totalEstimatedCalories),
+    totalProteinGrams: Math.round(totalProteinGrams),
+    totalCarbsGrams: Math.round(totalCarbsGrams),
+    totalFatGrams: Math.round(totalFatGrams),
+    summary: String(raw.summary || 'Estimated nutritional breakdown based on visual plate components.').trim(),
+    confidence: ['low', 'medium', 'high'].includes(String(raw.confidence).toLowerCase())
+      ? String(raw.confidence).toLowerCase()
+      : 'medium',
+  };
+}
+
+/**
+ * Text-based analysis of a food description for macronutrient and calorie estimation.
+ */
+export async function analyzeFoodText({ description, studentContext = {} }) {
+  const ai = getGeminiClient();
+  const model = getGeminiModel();
+
+  if (!description || typeof description !== 'string' || !description.trim()) {
+    throw new Error('Meal description text is required.');
+  }
+
+  let profileContext = '';
+  if (studentContext.dietPreference || studentContext.fitnessGoal) {
+    profileContext = `
+Student dietary context:
+- Diet Preference: ${studentContext.dietPreference || 'Not specified'}
+- Athletic Goal: ${studentContext.fitnessGoal || 'General Fitness'}
+`;
+  }
+
+  const promptText = `
+You are an expert sports nutritionist and culinary specialist with comprehensive knowledge of global cuisines and diverse Indian regional cooking (South, North, West, East, Northeast, and Coastal India).
+The student has described what they ate:
+"${description.trim()}"
+
+Analyze this meal description to identify the individual food items, estimate portion sizes, and calculate macronutrients (protein, carbs, fat) and total calories.
+
+CRITICAL GUARDRAILS & ACCURACY GUIDELINES:
+1. ESTIMATION DISCLOSURE: All calorie and macronutrient values from descriptions are estimates.
+2. DISH IDENTIFICATION: Recognize traditional Indian regional dishes accurately (e.g. Neer Dosa, Pesarattu, Dalma, Thepla, Dhokla, Pakhala, Makki di Roti, Kori Gassi, Upma, Poha, Khichdi, Biryani, Roti, Dal, Paneer, Curd, etc.).
+3. UNCLEAR OR NONSENSE DESCRIPTIONS: If the text does not describe edible food or drink, or is too vague to estimate (e.g. "something", "xyz123"), set "isIdentified": false and "unidentifiedReason": "Food description could not be understood confidently. Please describe what you ate with portion details (e.g. '2 rotis and 1 bowl dal')." Set "foods": [], and totals to 0. Do NOT fabricate numbers for unidentifiable descriptions.
+4. MACRO REASONABLENESS: Ensure estimated portions and macro grams are physiologically realistic for athletic fueling.
+5. NON-MEDICAL: Do not diagnose medical conditions or prescribe therapeutic diets.
+
+${profileContext}
+
+Respond strictly using the required JSON schema.
+`;
+
+  try {
+    const response = await callGeminiWithRetry(async () => {
+      return ai.models.generateContent({
+        model,
+        contents: [promptText],
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: foodAnalysisResponseSchema,
+          temperature: 0.2,
+        },
+      });
+    });
+
+    if (!response || !response.text) {
+      throw new Error('Gemini API returned an empty response.');
+    }
+
+    let parsedResult;
+    try {
+      parsedResult = JSON.parse(response.text);
+    } catch (parseErr) {
+      console.error('Failed to parse Gemini food text output:', response.text);
+      throw new Error('Invalid JSON format returned by Gemini.');
+    }
+
+    return normalizeFoodAnalysis(parsedResult);
+  } catch (error) {
+    console.error(`Gemini Food Text Analysis Error [${model}]:`, error);
+    throw new Error(`Gemini analysis error: ${error.message || 'Service unavailable'}`);
+  }
+}
+
