@@ -166,7 +166,7 @@ function AppRoutes() {
 
       {/* Protected Teacher Routes */}
       <Route element={<ProtectedRoute allowedRoles={['teacher']} redirectTo="/teacher/login" />}>
-        <Route path="/teacher/dashboard" element={<TeacherDashboardWrapper />} />
+        <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
       </Route>
 
       {/* Protected Community Routes */}

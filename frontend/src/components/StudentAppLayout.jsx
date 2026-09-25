@@ -11,6 +11,7 @@ import {
   Gamepad2,
   Award,
   User,
+  Users,
   LogOut,
   Bell,
   Menu,
@@ -18,7 +19,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
-const navItems = [
+const studentNavItems = [
   { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
   { label: 'Fitness Assessment', path: '/student/assessment', icon: ClipboardCheck },
   { label: 'Workout Plan', path: '/student/workout', icon: Dumbbell },
@@ -30,11 +31,16 @@ const navItems = [
   { label: 'Fitness Passport', path: '/student/fitness-result', icon: Award },
 ]
 
+const teacherNavItems = [
+  { label: 'Dashboard', path: '/teacher/dashboard', icon: LayoutDashboard },
+  { label: 'Students', path: '/teacher/dashboard#students', icon: Users, hash: '#students' },
+]
+
 export default function StudentAppLayout({
   children,
   pageTitle,
   pageSubtitle,
-  eyebrow = 'ATHLETICA STUDENT PORTAL',
+  eyebrow,
   actions,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -42,11 +48,24 @@ export default function StudentAppLayout({
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
-  const studentName = user?.name || 'Athlete'
+  const isTeacher = user?.role === 'teacher'
+  const userName = user?.name || (isTeacher ? 'Faculty Coach' : 'Athlete')
+  const navItems = isTeacher ? teacherNavItems : studentNavItems
+  const defaultEyebrow = isTeacher ? 'ATHLETICA FACULTY PORTAL' : 'ATHLETICA STUDENT PORTAL'
 
   const handleNavClick = (path) => {
     setMobileMenuOpen(false)
-    navigate(path)
+    if (path.includes('#')) {
+      const [route, hash] = path.split('#')
+      if (location.pathname === route) {
+        const el = document.getElementById(hash)
+        if (el) el.scrollIntoView({ behavior: 'smooth' })
+      } else {
+        navigate(path)
+      }
+    } else {
+      navigate(path)
+    }
   }
 
   const handleLogout = () => {
@@ -76,19 +95,21 @@ export default function StudentAppLayout({
           </div>
           <div className="ath-brand-text">
             <h2>ATHLETICA</h2>
-            <span>Fitness & Wellness</span>
+            <span>{isTeacher ? 'Faculty & Institution' : 'Fitness & Wellness'}</span>
           </div>
         </Link>
 
-        <p className="ath-sidebar-menu-kicker">Menu</p>
+        <p className="ath-sidebar-menu-kicker">{isTeacher ? 'Faculty Portal' : 'Menu'}</p>
 
-        <nav className="ath-sidebar-nav" aria-label="Student Navigation">
+        <nav className="ath-sidebar-nav" aria-label={isTeacher ? 'Faculty Navigation' : 'Student Navigation'}>
           {navItems.map((item) => {
             const Icon = item.icon
-            const isActive = location.pathname === item.path
+            const isActive =
+              location.pathname === item.path ||
+              (item.hash && location.pathname + location.hash === item.path)
             return (
               <button
-                key={item.path}
+                key={item.label}
                 type="button"
                 className={`ath-nav-btn ${isActive ? 'active' : ''}`}
                 onClick={() => handleNavClick(item.path)}
@@ -103,16 +124,18 @@ export default function StudentAppLayout({
         </nav>
 
         <div className="ath-sidebar-footer">
-          <button
-            type="button"
-            className={`ath-nav-btn ${location.pathname === '/student/profile' ? 'active' : ''}`}
-            onClick={() => handleNavClick('/student/profile')}
-          >
-            <div className="ath-nav-icon-wrap">
-              <User size={19} />
-            </div>
-            <span className="ath-nav-label">Profile</span>
-          </button>
+          {!isTeacher && (
+            <button
+              type="button"
+              className={`ath-nav-btn ${location.pathname === '/student/profile' ? 'active' : ''}`}
+              onClick={() => handleNavClick('/student/profile')}
+            >
+              <div className="ath-nav-icon-wrap">
+                <User size={19} />
+              </div>
+              <span className="ath-nav-label">Profile</span>
+            </button>
+          )}
           <button
             type="button"
             className="ath-nav-btn"
@@ -141,8 +164,13 @@ export default function StudentAppLayout({
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
             <div className="ath-topbar-heading">
-              <h1>{pageTitle || `Good day, ${studentName} 👋`}</h1>
-              <p>{pageSubtitle || 'Ready to improve your fitness today?'}</p>
+              <h1>{pageTitle || `Good day, ${userName} 👋`}</h1>
+              <p>
+                {pageSubtitle ||
+                  (isTeacher
+                    ? `Faculty Portal • Institution: ${user?.institutionId || 'General'}`
+                    : 'Ready to improve your fitness today?')}
+              </p>
             </div>
           </div>
 
@@ -159,22 +187,24 @@ export default function StudentAppLayout({
               <span className="ath-notify-dot" />
             </button>
 
-            <Link to="/student/profile" className="ath-user-profile-btn" aria-label="Go to Profile">
-              <div className="ath-avatar">
-                {studentName.charAt(0).toUpperCase()}
+            <div className="ath-user-profile-btn" style={{ cursor: 'default' }}>
+              <div className="ath-avatar" style={isTeacher ? { background: '#0f766e' } : undefined}>
+                {userName.charAt(0).toUpperCase()}
               </div>
               <div className="ath-user-meta">
-                <span className="ath-user-name">{studentName}</span>
-                <span className="ath-user-role">Student Athlete</span>
+                <span className="ath-user-name">{userName}</span>
+                <span className="ath-user-role">
+                  {isTeacher ? `Teacher • ${user?.institutionId || 'Faculty'}` : 'Student Athlete'}
+                </span>
               </div>
-            </Link>
+            </div>
           </div>
         </header>
 
         {/* CENTERED CONTENT CONTAINER */}
         <main className="ath-container">
-          {eyebrow && !pageTitle && (
-            <div className="ath-eyebrow">{eyebrow}</div>
+          {(eyebrow || defaultEyebrow) && !pageTitle && (
+            <div className="ath-eyebrow">{eyebrow || defaultEyebrow}</div>
           )}
           {children}
         </main>
