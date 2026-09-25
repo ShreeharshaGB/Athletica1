@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import authRoutes from './routes/authRoutes.js';
 import studentProfileRoutes from './routes/studentProfileRoutes.js';
@@ -11,25 +12,32 @@ const defaultOrigins = [
   'http://127.0.0.1:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5174',
+  'https://athletica1-frontend.onrender.com',
 ];
 
 const configuredOrigins = (process.env.FRONTEND_URL || '')
   .split(',')
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/\/+$/, ''))
   .filter(Boolean);
 
-const allowedOrigins = new Set([...defaultOrigins, ...configuredOrigins]);
+const allowedOrigins = new Set([
+  ...defaultOrigins.map((origin) => origin.replace(/\/+$/, '')),
+  ...configuredOrigins,
+]);
 
 app.disable('x-powered-by');
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
-  if (origin && allowedOrigins.has(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Vary', 'Origin');
+  if (origin) {
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+    if (allowedOrigins.has(normalizedOrigin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Vary', 'Origin');
+    }
   }
 
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
