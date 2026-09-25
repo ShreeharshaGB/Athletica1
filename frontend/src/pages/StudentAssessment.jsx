@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { ClipboardCheck, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { ClipboardCheck, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react'
 import { apiRequest } from '../lib/api.js'
-import './StudentDashboard.css'
+import StudentAppLayout from '../components/StudentAppLayout'
 
 export default function StudentAssessment() {
   const navigate = useNavigate()
+  const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     pushUps: '25',
     sitUps: '30',
@@ -41,7 +42,7 @@ export default function StudentAssessment() {
 
       setSuccess(true)
       setTimeout(() => {
-        navigate('/student/dashboard')
+        navigate('/student/fitness-result')
       }, 1500)
     } catch (err) {
       setFeedback(err.message || 'Unable to record assessment. Please try again.')
@@ -51,136 +52,219 @@ export default function StudentAssessment() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', padding: '36px 20px', fontFamily: 'DM Sans, sans-serif' }}>
-      <div style={{ maxWidth: '640px', margin: '0 auto', background: '#ffffff', borderRadius: '20px', padding: '36px 32px', border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(15,23,42,0.04)' }}>
-        <Link to="/student/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#0f766e', fontWeight: 600, fontSize: '0.88rem', textDecoration: 'none', marginBottom: '20px' }}>
-          <ArrowLeft size={16} /> Back to Dashboard
-        </Link>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#e6f7f2', color: '#0f766e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <ClipboardCheck size={22} />
+    <StudentAppLayout
+      pageTitle="Physical Fitness Assessment"
+      pageSubtitle="Standardized physiological baseline tests to calculate your certified Fitness Score."
+      eyebrow="FITNESS ASSESSMENT"
+    >
+      <div style={{ maxWidth: '780px', margin: '0 auto', width: '100%' }}>
+        {/* STEPPER PROGRESS */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: '#0f766e',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: '0.85rem',
+              }}
+            >
+              1
+            </div>
+            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: step === 1 ? '#0f766e' : '#64748b' }}>
+              Muscular Endurance
+            </span>
           </div>
-          <div>
-            <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-              Fitness Assessment
-            </h1>
-            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '2px 0 0' }}>
-              Record your physical test results to calculate your verified Fitness Score.
-            </p>
+
+          <div style={{ flex: 1, height: '2px', background: step === 2 ? '#0f766e' : '#e2e8f0', margin: '0 16px' }} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: step === 2 ? '#0f766e' : '#e2e8f0',
+                color: step === 2 ? '#ffffff' : '#64748b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: '0.85rem',
+              }}
+            >
+              2
+            </div>
+            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: step === 2 ? '#0f766e' : '#64748b' }}>
+              Speed & Flexibility
+            </span>
           </div>
         </div>
 
         {success ? (
-          <div style={{ textAlign: 'center', padding: '32px 16px' }}>
-            <CheckCircle2 size={48} color="#10b981" style={{ margin: '0 auto 16px' }} />
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a' }}>Assessment Saved!</h2>
-            <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Redirecting to your dashboard to view your new score...</p>
+          <div className="ath-card" style={{ textAlign: 'center', padding: '48px 24px' }}>
+            <CheckCircle2 size={54} color="#10b981" style={{ margin: '0 auto 16px' }} />
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: '0 0 6px' }}>
+              Assessment Successfully Recorded!
+            </h2>
+            <p style={{ color: '#64748b', fontSize: '0.92rem', margin: 0 }}>
+              Calculating your verified score and generating your digital Fitness Passport...
+            </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Push-ups (reps in 1 min)
-              </label>
-              <input
-                type="number"
-                name="pushUps"
-                value={formData.pushUps}
-                onChange={handleChange}
-                required
-                style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-              />
-            </div>
+          <form onSubmit={handleSubmit}>
+            {step === 1 && (
+              <div className="ath-card" style={{ gap: '20px' }}>
+                <div className="ath-card-header">
+                  <h2>
+                    <ClipboardCheck size={20} color="#0f766e" />
+                    Section 1: Muscular Strength & Endurance
+                  </h2>
+                  <span className="ath-badge info">1 MINUTE TESTS</span>
+                </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Sit-ups (reps in 1 min)
-              </label>
-              <input
-                type="number"
-                name="sitUps"
-                value={formData.sitUps}
-                onChange={handleChange}
-                required
-                style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-              />
-            </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                  <div className="ath-form-group">
+                    <label className="ath-label">Push-up Repetition Count</label>
+                    <input
+                      type="number"
+                      name="pushUps"
+                      className="ath-input"
+                      value={formData.pushUps}
+                      onChange={handleChange}
+                      placeholder="e.g. 25"
+                      min="0"
+                      max="150"
+                      required
+                    />
+                    <span style={{ fontSize: '0.74rem', color: '#64748b' }}>Continuous reps completed with full arm extension in 60s.</span>
+                  </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                50m Sprint Run Time (seconds)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                name="runTime"
-                value={formData.runTime}
-                onChange={handleChange}
-                required
-                style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-              />
-            </div>
+                  <div className="ath-form-group">
+                    <label className="ath-label">Sit-up Repetition Count</label>
+                    <input
+                      type="number"
+                      name="sitUps"
+                      className="ath-input"
+                      value={formData.sitUps}
+                      onChange={handleChange}
+                      placeholder="e.g. 30"
+                      min="0"
+                      max="150"
+                      required
+                    />
+                    <span style={{ fontSize: '0.74rem', color: '#64748b' }}>Full abdominal crunches completed in 60 seconds.</span>
+                  </div>
+                </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Sit and Reach Flexibility (cm)
-              </label>
-              <input
-                type="number"
-                name="flexibility"
-                value={formData.flexibility}
-                onChange={handleChange}
-                required
-                style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                4x10m Shuttle Run (seconds)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                name="shuttleRun"
-                value={formData.shuttleRun}
-                onChange={handleChange}
-                required
-                style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem' }}
-              />
-            </div>
-
-            {feedback && (
-              <p style={{ padding: '10px 14px', background: '#fef2f2', color: '#b91c1c', borderRadius: '8px', fontSize: '0.85rem', margin: 0 }}>
-                {feedback}
-              </p>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+                  <button
+                    type="button"
+                    className="ath-btn ath-btn-primary"
+                    onClick={() => setStep(2)}
+                  >
+                    Next: Speed & Flexibility <ArrowRight size={16} />
+                  </button>
+                </div>
+              </div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                marginTop: '10px',
-                padding: '14px',
-                background: '#0f766e',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '12px',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-              }}
-            >
-              {loading ? 'Submitting Assessment...' : 'Submit Fitness Assessment'}
-            </button>
+            {step === 2 && (
+              <div className="ath-card" style={{ gap: '20px' }}>
+                <div className="ath-card-header">
+                  <h2>
+                    <ClipboardCheck size={20} color="#0f766e" />
+                    Section 2: Speed, Agility & Mobility
+                  </h2>
+                  <span className="ath-badge info">TRACK & FIELD TIMING</span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                  <div className="ath-form-group">
+                    <label className="ath-label">50m Dash Sprint Time (seconds)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      name="runTime"
+                      className="ath-input"
+                      value={formData.runTime}
+                      onChange={handleChange}
+                      placeholder="e.g. 12.5"
+                      min="4"
+                      max="40"
+                      required
+                    />
+                    <span style={{ fontSize: '0.74rem', color: '#64748b' }}>Electronic or stopwatch timing from standing start.</span>
+                  </div>
+
+                  <div className="ath-form-group">
+                    <label className="ath-label">Sit and Reach Flexibility (cm)</label>
+                    <input
+                      type="number"
+                      name="flexibility"
+                      className="ath-input"
+                      value={formData.flexibility}
+                      onChange={handleChange}
+                      placeholder="e.g. 18"
+                      min="-20"
+                      max="60"
+                      required
+                    />
+                    <span style={{ fontSize: '0.74rem', color: '#64748b' }}>Centimeters reached past toes on standard test board.</span>
+                  </div>
+
+                  <div className="ath-form-group">
+                    <label className="ath-label">4×10m Shuttle Agility Run (seconds)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      name="shuttleRun"
+                      className="ath-input"
+                      value={formData.shuttleRun}
+                      onChange={handleChange}
+                      placeholder="e.g. 11.2"
+                      min="5"
+                      max="35"
+                      required
+                    />
+                    <span style={{ fontSize: '0.74rem', color: '#64748b' }}>Time taken to retrieve and place two blocks over 10m.</span>
+                  </div>
+                </div>
+
+                {feedback && (
+                  <p style={{ padding: '10px 14px', background: '#fef2f2', color: '#b91c1c', borderRadius: '8px', fontSize: '0.85rem', margin: 0 }}>
+                    {feedback}
+                  </p>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                  <button
+                    type="button"
+                    className="ath-btn ath-btn-secondary"
+                    onClick={() => setStep(1)}
+                  >
+                    <ArrowLeft size={16} /> Back
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="ath-btn ath-btn-primary"
+                    disabled={loading}
+                  >
+                    {loading ? 'Submitting Test Data...' : 'Submit & Calculate Score'}
+                  </button>
+                </div>
+              </div>
+            )}
           </form>
         )}
       </div>
-    </div>
+    </StudentAppLayout>
   )
 }

@@ -1,566 +1,224 @@
-import { useState } from "react";
-import "./Wellness.css";
+import { useState } from 'react'
+import { HeartPulse, Moon, Droplets, Smile, Brain, CheckCircle2, Sparkles } from 'lucide-react'
+import StudentAppLayout from '../components/StudentAppLayout'
 
-function SidebarItem({ icon, text, active, onClick }) {
-  return (
-    <button className={`sidebar-item ${active ? "active" : ""}`} onClick={onClick}>
-      <span className="sidebar-icon">{icon}</span>
-      <span>{text}</span>
-    </button>
-  );
-}
+const moods = [
+  { id: 'energized', label: 'Energized', icon: '⚡' },
+  { id: 'calm', label: 'Calm', icon: '🌿' },
+  { id: 'focused', label: 'Focused', icon: '🎯' },
+  { id: 'tired', label: 'Tired', icon: '😴' },
+]
 
-function WellnessMetric({ icon, title, value, subtitle, type }) {
-  return (
-    <div className={`wellness-metric ${type}`}>
-      <div className="metric-icon">{icon}</div>
+export default function Wellness() {
+  const [water, setWater] = useState('7')
+  const [sleep, setSleep] = useState('8')
+  const [meditation, setMeditation] = useState('15')
+  const [selectedMood, setSelectedMood] = useState('calm')
+  const [saved, setSaved] = useState(false)
 
-      <div className="metric-content">
-        <span className="metric-title">{title}</span>
-        <strong>{value}</strong>
-        <span className="metric-subtitle">{subtitle}</span>
-      </div>
-    </div>
-  );
-}
-
-export default function Wellness({ onDashboard, onWorkoutPlan, onNutrition, onProgress, onTalent, onGamification }) {
-  const [water, setWater] = useState("");
-  const [sleep, setSleep] = useState("");
-  const [meditation, setMeditation] = useState("");
-  const [mood, setMood] = useState("");
-
-  const handleSave = () => {
-    if (!water || !sleep || !meditation) {
-      alert("Please complete your wellness questions.");
-      return;
+  const handleSave = (e) => {
+    e.preventDefault()
+    if (!water || !sleep) {
+      alert('Please fill in water and sleep hours.')
+      return
     }
-
-    alert("Your wellness information has been saved!");
-  };
+    setSaved(true)
+    setTimeout(() => setSaved(false), 3000)
+  }
 
   return (
-    <div className="wellness-layout">
-
-      {/* ================= SIDEBAR ================= */}
-
-      <aside className="wellness-sidebar">
-
-        <div className="wellness-brand">
-          <div className="wellness-logo">A</div>
-
+    <StudentAppLayout
+      pageTitle="Mind & Body Wellness"
+      pageSubtitle="Holistic recovery, sleep rhythm tracking, and daily mental clarity check-ins."
+      eyebrow="HOLISTIC WELLNESS"
+    >
+      {/* METRICS ROW */}
+      <div className="ath-metrics-row">
+        <div className="ath-metric-card">
+          <div className="ath-metric-top">
+            <div className="ath-metric-icon teal">
+              <Brain size={20} />
+            </div>
+            <span className="ath-badge success">EXCELLENT</span>
+          </div>
           <div>
-            <strong>ATHLETICA</strong>
+            <div className="ath-metric-label">Mental Clarity</div>
+            <div className="ath-metric-val">88<span style={{ fontSize: '1rem', color: '#64748b' }}>/100</span></div>
           </div>
+          <div className="ath-metric-subtext">Based on check-in frequency</div>
         </div>
 
-        <nav className="wellness-navigation">
-
-          <SidebarItem
-            icon="⌂"
-            text="Dashboard"
-            onClick={onDashboard}
-          />
-
-          <SidebarItem
-            icon="◉"
-            text="Assessment"
-          />
-
-          <SidebarItem
-            icon="▣"
-            text="Workout Plan"
-            onClick={onWorkoutPlan}
-          />
-
-          <SidebarItem
-            icon="▤"
-            text="Nutrition"
-            onClick={onNutrition}
-          />
-
-          <SidebarItem
-            icon="♡"
-            text="Wellness"
-            active
-          />
-
-          <SidebarItem
-            icon="◔"
-            text="Progress"
-            onClick={onProgress}
-          />
-
-          <SidebarItem
-            icon="✦"
-            text="Talent Discovery"
-            onClick={onTalent}
-          />
-
-          <SidebarItem
-            icon="♛"
-            text="Gamification"
-            onClick={onGamification}
-          />
-
-        </nav>
-
-        <div className="wellness-language">
-          <span>◉</span>
-          <span>English</span>
-          <span className="language-arrow">⌄</span>
+        <div className="ath-metric-card">
+          <div className="ath-metric-top">
+            <div className="ath-metric-icon purple">
+              <Moon size={20} />
+            </div>
+            <span className="ath-badge info">OPTIMAL</span>
+          </div>
+          <div>
+            <div className="ath-metric-label">Sleep Duration</div>
+            <div className="ath-metric-val">{sleep} <span style={{ fontSize: '1rem', color: '#64748b' }}>hrs</span></div>
+          </div>
+          <div className="ath-metric-subtext">Recommended: 7–9 hrs</div>
         </div>
 
-      </aside>
+        <div className="ath-metric-card">
+          <div className="ath-metric-top">
+            <div className="ath-metric-icon blue">
+              <Droplets size={20} />
+            </div>
+            <span className="ath-badge success">ON TRACK</span>
+          </div>
+          <div>
+            <div className="ath-metric-label">Hydration Target</div>
+            <div className="ath-metric-val">{water} <span style={{ fontSize: '1rem', color: '#64748b' }}>glasses</span></div>
+          </div>
+          <div className="ath-metric-subtext">{(Number(water) * 0.25).toFixed(1)} L of water consumed</div>
+        </div>
 
+        <div className="ath-metric-card">
+          <div className="ath-metric-top">
+            <div className="ath-metric-icon orange">
+              <Sparkles size={20} />
+            </div>
+            <span className="ath-badge">ACTIVE</span>
+          </div>
+          <div>
+            <div className="ath-metric-label">Mindful Minutes</div>
+            <div className="ath-metric-val">{meditation} <span style={{ fontSize: '1rem', color: '#64748b' }}>mins</span></div>
+          </div>
+          <div className="ath-metric-subtext">Breathwork & mobility done</div>
+        </div>
+      </div>
 
-      {/* ================= MAIN ================= */}
-
-      <main className="wellness-main">
-
-        {/* TOP BAR */}
-
-        <header className="wellness-topbar">
-
-          <div className="wellness-search">
-            <span>⌕</span>
-
-            <input
-              type="text"
-              placeholder="Search..."
-            />
+      {/* TWO-COLUMN CONTENT */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
+        {/* CHECK-IN FORM */}
+        <div className="ath-card">
+          <div className="ath-card-header">
+            <h2>
+              <HeartPulse size={20} color="#0f766e" />
+              Daily Wellness Check-In
+            </h2>
+            <span className="ath-badge">TODAY</span>
           </div>
 
-          <div className="wellness-actions">
+          <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="ath-form-group">
+              <label className="ath-label">How are you feeling right now?</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                {moods.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setSelectedMood(m.id)}
+                    style={{
+                      padding: '12px 8px',
+                      borderRadius: '10px',
+                      border: selectedMood === m.id ? '2px solid #0f766e' : '1px solid #e2e8f0',
+                      background: selectedMood === m.id ? '#e6f7f2' : '#ffffff',
+                      color: selectedMood === m.id ? '#0f766e' : '#334155',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '4px',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    <span style={{ fontSize: '1.4rem' }}>{m.icon}</span>
+                    <span>{m.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            <button className="notification-button">
-              ♧
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="ath-form-group">
+                <label className="ath-label">Sleep Hours (last night)</label>
+                <input
+                  type="number"
+                  className="ath-input"
+                  value={sleep}
+                  onChange={(e) => setSleep(e.target.value)}
+                  min="3"
+                  max="14"
+                  required
+                />
+              </div>
+
+              <div className="ath-form-group">
+                <label className="ath-label">Water Intake (glasses)</label>
+                <input
+                  type="number"
+                  className="ath-input"
+                  value={water}
+                  onChange={(e) => setWater(e.target.value)}
+                  min="0"
+                  max="20"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="ath-form-group">
+              <label className="ath-label">Mindfulness / Breathing (minutes)</label>
+              <input
+                type="number"
+                className="ath-input"
+                value={meditation}
+                onChange={(e) => setMeditation(e.target.value)}
+                min="0"
+                max="120"
+              />
+            </div>
+
+            {saved && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', background: '#ecfdf5', color: '#065f46', borderRadius: '8px', fontSize: '0.85rem' }}>
+                <CheckCircle2 size={16} /> Daily check-in saved to your wellness profile!
+              </div>
+            )}
+
+            <button type="submit" className="ath-btn ath-btn-primary" style={{ width: '100%', marginTop: '6px' }}>
+              Save Today&apos;s Check-In
             </button>
+          </form>
+        </div>
 
-            <div className="profile-circle">
-              A
+        {/* RECOVERY & HABIT INSIGHTS */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="ath-card" style={{ gap: '14px' }}>
+            <div className="ath-card-header">
+              <h2>
+                <Smile size={20} color="#f59e0b" />
+                Active Recovery Guidance
+              </h2>
             </div>
+            <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>
+              Physical performance is built on physiological recovery. Your central nervous system requires deliberate down-regulation after competitive sports or demanding academic exams.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '1.2rem' }}>🧘</span>
+                <div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0f172a' }}>Box Breathing Routine</div>
+                  <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Inhale 4s • Hold 4s • Exhale 4s • Hold 4s</div>
+                </div>
+              </div>
 
+              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '1.2rem' }}>📵</span>
+                <div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0f172a' }}>Digital Sunset</div>
+                  <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Turn off screens 45 minutes before sleep for deeper REM cycles</div>
+                </div>
+              </div>
+            </div>
           </div>
-
-        </header>
-
-
-        {/* ================= PAGE CONTENT ================= */}
-
-        <section className="wellness-content">
-
-          {/* PAGE HEADING */}
-
-          <div className="wellness-heading">
-
-            <div>
-              <h1>Your Wellness</h1>
-
-              <p>
-                A balanced mind and body help you perform better.
-              </p>
-            </div>
-
-            <span className="wellness-date">
-              Mon, 22 Sep 2025
-            </span>
-
-          </div>
-
-
-          {/* ================= METRIC CARDS ================= */}
-
-          <div className="wellness-metrics">
-
-            <WellnessMetric
-              icon="💧"
-              title="Hydration"
-              value={water || "5 / 8"}
-              subtitle="glasses"
-              type="hydration"
-            />
-
-            <WellnessMetric
-              icon="🌙"
-              title="Sleep"
-              value={sleep || "7h 20m"}
-              subtitle="Good"
-              type="sleep"
-            />
-
-            <WellnessMetric
-              icon="😊"
-              title="Mood"
-              value="Good"
-              subtitle=""
-              type="mood"
-            />
-
-            <WellnessMetric
-              icon="🪷"
-              title="Stress"
-              value="Moderate"
-              subtitle=""
-              type="stress"
-            />
-
-            <WellnessMetric
-              icon="🍴"
-              title="Nutrition"
-              value="82%"
-              subtitle="goal"
-              type="nutrition"
-            />
-
-            <WellnessMetric
-              icon="👟"
-              title="Steps"
-              value="6,240"
-              subtitle="/10,000"
-              type="steps"
-            />
-
-          </div>
-
-
-          {/* ================= NEW WELLNESS QUESTIONS ================= */}
-
-          <div className="wellness-check-section">
-
-            <div className="section-heading">
-
-              <div>
-                <h2>Daily Wellness Check</h2>
-
-                <p>
-                  Tell us about your day to keep your wellness on track.
-                </p>
-              </div>
-
-              <span className="daily-badge">
-                Today
-              </span>
-
-            </div>
-
-
-            <div className="wellness-questions">
-
-              {/* WATER */}
-
-              <div className="question-card">
-
-                <div className="question-icon water-question">
-                  💧
-                </div>
-
-                <div className="question-content">
-
-                  <label htmlFor="water">
-                    How much water did you drink today?
-                  </label>
-
-                  <select
-                    id="water"
-                    value={water}
-                    onChange={(e) => setWater(e.target.value)}
-                  >
-                    <option value="">
-                      Select water intake
-                    </option>
-
-                    <option value="1 Litre">
-                      1 Litre
-                    </option>
-
-                    <option value="2 Litres">
-                      2 Litres
-                    </option>
-
-                    <option value="3 Litres">
-                      3 Litres
-                    </option>
-
-                    <option value="4 Litres">
-                      4 Litres
-                    </option>
-
-                    <option value="5+ Litres">
-                      5+ Litres
-                    </option>
-                  </select>
-
-                </div>
-
-              </div>
-
-
-              {/* SLEEP */}
-
-              <div className="question-card">
-
-                <div className="question-icon sleep-question">
-                  🌙
-                </div>
-
-                <div className="question-content">
-
-                  <label htmlFor="sleep">
-                    How many hours did you sleep last night?
-                  </label>
-
-                  <select
-                    id="sleep"
-                    value={sleep}
-                    onChange={(e) => setSleep(e.target.value)}
-                  >
-                    <option value="">
-                      Select sleep duration
-                    </option>
-
-                    <option value="Less than 4 hours">
-                      Less than 4 hours
-                    </option>
-
-                    <option value="4 hours">
-                      4 hours
-                    </option>
-
-                    <option value="5 hours">
-                      5 hours
-                    </option>
-
-                    <option value="6 hours">
-                      6 hours
-                    </option>
-
-                    <option value="7 hours">
-                      7 hours
-                    </option>
-
-                    <option value="8 hours">
-                      8 hours
-                    </option>
-
-                    <option value="9 hours">
-                      9 hours
-                    </option>
-
-                    <option value="10+ hours">
-                      10+ hours
-                    </option>
-
-                  </select>
-
-                </div>
-
-              </div>
-
-
-              {/* MEDITATION */}
-
-              <div className="question-card">
-
-                <div className="question-icon meditation-question">
-                  🧘
-                </div>
-
-                <div className="question-content">
-
-                  <label htmlFor="meditation">
-                    How much time did you meditate today?
-                  </label>
-
-                  <select
-                    id="meditation"
-                    value={meditation}
-                    onChange={(e) => setMeditation(e.target.value)}
-                  >
-
-                    <option value="">
-                      Select meditation time
-                    </option>
-
-                    <option value="No meditation">
-                      No meditation
-                    </option>
-
-                    <option value="5 minutes">
-                      5 minutes
-                    </option>
-
-                    <option value="10 minutes">
-                      10 minutes
-                    </option>
-
-                    <option value="15 minutes">
-                      15 minutes
-                    </option>
-
-                    <option value="20 minutes">
-                      20 minutes
-                    </option>
-
-                    <option value="30 minutes">
-                      30 minutes
-                    </option>
-
-                    <option value="45 minutes">
-                      45 minutes
-                    </option>
-
-                    <option value="60+ minutes">
-                      60+ minutes
-                    </option>
-
-                  </select>
-
-                </div>
-
-              </div>
-
-
-              {/* MOOD */}
-
-              <div className="question-card mood-question-card">
-
-                <div className="question-icon mood-question">
-                  😊
-                </div>
-
-                <div className="question-content">
-
-                  <label htmlFor="mood">
-                    How are you feeling today?
-                  </label>
-
-                  <select
-                    id="mood"
-                    value={mood}
-                    onChange={(e) => setMood(e.target.value)}
-                  >
-
-                    <option value="">
-                      Select your mood
-                    </option>
-
-                    <option value="Great">
-                      Great
-                    </option>
-
-                    <option value="Good">
-                      Good
-                    </option>
-
-                    <option value="Okay">
-                      Okay
-                    </option>
-
-                    <option value="Low">
-                      Low
-                    </option>
-
-                  </select>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <button
-              className="save-wellness-button"
-              onClick={handleSave}
-            >
-              Save Wellness Check
-            </button>
-
-          </div>
-
-
-          {/* ================= OLD WELLNESS CHECK + AI COACH ================= */}
-
-          <div className="bottom-section">
-
-            <div className="wellness-check-card">
-
-              <div className="card-heading">
-                <h2>Wellness Check-in</h2>
-
-                <p>
-                  How are you feeling today?
-                </p>
-              </div>
-
-              <div className="mood-options">
-
-                <button
-                  className="mood-option great"
-                  onClick={() => setMood("Great")}
-                >
-                  <span>😄</span>
-                  <small>Great</small>
-                </button>
-
-                <button
-                  className="mood-option good"
-                  onClick={() => setMood("Good")}
-                >
-                  <span>🙂</span>
-                  <small>Good</small>
-                </button>
-
-                <button
-                  className="mood-option okay"
-                  onClick={() => setMood("Okay")}
-                >
-                  <span>😐</span>
-                  <small>Okay</small>
-                </button>
-
-                <button
-                  className="mood-option low"
-                  onClick={() => setMood("Low")}
-                >
-                  <span>😟</span>
-                  <small>Low</small>
-                </button>
-
-              </div>
-
-            </div>
-
-
-            {/* AI COACH */}
-
-            <div className="ai-coach-card">
-
-              <div className="ai-coach-heading">
-
-                <div className="ai-icon">
-                  🤖
-                </div>
-
-                <h2>AI Coach</h2>
-
-              </div>
-
-              <p>
-                Your activity level is good.
-                Consider taking a short recovery break
-                and maintaining hydration.
-              </p>
-
-            </div>
-
-          </div>
-
-        </section>
-
-      </main>
-
-    </div>
-  );
+        </div>
+      </div>
+    </StudentAppLayout>
+  )
 }

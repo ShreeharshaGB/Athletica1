@@ -1,345 +1,316 @@
-import "./teacher_dashboard.css";
+import { useState } from 'react'
+import {
+  Users,
+  ClipboardCheck,
+  Dumbbell,
+  Apple,
+  HeartPulse,
+  TrendingUp,
+  Trophy,
+  Gamepad2,
+  LogOut,
+  Bell,
+  Menu,
+  X,
+  ShieldCheck,
+} from 'lucide-react'
+import { Link } from 'react-router-dom'
 
-const TeacherDashboard = ({ onWorkoutPlan, onNutrition, onWellness, onProgress, onTalent, onGamification }) => {
-  const students = [
-    {
-      name: "Ananya S.",
-      score: 82,
-      date: "Sep 21, 2025",
-      status: "Improving",
-    },
-    {
-      name: "Diya K.",
-      score: 76,
-      date: "Sep 20, 2025",
-      status: "Improving",
-    },
-    {
-      name: "Rohan M.",
-      score: 69,
-      date: "Sep 19, 2025",
-      status: "On Track",
-    },
-  ];
+const students = [
+  { name: 'Ananya S.', score: 82, date: 'Sep 21, 2026', status: 'Improving', tier: 'Top 10%' },
+  { name: 'Diya K.', score: 76, date: 'Sep 20, 2026', status: 'Improving', tier: 'Above Average' },
+  { name: 'Rohan M.', score: 69, date: 'Sep 19, 2026', status: 'On Track', tier: 'Developing' },
+  { name: 'Karthik N.', score: 88, date: 'Sep 18, 2026', status: 'Exceptional', tier: 'Top 5%' },
+]
 
-  const talentAreas = [
-    { name: "Endurance", value: 28, icon: "◉" },
-    { name: "Strength", value: 24, icon: "▣" },
-    { name: "Speed", value: 18, icon: "◌" },
-    { name: "Flexibility", value: 14, icon: "♧" },
-    { name: "Agility", value: 10, icon: "◇" },
-  ];
+const talentAreas = [
+  { name: 'Sprinting & Explosive Power', value: 85, count: 12, icon: '⚡' },
+  { name: 'Aerobic & Cardio Endurance', value: 78, count: 18, icon: '🏃' },
+  { name: 'Flexibility & Joint Mobility', value: 72, count: 14, icon: '🧘' },
+  { name: 'Coordination & Agility', value: 80, count: 10, icon: '🎯' },
+]
+
+export default function TeacherDashboard({
+  onWorkoutPlan,
+  onNutrition,
+  onWellness,
+  onProgress,
+  onTalent,
+  onGamification,
+  onLogout,
+}) {
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="teacher-dashboard">
+    <div className="ath-shell">
+      {/* Mobile Backdrop */}
+      <div
+        className={`ath-sidebar-backdrop ${mobileOpen ? 'open' : ''}`}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden="true"
+      />
 
-      {/* Sidebar */}
-      <aside className="teacher-sidebar">
-
-        <div className="teacher-logo">
-          <div className="logo-mark">A</div>
-
-          <div>
-            <h2>ATHLETICA</h2>
+      {/* SIDEBAR */}
+      <aside className={`ath-sidebar ${mobileOpen ? 'open' : ''}`}>
+        <Link to="/" className="ath-sidebar-brand" onClick={() => setMobileOpen(false)}>
+          <div className="ath-brand-badge">
+            A<span>+</span>
           </div>
-        </div>
+          <div className="ath-brand-text">
+            <h2>ATHLETICA</h2>
+            <span>Coach & Educator</span>
+          </div>
+        </Link>
 
-        <nav className="teacher-nav">
-          <button type="button" className="teacher-nav-item">
-            <span className="nav-icon">⌂</span><span>Dashboard</span>
-          </button>
-          <button type="button" onClick={onWorkoutPlan} className="teacher-nav-item">
-            <span className="nav-icon">▤</span><span>Workout Plan</span>
-          </button>
-          <button type="button" onClick={onNutrition} className="teacher-nav-item">
-            <span className="nav-icon">▢</span><span>Nutrition</span>
-          </button>
-          <button type="button" onClick={onWellness} className="teacher-nav-item">
-            <span className="nav-icon">♧</span><span>Wellness</span>
-          </button>
-          <button type="button" onClick={onProgress} className="teacher-nav-item">
-            <span className="nav-icon">◒</span><span>Progress</span>
-          </button>
-          <button type="button" onClick={onTalent} className="teacher-nav-item">
-            <span className="nav-icon">♙</span><span>Talent Discovery</span>
-          </button>
-          <button type="button" onClick={onGamification} className="teacher-nav-item">
-            <span className="nav-icon">✧</span><span>Gamification</span>
-          </button>
+        <p className="ath-sidebar-menu-kicker">Faculty Portal</p>
 
+        <nav className="ath-sidebar-nav">
+          <button type="button" className="ath-nav-btn active">
+            <div className="ath-nav-icon-wrap">
+              <Users size={19} />
+            </div>
+            <span className="ath-nav-label">Class Cohorts</span>
+          </button>
+          <button type="button" onClick={onWorkoutPlan} className="ath-nav-btn">
+            <div className="ath-nav-icon-wrap">
+              <Dumbbell size={19} />
+            </div>
+            <span className="ath-nav-label">Assigned Workouts</span>
+          </button>
+          <button type="button" onClick={onNutrition} className="ath-nav-btn">
+            <div className="ath-nav-icon-wrap">
+              <Apple size={19} />
+            </div>
+            <span className="ath-nav-label">Student Fueling</span>
+          </button>
+          <button type="button" onClick={onWellness} className="ath-nav-btn">
+            <div className="ath-nav-icon-wrap">
+              <HeartPulse size={19} />
+            </div>
+            <span className="ath-nav-label">Wellness Reports</span>
+          </button>
+          <button type="button" onClick={onProgress} className="ath-nav-btn">
+            <div className="ath-nav-icon-wrap">
+              <TrendingUp size={19} />
+            </div>
+            <span className="ath-nav-label">Cohort Trends</span>
+          </button>
+          <button type="button" onClick={onTalent} className="ath-nav-btn">
+            <div className="ath-nav-icon-wrap">
+              <Trophy size={19} />
+            </div>
+            <span className="ath-nav-label">Talent Scouting</span>
+          </button>
+          <button type="button" onClick={onGamification} className="ath-nav-btn">
+            <div className="ath-nav-icon-wrap">
+              <Gamepad2 size={19} />
+            </div>
+            <span className="ath-nav-label">School Leaderboard</span>
+          </button>
         </nav>
 
-        <div className="sidebar-language">
-          <span>◉</span>
-          <span>English</span>
-          <span className="language-arrow">⌄</span>
+        <div className="ath-sidebar-footer">
+          <button
+            type="button"
+            className="ath-nav-btn"
+            style={{ color: '#ef4444' }}
+            onClick={onLogout}
+          >
+            <div className="ath-nav-icon-wrap">
+              <LogOut size={19} />
+            </div>
+            <span className="ath-nav-label">Sign Out</span>
+          </button>
         </div>
-
       </aside>
 
-      {/* Main Content */}
-      <main className="teacher-main">
-
-        {/* Top Header */}
-        <header className="teacher-topbar">
-
-          <div className="teacher-search">
-            <span>⌕</span>
-            <span>Search...</span>
+      {/* MAIN SHELL */}
+      <div className="ath-main-shell">
+        <header className="ath-topbar">
+          <div className="ath-topbar-left">
+            <button
+              className="ath-mobile-toggle"
+              type="button"
+              aria-label="Toggle navigation"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+            <div className="ath-topbar-heading">
+              <h1>Physical Education Dashboard</h1>
+              <p>Section 9-B Athletic Cohort Overview</p>
+            </div>
           </div>
 
-          <div className="teacher-top-actions">
-            <button className="notification-button">
-              ♧
+          <div className="ath-topbar-right">
+            <button
+              className="ath-icon-btn"
+              type="button"
+              aria-label="Notifications"
+              onClick={() => alert('No urgent fitness alerts.')}
+            >
+              <Bell size={18} />
+              <span className="ath-notify-dot" />
             </button>
 
-            <div className="profile-circle">
-              T
+            <div className="ath-user-profile-btn">
+              <div className="ath-avatar" style={{ background: '#3b82f6' }}>
+                T
+              </div>
+              <div className="ath-user-meta">
+                <span className="ath-user-name">Coach Sharma</span>
+                <span className="ath-user-role" style={{ color: '#3b82f6' }}>Head of P.E.</span>
+              </div>
             </div>
           </div>
-
         </header>
 
-        {/* Page Heading */}
-        <section className="teacher-heading">
+        <main className="ath-container">
+          <div className="ath-eyebrow">COHORT OVERVIEW</div>
 
-          <div>
-            <h1>Institution Overview</h1>
+          {/* METRICS ROW */}
+          <div className="ath-metrics-row">
+            <div className="ath-metric-card">
+              <div className="ath-metric-top">
+                <div className="ath-metric-icon blue">
+                  <Users size={20} />
+                </div>
+                <span className="ath-badge success">42 ENROLLED</span>
+              </div>
+              <div>
+                <div className="ath-metric-label">Monitored Athletes</div>
+                <div className="ath-metric-val">42</div>
+              </div>
+              <div className="ath-metric-subtext">Active student fitness logs</div>
+            </div>
 
-            <div className="institution-select">
-              <span>◉</span>
-              <span>Ramanarayan College, Ujre</span>
-              <span>⌄</span>
+            <div className="ath-metric-card">
+              <div className="ath-metric-top">
+                <div className="ath-metric-icon teal">
+                  <ClipboardCheck size={20} />
+                </div>
+                <span className="ath-badge success">+4% vs last month</span>
+              </div>
+              <div>
+                <div className="ath-metric-label">Average Cohort Score</div>
+                <div className="ath-metric-val">77.4<span style={{ fontSize: '0.9rem', color: '#64748b' }}>/100</span></div>
+              </div>
+              <div className="ath-metric-subtext">Class median fitness index</div>
+            </div>
+
+            <div className="ath-metric-card">
+              <div className="ath-metric-top">
+                <div className="ath-metric-icon purple">
+                  <ShieldCheck size={20} />
+                </div>
+                <span className="ath-badge info">38 VERIFIED</span>
+              </div>
+              <div>
+                <div className="ath-metric-label">Assessments Logged</div>
+                <div className="ath-metric-val">90.5%</div>
+              </div>
+              <div className="ath-metric-subtext">38 of 42 completed testing</div>
+            </div>
+
+            <div className="ath-metric-card">
+              <div className="ath-metric-top">
+                <div className="ath-metric-icon orange">
+                  <Trophy size={20} />
+                </div>
+                <span className="ath-badge">SCOUTING</span>
+              </div>
+              <div>
+                <div className="ath-metric-label">Talents Flagged</div>
+                <div className="ath-metric-val">8</div>
+              </div>
+              <div className="ath-metric-subtext">Recommended for district trials</div>
             </div>
           </div>
 
-          <div className="month-select">
-            <span>Sep 2025</span>
-            <span>⌄</span>
-          </div>
-
-        </section>
-
-        {/* Summary Cards */}
-        <section className="teacher-summary">
-
-          <div className="summary-card">
-            <p>Total Students</p>
-            <h2>248</h2>
-          </div>
-
-          <div className="summary-card">
-            <p>Active This Week</p>
-            <h2>189</h2>
-          </div>
-
-          <div className="summary-card">
-            <p>Talent Identified</p>
-            <h2>32</h2>
-          </div>
-
-        </section>
-
-        {/* Charts + Talent */}
-        <section className="teacher-middle">
-
-          {/* Fitness Score Chart */}
-          <div className="fitness-chart-card">
-
-            <h3>Fitness Score Trend (Average)</h3>
-
-            <div className="chart-wrapper">
-
-              <div className="y-axis">
-                <span>100</span>
-                <span>80</span>
-                <span>60</span>
-                <span>40</span>
-                <span>20</span>
-                <span>0</span>
+          {/* TWO-COLUMN: RECENT ASSESSMENTS + TALENT SCOUTING */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
+            {/* STUDENTS TABLE */}
+            <div className="ath-card" style={{ gap: '16px' }}>
+              <div className="ath-card-header">
+                <h2>
+                  <Users size={20} color="#0f766e" />
+                  Recent Student Assessments
+                </h2>
+                <span className="ath-badge">LATEST</span>
               </div>
 
-              <div className="chart-area">
-
-                <div className="chart-grid">
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                </div>
-
-                <svg
-                  className="fitness-svg"
-                  viewBox="0 0 600 220"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient
-                      id="chartFill"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="0%"
-                        stopColor="#36c99b"
-                        stopOpacity="0.25"
-                      />
-
-                      <stop
-                        offset="100%"
-                        stopColor="#36c99b"
-                        stopOpacity="0.02"
-                      />
-                    </linearGradient>
-                  </defs>
-
-                  <path
-                    d="
-                      M 10 150
-                      L 100 135
-                      L 190 115
-                      L 280 112
-                      L 370 113
-                      L 460 90
-                      L 550 55
-                      L 550 200
-                      L 10 200
-                      Z
-                    "
-                    fill="url(#chartFill)"
-                  />
-
-                  <polyline
-                    points="
-                      10,150
-                      100,135
-                      190,115
-                      280,112
-                      370,113
-                      460,90
-                      550,55
-                    "
-                    fill="none"
-                    stroke="#20a77d"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-
-                  <circle cx="10" cy="150" r="5" fill="#20a77d" />
-                  <circle cx="100" cy="135" r="5" fill="#20a77d" />
-                  <circle cx="190" cy="115" r="5" fill="#20a77d" />
-                  <circle cx="280" cy="112" r="5" fill="#20a77d" />
-                  <circle cx="370" cy="113" r="5" fill="#20a77d" />
-                  <circle cx="460" cy="90" r="5" fill="#20a77d" />
-                  <circle cx="550" cy="55" r="5" fill="#20a77d" />
-                </svg>
-
-                <div className="x-axis">
-                  <span>Sep 15</span>
-                  <span>Sep 16</span>
-                  <span>Sep 17</span>
-                  <span>Sep 18</span>
-                  <span>Sep 19</span>
-                  <span>Sep 20</span>
-                  <span>Sep 21</span>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* Talent Areas */}
-          <div className="talent-card">
-
-            <h3>Top Talent Areas</h3>
-
-            <div className="talent-list">
-
-              {talentAreas.map((talent) => (
-                <div
-                  className="talent-row"
-                  key={talent.name}
-                >
-                  <div className="talent-name">
-                    <span className="talent-icon">
-                      {talent.icon}
-                    </span>
-
-                    <span>{talent.name}</span>
-                  </div>
-
-                  <strong>{talent.value}</strong>
-                </div>
-              ))}
-
-            </div>
-
-          </div>
-
-        </section>
-
-        {/* Recent Activity */}
-        <section className="recent-activity-card">
-
-          <h3>Recent Student Activity</h3>
-
-          <div className="student-table">
-
-            <div className="table-header">
-              <span>Name</span>
-              <span>Fitness Score</span>
-              <span>Last Active</span>
-              <span>Status</span>
-            </div>
-
-            {students.map((student, index) => (
-              <div
-                className="table-row"
-                key={student.name}
-              >
-
-                <div className="student-name">
-
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {students.map((student, i) => (
                   <div
-                    className={`student-avatar avatar-${index}`}
+                    key={i}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '12px 16px',
+                      borderRadius: '10px',
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      flexWrap: 'wrap',
+                      gap: '10px',
+                    }}
                   >
-                    {student.name.charAt(0)}
+                    <div>
+                      <div style={{ fontSize: '0.92rem', fontWeight: 750, color: '#0f172a' }}>
+                        {student.name}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        Tested {student.date} • {student.tier}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <span className="ath-badge success">{student.status}</span>
+                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f766e' }}>
+                        {student.score}
+                        <span style={{ fontSize: '0.72rem', color: '#64748b' }}>/100</span>
+                      </div>
+                    </div>
                   </div>
-
-                  <span>{student.name}</span>
-
-                </div>
-
-                <span>{student.score}</span>
-
-                <span>{student.date}</span>
-
-                <span
-                  className={`student-status ${
-                    student.status === "On Track"
-                      ? "on-track"
-                      : "improving"
-                  }`}
-                >
-                  {student.status}
-                </span>
-
+                ))}
               </div>
-            ))}
+            </div>
 
+            {/* TALENT IDENTIFICATION BREAKDOWN */}
+            <div className="ath-card" style={{ gap: '16px' }}>
+              <div className="ath-card-header">
+                <h2>
+                  <Trophy size={20} color="#f59e0b" />
+                  Cohort Aptitude Distribution
+                </h2>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {talentAreas.map((talent, idx) => (
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem' }}>
+                      <span style={{ fontWeight: 700, color: '#334155' }}>
+                        {talent.icon} {talent.name}
+                      </span>
+                      <span style={{ color: '#64748b' }}>{talent.count} athletes ({talent.value}%)</span>
+                    </div>
+                    <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div
+                        style={{
+                          width: `${talent.value}%`,
+                          height: '100%',
+                          background: 'linear-gradient(90deg, #0f766e, #14b8a6)',
+                          borderRadius: '4px',
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-
-        </section>
-
-      </main>
+        </main>
+      </div>
     </div>
-  );
-};
-
-export default TeacherDashboard;
+  )
+}

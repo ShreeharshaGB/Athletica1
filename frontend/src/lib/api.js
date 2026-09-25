@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+const CLEAN_API_URL = RAW_API_URL.replace(/\/+$/, '')
+const API_BASE_URL = CLEAN_API_URL.endsWith('/api') ? CLEAN_API_URL : `${CLEAN_API_URL}/api`
 
 export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem('athletica_token')

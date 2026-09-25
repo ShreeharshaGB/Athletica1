@@ -126,20 +126,17 @@ export default function RoleSelection() {
 
                 <button
                   type="button"
+                  className="ath-btn ath-btn-primary"
                   style={{
                     width: '100%',
-                    padding: '12px 18px',
-                    borderRadius: '12px',
-                    background: role.id === 'student' ? '#0f766e' : '#f8fafc',
-                    color: role.id === 'student' ? '#ffffff' : '#0f172a',
-                    border: role.id === 'student' ? 'none' : '1px solid #e2e8f0',
-                    fontWeight: 600,
-                    fontSize: '0.92rem',
+                    padding: '13px 18px',
+                    borderRadius: '10px',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '8px',
-                    transition: 'background 0.2s',
                   }}
                 >
                   Continue as {role.id === 'student' ? 'Student' : role.id === 'teacher' ? 'Teacher' : 'Community'}

@@ -44,35 +44,74 @@ function CommunityPortal() {
   const navigate = useNavigate()
 
   return (
-    <main className="login-page">
-      <section className="login-layout">
-        <header className="login-header">
-          <Link className="login-brand" to="/" aria-label="Athletica home">
-            <div className="login-brand-mark">A<span>+</span></div>
-            <span>ATHLETICA</span>
-          </Link>
-        </header>
-        <section className="login-card" style={{ maxWidth: '600px', margin: '40px auto' }}>
-          <p className="login-kicker"><span></span> COMMUNITY PORTAL</p>
-          <h2>Welcome, {user?.name}!</h2>
-          <p className="card-copy">You are successfully signed in as a Community Member ({user?.email}).</p>
-          <p style={{ marginTop: '1rem', color: '#666', fontSize: '0.9rem', lineHeight: 1.5 }}>
-            Community fitness challenges, peer workouts, and low-connectivity toolsets are active for your account.
+    <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
+      <header className="ath-topbar" style={{ padding: '0 32px' }}>
+        <Link className="brand" to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+          <div className="ath-brand-badge">A<span>+</span></div>
+          <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', letterSpacing: '0.08em' }}>ATHLETICA</span>
+        </Link>
+        <button
+          type="button"
+          className="ath-btn ath-btn-secondary"
+          onClick={() => {
+            logout()
+            navigate('/')
+          }}
+        >
+          Sign Out
+        </button>
+      </header>
+
+      <main className="ath-container" style={{ maxWidth: '960px', margin: '40px auto', padding: '0 24px', flex: 1 }}>
+        <div className="ath-card" style={{ background: 'linear-gradient(135deg, #0f766e 0%, #065f46 100%)', color: '#ffffff', padding: '32px 36px', borderRadius: '20px' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '20px' }}>
+            COMMUNITY & GRASSROOTS WELLNESS
+          </span>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: 800, margin: '14px 0 6px', color: '#ffffff' }}>
+            Welcome, {user?.name || 'Community Athlete'}!
+          </h1>
+          <p style={{ margin: 0, color: '#ccfbf1', fontSize: '0.92rem', maxWidth: '600px', lineHeight: 1.55 }}>
+            You are signed in to the Athletica Community Portal ({user?.email}). Access accessible fitness guidance built for all environments and activity levels.
           </p>
-          <button
-            className="sign-in-button"
-            style={{ marginTop: '1.5rem' }}
-            type="button"
-            onClick={() => {
-              logout()
-              navigate('/')
-            }}
-          >
-            Sign Out
-          </button>
-        </section>
-      </section>
-    </main>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+          <div className="ath-card" style={{ gap: '12px' }}>
+            <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#e6f7f2', color: '#0f766e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+              👥
+            </div>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 750, color: '#0f172a', margin: 0 }}>Community Movement Circles</h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0, lineHeight: 1.55 }}>
+              Connect with peer walking clubs, community calisthenics, and local open-gym fitness challenges.
+            </p>
+          </div>
+
+          <div className="ath-card" style={{ gap: '12px' }}>
+            <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+              📡
+            </div>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 750, color: '#0f172a', margin: 0 }}>Low-Bandwidth Support</h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0, lineHeight: 1.55 }}>
+              All daily workout routines, yoga warm-ups, and dietary checklists are cached locally for offline guidance.
+            </p>
+          </div>
+
+          <div className="ath-card" style={{ gap: '12px' }}>
+            <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#fff7ed', color: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+              ❤️
+            </div>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 750, color: '#0f172a', margin: 0 }}>Everyday Vitality Telemetry</h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0, lineHeight: 1.55 }}>
+              Track recovery heart rates, daily hydration targets, and simple step goals designed for sustainable lifelong movement.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <footer style={{ borderTop: '1px solid #e2e8f0', padding: '24px 32px', textAlign: 'center', color: '#94a3b8', fontSize: '0.82rem', background: '#ffffff' }}>
+        © 2026 Athletica • Community Health & Wellness
+      </footer>
+    </div>
   )
 }
 
@@ -96,21 +135,6 @@ function TeacherDashboardWrapper() {
   )
 }
 
-function StudentSubpageWrapper({ Component }) {
-  const navigate = useNavigate()
-
-  return (
-    <Component
-      onDashboard={() => navigate('/student/dashboard')}
-      onWorkoutPlan={() => navigate('/student/workout')}
-      onNutrition={() => navigate('/student/nutrition')}
-      onWellness={() => navigate('/student/wellness')}
-      onProgress={() => navigate('/student/progress')}
-      onTalent={() => navigate('/student/talent')}
-      onGamification={() => navigate('/student/gamification')}
-    />
-  )
-}
 
 function AppRoutes() {
   return (
@@ -131,12 +155,12 @@ function AppRoutes() {
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/student/assessment" element={<StudentAssessment />} />
         <Route path="/student/fitness-result" element={<FitnessPassport />} />
-        <Route path="/student/workout" element={<StudentSubpageWrapper Component={WorkoutPlan} />} />
-        <Route path="/student/nutrition" element={<StudentSubpageWrapper Component={Nutrition} />} />
-        <Route path="/student/wellness" element={<StudentSubpageWrapper Component={Wellness} />} />
-        <Route path="/student/progress" element={<StudentSubpageWrapper Component={Progress} />} />
-        <Route path="/student/talent" element={<StudentSubpageWrapper Component={TalentDiscovery} />} />
-        <Route path="/student/gamification" element={<StudentSubpageWrapper Component={Gamification} />} />
+        <Route path="/student/workout" element={<WorkoutPlan />} />
+        <Route path="/student/nutrition" element={<Nutrition />} />
+        <Route path="/student/wellness" element={<Wellness />} />
+        <Route path="/student/progress" element={<Progress />} />
+        <Route path="/student/talent" element={<TalentDiscovery />} />
+        <Route path="/student/gamification" element={<Gamification />} />
         <Route path="/student/profile" element={<StudentProfile />} />
       </Route>
 

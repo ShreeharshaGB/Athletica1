@@ -1,441 +1,213 @@
-import { useState } from "react";
-import "./progress.css";
-
-function Progress({ onDashboard, onWorkoutPlan, onNutrition, onWellness, onTalent, onGamification }) {
-  const [activePeriod, setActivePeriod] = useState("Week");
-
-  const progressData = {
-    Week: {
-      fitness: "78 → 82",
-      fitnessChange: "↑ 4",
-      weight: "58 → 55",
-      weightChange: "↓ 3",
-      endurance: "15 → 20",
-      enduranceChange: "↑ 5",
-      chartValues: [76, 79, 83, 85, 85, 90, 92],
-      chartLabels: [
-        "Sep 15",
-        "Sep 16",
-        "Sep 17",
-        "Sep 18",
-        "Sep 19",
-        "Sep 20",
-        "Sep 21",
-      ],
-    },
-
-    Month: {
-      fitness: "72 → 82",
-      fitnessChange: "↑ 10",
-      weight: "60 → 55",
-      weightChange: "↓ 5",
-      endurance: "12 → 20",
-      enduranceChange: "↑ 8",
-      chartValues: [70, 73, 76, 78, 80, 81, 82],
-      chartLabels: [
-        "Week 1",
-        "Week 2",
-        "Week 3",
-        "Week 4",
-        "Week 5",
-        "Week 6",
-        "Week 7",
-      ],
-    },
-
-    "3 Months": {
-      fitness: "65 → 82",
-      fitnessChange: "↑ 17",
-      weight: "63 → 55",
-      weightChange: "↓ 8",
-      endurance: "10 → 20",
-      enduranceChange: "↑ 10",
-      chartValues: [65, 69, 72, 76, 78, 80, 82],
-      chartLabels: [
-        "Jul",
-        "Aug",
-        "Sep",
-        "Week 4",
-        "Week 5",
-        "Week 6",
-        "Week 7",
-      ],
-    },
-
-    "6 Months": {
-      fitness: "58 → 82",
-      fitnessChange: "↑ 24",
-      weight: "68 → 55",
-      weightChange: "↓ 13",
-      endurance: "8 → 20",
-      enduranceChange: "↑ 12",
-      chartValues: [58, 63, 67, 72, 76, 80, 82],
-      chartLabels: [
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Now",
-      ],
-    },
-  };
-
-  const currentData = progressData[activePeriod];
-
-  return (
-    <div className="progress-page">
-
-      {/* ================= SIDEBAR ================= */}
-      <aside className="progress-sidebar">
-
-        <div className="progress-logo">
-          <div className="logo-mark">A</div>
-
-          <div>
-            <h2>ATHLETICA</h2>
-          </div>
-        </div>
-
-        <nav className="progress-navigation">
-
-          <button type="button" onClick={onDashboard} className="progress-nav-item">
-            <span className="nav-icon">⌂</span>
-            <span>Dashboard</span>
-          </button>
-
-          <button type="button" onClick={onWorkoutPlan} className="progress-nav-item">
-            <span className="nav-icon">▣</span>
-            <span>Workout Plan</span>
-          </button>
-
-          <button type="button" onClick={onNutrition} className="progress-nav-item">
-            <span className="nav-icon">◉</span>
-            <span>Nutrition</span>
-          </button>
-
-          <button type="button" onClick={onWellness} className="progress-nav-item">
-            <span className="nav-icon">♧</span>
-            <span>Wellness</span>
-          </button>
-
-          <button type="button" className="progress-nav-item active">
-            <span className="nav-icon">▥</span>
-            <span>Progress</span>
-          </button>
-
-          <button type="button" onClick={onTalent} className="progress-nav-item">
-            <span className="nav-icon">♟</span>
-            <span>Talent Discovery</span>
-          </button>
-
-          <button type="button" onClick={onGamification} className="progress-nav-item">
-            <span className="nav-icon">✧</span>
-            <span>Gamification</span>
-          </button>
-
-        </nav>
-
-        <div className="progress-language">
-          <span>◉</span>
-          <span>English</span>
-          <span>⌄</span>
-        </div>
-
-      </aside>
-
-
-      {/* ================= MAIN CONTENT ================= */}
-
-      <main className="progress-main">
-
-        {/* Top bar */}
-        <div className="progress-topbar">
-
-          <div className="progress-search">
-            <span>⌕</span>
-            <span>Search...</span>
-          </div>
-
-          <div className="progress-top-actions">
-            <span className="notification-icon">♧</span>
-
-            <div className="profile-circle">
-              A
-            </div>
-          </div>
-
-        </div>
-
-
-        {/* Page Header */}
-        <section className="progress-header">
-
-          <div>
-            <h1>Your Progress</h1>
-
-            <p>
-              See your improvement over time.
-            </p>
-          </div>
-
-        </section>
-
-
-        {/* ================= PERIOD FILTER ================= */}
-
-        <div className="period-tabs">
-
-          {["Week", "Month", "3 Months", "6 Months"].map(
-            (period) => (
-              <button
-                key={period}
-                className={
-                  activePeriod === period
-                    ? "period-tab active"
-                    : "period-tab"
-                }
-                onClick={() => setActivePeriod(period)}
-              >
-                {period}
-              </button>
-            )
-          )}
-
-        </div>
-
-
-        {/* ================= SUMMARY CARDS ================= */}
-
-        <section className="progress-summary">
-
-          {/* Fitness */}
-          <div className="summary-card fitness-card">
-
-            <div className="summary-title">
-              Fitness Score
-            </div>
-
-            <div className="summary-value">
-              {currentData.fitness}
-            </div>
-
-            <div className="summary-change fitness-change">
-              {currentData.fitnessChange}
-            </div>
-
-          </div>
-
-
-          {/* Weight */}
-          <div className="summary-card weight-card">
-
-            <div className="summary-title">
-              Weight (kg)
-            </div>
-
-            <div className="summary-value">
-              {currentData.weight}
-            </div>
-
-            <div className="summary-change weight-change">
-              {currentData.weightChange}
-            </div>
-
-          </div>
-
-
-          {/* Endurance */}
-          <div className="summary-card endurance-card">
-
-            <div className="summary-title">
-              Endurance (min)
-            </div>
-
-            <div className="summary-value">
-              {currentData.endurance}
-            </div>
-
-            <div className="summary-change endurance-change">
-              {currentData.enduranceChange}
-            </div>
-
-          </div>
-
-        </section>
-
-
-        {/* ================= CHART + ACHIEVEMENTS ================= */}
-
-        <section className="progress-lower">
-
-          {/* Fitness Chart */}
-
-          <div className="chart-card">
-
-            <h2>Fitness Score Trend</h2>
-
-            <div className="chart-wrapper">
-
-              <div className="y-axis">
-
-                <span>100</span>
-                <span>90</span>
-                <span>80</span>
-                <span>70</span>
-                <span>60</span>
-                <span>0</span>
-
-              </div>
-
-              <div className="chart-area">
-
-                <div className="horizontal-line line-1"></div>
-                <div className="horizontal-line line-2"></div>
-                <div className="horizontal-line line-3"></div>
-                <div className="horizontal-line line-4"></div>
-                <div className="horizontal-line line-5"></div>
-
-                <svg
-                  className="progress-chart"
-                  viewBox="0 0 700 280"
-                  preserveAspectRatio="none"
-                >
-
-                  {/* Area */}
-                  <polygon
-                    points={`
-                      0,195
-                      115,175
-                      230,140
-                      345,125
-                      460,125
-                      575,80
-                      690,60
-                      690,250
-                      0,250
-                    `}
-                    className="chart-area-fill"
-                  />
-
-                  {/* Line */}
-                  <polyline
-                    points={`
-                      0,195
-                      115,175
-                      230,140
-                      345,125
-                      460,125
-                      575,80
-                      690,60
-                    `}
-                    className="chart-line"
-                  />
-
-                  {/* Points */}
-                  <circle cx="0" cy="195" r="5" />
-                  <circle cx="115" cy="175" r="5" />
-                  <circle cx="230" cy="140" r="5" />
-                  <circle cx="345" cy="125" r="5" />
-                  <circle cx="460" cy="125" r="5" />
-                  <circle cx="575" cy="80" r="5" />
-                  <circle cx="690" cy="60" r="5" />
-
-                </svg>
-
-
-                {/* X axis labels */}
-                <div className="x-axis">
-
-                  {currentData.chartLabels.map(
-                    (label, index) => (
-                      <span key={index}>
-                        {label}
-                      </span>
-                    )
-                  )}
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          {/* ================= ACHIEVEMENTS ================= */}
-
-          <div className="achievements-card">
-
-            <h2>Achievements</h2>
-
-
-            <div className="achievement-item">
-
-              <div className="achievement-icon fire">
-                🔥
-              </div>
-
-              <div className="achievement-content">
-
-                <h3>5 Day Streak</h3>
-
-                <p>
-                  Completed 5 days in a row!
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <div className="achievement-item">
-
-              <div className="achievement-icon trophy">
-                🏆
-              </div>
-
-              <div className="achievement-content">
-
-                <h3>Fitness Milestone</h3>
-
-                <p>
-                  Score increased by 5%.
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <div className="achievement-item">
-
-              <div className="achievement-icon nutrition">
-                🥗
-              </div>
-
-              <div className="achievement-content">
-
-                <h3>Nutrition Goal</h3>
-
-                <p>
-                  Met 4/7 days
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
-      </main>
-
-    </div>
-  );
+import { useState } from 'react'
+import { TrendingUp, Award, Calendar, ArrowUpRight, ArrowDownRight, Target } from 'lucide-react'
+import StudentAppLayout from '../components/StudentAppLayout'
+
+const progressData = {
+  Week: {
+    fitness: '78 → 82',
+    fitnessChange: '+4 pts',
+    isPositiveFitness: true,
+    weight: '58 → 57',
+    weightChange: '-1 kg',
+    endurance: '15 → 20',
+    enduranceChange: '+5 mins',
+    chartValues: [76, 78, 79, 80, 80, 81, 82],
+    chartLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  },
+  Month: {
+    fitness: '72 → 82',
+    fitnessChange: '+10 pts',
+    isPositiveFitness: true,
+    weight: '60 → 57',
+    weightChange: '-3 kg',
+    endurance: '12 → 20',
+    enduranceChange: '+8 mins',
+    chartValues: [72, 74, 76, 77, 79, 81, 82],
+    chartLabels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7'],
+  },
+  '3 Months': {
+    fitness: '65 → 82',
+    fitnessChange: '+17 pts',
+    isPositiveFitness: true,
+    weight: '63 → 57',
+    weightChange: '-6 kg',
+    endurance: '10 → 20',
+    enduranceChange: '+10 mins',
+    chartValues: [65, 68, 71, 74, 76, 79, 82],
+    chartLabels: ['Month 1', 'Month 2', 'Month 3'],
+  },
 }
 
-export default Progress;
+export default function Progress() {
+  const [activePeriod, setActivePeriod] = useState('Week')
+  const current = progressData[activePeriod]
+
+  return (
+    <StudentAppLayout
+      pageTitle="Progress & Performance Analytics"
+      pageSubtitle="Empirical tracking of your fitness assessment improvements, endurance growth, and body metrics."
+      eyebrow="ANALYTICS & TRENDS"
+    >
+      {/* PERIOD SELECTOR TABS */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
+        <div className="ath-tabs">
+          {['Week', 'Month', '3 Months'].map((period) => (
+            <button
+              key={period}
+              type="button"
+              className={`ath-tab ${activePeriod === period ? 'active' : ''}`}
+              onClick={() => setActivePeriod(period)}
+            >
+              {period}
+            </button>
+          ))}
+        </div>
+        <span className="ath-badge success" style={{ padding: '6px 12px' }}>
+          Overall Trajectory: Steadily Improving
+        </span>
+      </div>
+
+      {/* METRICS ROW */}
+      <div className="ath-metrics-row">
+        <div className="ath-metric-card">
+          <div className="ath-metric-top">
+            <div className="ath-metric-icon teal">
+              <TrendingUp size={20} />
+            </div>
+            <span className="ath-badge success" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+              <ArrowUpRight size={13} /> {current.fitnessChange}
+            </span>
+          </div>
+          <div>
+            <div className="ath-metric-label">Fitness Score Trend</div>
+            <div className="ath-metric-val">{current.fitness}</div>
+          </div>
+          <div className="ath-metric-subtext">Verified assessment trajectory</div>
+        </div>
+
+        <div className="ath-metric-card">
+          <div className="ath-metric-top">
+            <div className="ath-metric-icon blue">
+              <Target size={20} />
+            </div>
+            <span className="ath-badge success" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+              <ArrowDownRight size={13} /> {current.weightChange}
+            </span>
+          </div>
+          <div>
+            <div className="ath-metric-label">Body Weight Trend</div>
+            <div className="ath-metric-val">{current.weight} <span style={{ fontSize: '0.9rem', color: '#64748b' }}>kg</span></div>
+          </div>
+          <div className="ath-metric-subtext">Optimal body composition</div>
+        </div>
+
+        <div className="ath-metric-card">
+          <div className="ath-metric-top">
+            <div className="ath-metric-icon purple">
+              <Calendar size={20} />
+            </div>
+            <span className="ath-badge info" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+              <ArrowUpRight size={13} /> {current.enduranceChange}
+            </span>
+          </div>
+          <div>
+            <div className="ath-metric-label">Aerobic Stamina</div>
+            <div className="ath-metric-val">{current.endurance} <span style={{ fontSize: '0.9rem', color: '#64748b' }}>mins</span></div>
+          </div>
+          <div className="ath-metric-subtext">Sustained sprint capacity</div>
+        </div>
+
+        <div className="ath-metric-card">
+          <div className="ath-metric-top">
+            <div className="ath-metric-icon orange">
+              <Award size={20} />
+            </div>
+            <span className="ath-badge">RANK #4</span>
+          </div>
+          <div>
+            <div className="ath-metric-label">Consistency Score</div>
+            <div className="ath-metric-val">92%</div>
+          </div>
+          <div className="ath-metric-subtext">Top 10% in school cohort</div>
+        </div>
+      </div>
+
+      {/* CHART VISUALIZER */}
+      <div className="ath-card" style={{ gap: '20px' }}>
+        <div className="ath-card-header">
+          <h2>Fitness Score Trajectory ({activePeriod})</h2>
+          <span style={{ fontSize: '0.82rem', color: '#64748b' }}>Target Goal: 85+</span>
+        </div>
+
+        {/* Responsive SVG Chart */}
+        <div style={{ width: '100%', overflowX: 'auto', padding: '10px 0' }}>
+          <div style={{ minWidth: '400px', height: '220px', position: 'relative' }}>
+            <svg viewBox="0 0 700 200" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+              <defs>
+                <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0f766e" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#0f766e" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+
+              {/* Grid lines */}
+              {[40, 80, 120, 160].map((y) => (
+                <line key={y} x1="30" y1={y} x2="680" y2={y} stroke="#f1f5f9" strokeWidth="1" />
+              ))}
+
+              {/* Area path */}
+              <path
+                d={`M 50 ${200 - (current.chartValues[0] - 60) * 5} ${current.chartValues
+                  .map((val, idx) => {
+                    const x = 50 + (idx * 600) / (current.chartValues.length - 1)
+                    const y = 200 - (val - 60) * 5
+                    return `L ${x} ${y}`
+                  })
+                  .join(' ')} L ${50 + 600} 200 L 50 200 Z`}
+                fill="url(#scoreGradient)"
+              />
+
+              {/* Line path */}
+              <path
+                d={`M 50 ${200 - (current.chartValues[0] - 60) * 5} ${current.chartValues
+                  .map((val, idx) => {
+                    const x = 50 + (idx * 600) / (current.chartValues.length - 1)
+                    const y = 200 - (val - 60) * 5
+                    return `L ${x} ${y}`
+                  })
+                  .join(' ')}`}
+                fill="none"
+                stroke="#0f766e"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              />
+
+              {/* Data points */}
+              {current.chartValues.map((val, idx) => {
+                const x = 50 + (idx * 600) / (current.chartValues.length - 1)
+                const y = 200 - (val - 60) * 5
+                return (
+                  <g key={idx}>
+                    <circle cx={x} cy={y} r="5.5" fill="#ffffff" stroke="#0f766e" strokeWidth="3" />
+                    <text x={x} y={y - 12} textAnchor="middle" fontSize="11" fontWeight="700" fill="#0f172a">
+                      {val}
+                    </text>
+                  </g>
+                )
+              })}
+            </svg>
+
+            {/* Labels row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 40px', marginTop: '10px' }}>
+              {current.chartLabels.map((label, i) => (
+                <span key={i} style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </StudentAppLayout>
+  )
+}

@@ -1,20 +1,12 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
-  LayoutDashboard,
   ClipboardCheck,
   Dumbbell,
   Apple,
   HeartPulse,
   TrendingUp,
-  Trophy,
-  Gamepad2,
   Award,
-  User,
-  LogOut,
-  Bell,
-  Menu,
-  X,
   Play,
   Flame,
   ArrowRight,
@@ -23,17 +15,14 @@ import {
   CheckCircle2,
   RefreshCw,
   Sparkles,
+  Trophy,
 } from 'lucide-react'
 import { apiRequest } from '../lib/api.js'
 import { useAuth } from '../context/AuthContext'
-import './StudentDashboard.css'
+import StudentAppLayout from '../components/StudentAppLayout'
 
 export default function StudentDashboard() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [dashboardData, setDashboardData] = useState({
@@ -55,7 +44,6 @@ export default function StudentDashboard() {
       .then(([profileRes, assessmentRes, planRes]) => {
         if (!active) return
 
-        // 404 is an expected state for new users without assessment/plan
         const serverError = [profileRes, assessmentRes, planRes].find(
           (res) => res.status === 'rejected' && res.reason?.status >= 500
         )
@@ -131,549 +119,509 @@ export default function StudentDashboard() {
     return matching || workouts[0]
   }, [dashboardData.plan])
 
-  // Day list for weekly progress
+  // Days list for weekly progress
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   const todayDayIndex = (new Date().getDay() + 6) % 7 // 0 = Mon, 6 = Sun
 
-  const navLinks = [
-    { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
-    { label: 'Fitness Assessment', path: '/student/assessment', icon: ClipboardCheck },
-    { label: 'Workout Plan', path: '/student/workout', icon: Dumbbell },
-    { label: 'Nutrition', path: '/student/nutrition', icon: Apple },
-    { label: 'Wellness', path: '/student/wellness', icon: HeartPulse },
-    { label: 'Progress', path: '/student/progress', icon: TrendingUp },
-    { label: 'Talent Discovery', path: '/student/talent', icon: Trophy },
-    { label: 'Gamification', path: '/student/gamification', icon: Gamepad2 },
-    { label: 'Fitness Passport', path: '/student/fitness-result', icon: Award },
-  ]
-
-  const handleNavClick = (path) => {
-    setMobileMenuOpen(false)
-    navigate(path)
-  }
-
-  const handleLogout = () => {
-    logout()
-    navigate('/', { replace: true })
-  }
-
   return (
-    <div className="ath-dashboard-layout">
-      {/* ================= SIDEBAR ================= */}
-      <aside className={`ath-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
-        <Link to="/" className="ath-sidebar-brand" onClick={() => setMobileMenuOpen(false)}>
-          <div className="ath-brand-badge">
-            A<span>+</span>
-          </div>
-          <div className="ath-brand-text">
-            <h2>ATHLETICA</h2>
-            <span>Fitness & Wellness</span>
-          </div>
-        </Link>
+    <StudentAppLayout
+      pageTitle={`${greeting}, ${studentName} 👋`}
+      pageSubtitle="Ready to improve your fitness today?"
+      eyebrow="YOUR FITNESS JOURNEY"
+    >
+      {/* LOADING STATE */}
+      {loading && (
+        <div className="ath-card" style={{ textAlign: 'center', padding: '60px 24px', margin: '40px 0' }}>
+          <div
+            style={{
+              width: '42px',
+              height: '42px',
+              border: '3px solid #e2e8f0',
+              borderTopColor: '#0f766e',
+              borderRadius: '50%',
+              animation: 'ath-spin 0.8s linear infinite',
+              margin: '0 auto 16px',
+            }}
+          />
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 6px', color: '#0f172a' }}>
+            Loading your fitness dashboard...
+          </h3>
+          <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>
+            Syncing verified metrics, daily workout plans, and wellness tracking.
+          </p>
+        </div>
+      )}
 
-        <nav className="ath-sidebar-nav" aria-label="Sidebar navigation">
-          <span className="ath-nav-section-title">Menu</span>
-          {navLinks.map((item) => {
-            const Icon = item.icon
-            const isActive = location.pathname === item.path
-            return (
-              <button
-                key={item.path}
-                type="button"
-                className={`ath-nav-item ${isActive ? 'active' : ''}`}
-                onClick={() => handleNavClick(item.path)}
-              >
-                <Icon size={18} />
-                <span>{item.label}</span>
-              </button>
-            )
-          })}
-        </nav>
-
-        <div className="ath-sidebar-footer">
+      {/* ERROR STATE */}
+      {!loading && error && (
+        <div className="ath-card" style={{ textAlign: 'center', padding: '50px 24px', margin: '40px 0' }}>
+          <div style={{ color: '#ef4444', marginBottom: '12px' }}>
+            <Activity size={36} />
+          </div>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 6px', color: '#0f172a' }}>
+            {error}
+          </h3>
+          <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0 0 18px' }}>
+            Unable to connect to Athletica services right now.
+          </p>
           <button
             type="button"
-            className="ath-nav-item"
-            onClick={() => handleNavClick('/student/profile')}
+            className="ath-btn ath-btn-primary"
+            onClick={loadData}
+            style={{ margin: '0 auto' }}
           >
-            <User size={18} />
-            <span>Profile</span>
-          </button>
-          <button
-            type="button"
-            className="ath-nav-item"
-            style={{ color: '#ef4444' }}
-            onClick={handleLogout}
-          >
-            <LogOut size={18} />
-            <span>Sign Out</span>
+            <RefreshCw size={15} /> Retry
           </button>
         </div>
-      </aside>
+      )}
 
-      {/* ================= MAIN WRAPPER ================= */}
-      <div className="ath-main-wrapper">
-        {/* TOPBAR */}
-        <header className="ath-topbar">
-          <div className="ath-topbar-left">
-            <button
-              className="ath-mobile-toggle"
-              type="button"
-              aria-label="Toggle navigation"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-            <div className="ath-topbar-heading">
-              <h1>
-                {greeting}, {studentName} 👋
-              </h1>
-              <p>Ready to improve your fitness today?</p>
-            </div>
-          </div>
-
-          <div className="ath-topbar-right">
-            <button
-              className="ath-icon-btn"
-              type="button"
-              aria-label="Notifications"
-              onClick={() => alert('No new notifications today. Keep moving!')}
-            >
-              <Bell size={18} />
-              <span className="ath-notify-dot" />
-            </button>
-
-            <Link to="/student/profile" className="ath-user-profile-btn" aria-label="Go to Profile">
-              <div className="ath-avatar">
-                {studentName.charAt(0).toUpperCase()}
-              </div>
-              <div className="ath-user-meta">
-                <span className="ath-user-name">{studentName}</span>
-                <span className="ath-user-role">Student Athlete</span>
-              </div>
-            </Link>
-          </div>
-        </header>
-
-        {/* LOADING STATE */}
-        {loading && (
-          <div className="ath-status-screen">
-            <div className="ath-status-box">
-              <div className="ath-spinner" />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 6px', color: '#0f172a' }}>
-                Loading your fitness dashboard...
-              </h3>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>
-                Gathering your latest stats, active workout plan, and progress metrics.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* ERROR STATE */}
-        {!loading && error && (
-          <div className="ath-status-screen">
-            <div className="ath-status-box">
-              <div style={{ color: '#ef4444', marginBottom: '12px' }}>
-                <Activity size={36} />
-              </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 6px', color: '#0f172a' }}>
-                {error}
-              </h3>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0 0 16px' }}>
-                We could not connect to the Athletica services. Please try again.
-              </p>
-              <button
-                type="button"
-                className="ath-empty-cta"
-                onClick={loadData}
-                style={{ margin: '0 auto' }}
+      {/* MAIN DASHBOARD CONTENT */}
+      {!loading && !error && (
+        <>
+          {/* ================= HERO / DAILY SUMMARY ================= */}
+          <section
+            style={{
+              background: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)',
+              borderRadius: '20px',
+              padding: '24px 28px',
+              color: '#ffffff',
+              boxShadow: '0 6px 20px rgba(15, 118, 110, 0.16)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '24px',
+              flexWrap: 'wrap',
+            }}
+            aria-label="Daily fitness summary"
+          >
+            <div style={{ maxWidth: '640px' }}>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 10px',
+                  background: 'rgba(255, 255, 255, 0.16)',
+                  borderRadius: '20px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  marginBottom: '10px',
+                }}
               >
-                <RefreshCw size={14} /> Retry Loading
-              </button>
+                <Sparkles size={13} /> Active Focus
+              </div>
+              <h2 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.7rem)', fontWeight: 800, margin: '0 0 6px', lineHeight: 1.2 }}>
+                {dashboardData.assessment
+                  ? 'Keep up your physical momentum this week'
+                  : 'Complete your fitness assessment to unlock training'}
+              </h2>
+              <p style={{ fontSize: '0.9rem', color: '#ccfbf1', margin: '0 0 16px', lineHeight: 1.5 }}>
+                {dashboardData.assessment
+                  ? `Verified Assessment Score: ${fitnessScore}/100 • Tier: ${dashboardData.assessment.fitnessLevel || 'Active'}`
+                  : 'Log your baseline push-ups, sit-ups, and sprint times to generate AI workout and nutrition recommendations.'}
+              </p>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                  }}
+                >
+                  <Flame size={15} color="#f97316" />
+                  <span>Streak: <strong style={{ color: '#5eead4' }}>{dashboardData.assessment ? '3 Days' : '0 Days'}</strong></span>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                  }}
+                >
+                  <Activity size={15} color="#14b8a6" />
+                  <span>Goal: <strong style={{ color: '#5eead4' }}>{dashboardData.profile?.fitnessGoal || 'Build Stamina'}</strong></span>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* MAIN DASHBOARD BODY */}
-        {!loading && !error && (
-          <main className="ath-dashboard-body">
-            {/* ================= HERO / DAILY SUMMARY ================= */}
-            <section className="ath-hero-banner" aria-label="Daily fitness summary">
-              <div className="ath-hero-content">
-                <div className="ath-hero-kicker">
-                  <Sparkles size={14} /> Your Fitness Journey
+            <div style={{ flexShrink: 0 }}>
+              {dashboardData.assessment ? (
+                <Link to="/student/workout" className="ath-btn" style={{ background: '#ffffff', color: '#0f766e', fontWeight: 700, padding: '12px 20px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                  <Play size={15} fill="currentColor" /> View Today&apos;s Plan
+                </Link>
+              ) : (
+                <Link to="/student/assessment" className="ath-btn" style={{ background: '#ffffff', color: '#0f766e', fontWeight: 700, padding: '12px 20px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                  Take Assessment <ArrowRight size={15} />
+                </Link>
+              )}
+            </div>
+          </section>
+
+          {/* ================= METRICS ROW (4 Cards of Identical Height & Layout) ================= */}
+          <section className="ath-metrics-row" aria-label="Key Fitness Metrics">
+            {/* Card 1: BMI */}
+            <div className="ath-metric-card">
+              <div className="ath-metric-top">
+                <div className="ath-metric-icon teal">
+                  <HeartPulse size={20} />
                 </div>
-                <h2 className="ath-hero-title">
-                  {dashboardData.assessment
-                    ? 'Assessment verified & active!'
-                    : 'Unlock your personalized training plan'}
-                </h2>
-                <p className="ath-hero-subtitle">
-                  {dashboardData.assessment
-                    ? `Fitness Level: ${dashboardData.assessment.fitnessLevel || 'Intermediate'}. Keep up the momentum this week.`
-                    : 'Complete your initial fitness assessment to calculate your score and generate AI workout recommendations.'}
-                </p>
-
-                <div className="ath-hero-stats-row">
-                  <div className="ath-hero-chip">
-                    <Flame size={15} color="#f97316" />
-                    <span>Active Streak: <strong>{dashboardData.assessment ? '3 Days' : '0 Days'}</strong></span>
-                  </div>
-                  <div className="ath-hero-chip">
-                    <Activity size={15} color="#14b8a6" />
-                    <span>Goal: <strong>{dashboardData.profile?.fitnessGoal || 'Stay Active'}</strong></span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="ath-hero-action">
-                {dashboardData.assessment ? (
-                  <Link to="/student/workout" className="ath-hero-btn">
-                    <Play size={16} fill="currentColor" /> View Today&apos;s Workout
-                  </Link>
-                ) : (
-                  <Link to="/student/assessment" className="ath-hero-btn">
-                    Take Assessment <ArrowRight size={16} />
-                  </Link>
-                )}
-              </div>
-            </section>
-
-            {/* ================= FITNESS OVERVIEW (METRICS) ================= */}
-            <section className="ath-metrics-grid" aria-label="Fitness Overview">
-              {/* BMI CARD */}
-              <div className="ath-metric-card">
-                <div className="ath-metric-top">
-                  <div className="ath-metric-icon teal">
-                    <HeartPulse size={20} />
-                  </div>
-                  {bmiInfo && (
-                    <span className="ath-metric-tag positive">{bmiInfo.category}</span>
-                  )}
-                </div>
-                <span className="ath-metric-label">Body Mass Index (BMI)</span>
                 {bmiInfo ? (
-                  <>
-                    <div className="ath-metric-val-row">
-                      <span className="ath-metric-value">{bmiInfo.value}</span>
-                      <span className="ath-metric-sub">kg/m²</span>
-                    </div>
-                    <span className="ath-metric-sub">
-                      Height: {dashboardData.profile.height} cm • Weight: {dashboardData.profile.weight} kg
-                    </span>
-                  </>
+                  <span className="ath-badge success">{bmiInfo.category}</span>
                 ) : (
-                  <div className="ath-metric-empty">
-                    <p style={{ margin: 0 }}>Complete your profile to unlock your BMI calculation.</p>
-                    <Link to="/student/profile" className="ath-metric-cta-link">
-                      Update Profile →
-                    </Link>
-                  </div>
+                  <span className="ath-badge">SETUP NEEDED</span>
                 )}
               </div>
-
-              {/* FITNESS SCORE CARD */}
-              <div className="ath-metric-card">
-                <div className="ath-metric-top">
-                  <div className="ath-metric-icon blue">
-                    <Award size={20} />
+              <div>
+                <div className="ath-metric-label">Body Mass Index (BMI)</div>
+                {bmiInfo ? (
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                    <span className="ath-metric-val">{bmiInfo.value}</span>
+                    <span style={{ fontSize: '0.78rem', color: '#64748b' }}>kg/m²</span>
                   </div>
-                  {fitnessScore && (
-                    <span className="ath-metric-tag positive">
-                      {dashboardData.assessment?.fitnessLevel || 'Good'}
-                    </span>
-                  )}
+                ) : (
+                  <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#64748b' }}>Not calculated</span>
+                )}
+              </div>
+              <div className="ath-metric-subtext">
+                {bmiInfo ? (
+                  `Height: ${dashboardData.profile.height} cm • Weight: ${dashboardData.profile.weight} kg`
+                ) : (
+                  <Link to="/student/profile" style={{ color: '#0f766e', fontWeight: 600, textDecoration: 'none' }}>
+                    Complete Profile →
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {/* Card 2: Fitness Score */}
+            <div className="ath-metric-card">
+              <div className="ath-metric-top">
+                <div className="ath-metric-icon blue">
+                  <Award size={20} />
                 </div>
-                <span className="ath-metric-label">Fitness Score</span>
                 {fitnessScore !== null ? (
-                  <>
-                    <div className="ath-metric-val-row">
-                      <span className="ath-metric-value">{fitnessScore}</span>
-                      <span className="ath-metric-sub">/ 100</span>
-                    </div>
-                    <span className="ath-metric-sub">
-                      {dashboardData.assessment?.pushUps !== undefined
-                        ? `Push-ups: ${dashboardData.assessment.pushUps} • Sit-ups: ${dashboardData.assessment.sitUps}`
-                        : 'Based on verified assessment'}
-                    </span>
-                  </>
+                  <span className="ath-badge success">{dashboardData.assessment?.fitnessLevel || 'Good'}</span>
                 ) : (
-                  <div className="ath-metric-empty">
-                    <p style={{ margin: 0 }}>Complete your fitness assessment to unlock your Fitness Score.</p>
-                    <Link to="/student/assessment" className="ath-metric-cta-link">
-                      Take Assessment →
-                    </Link>
-                  </div>
+                  <span className="ath-badge warning">UNASSESSED</span>
                 )}
               </div>
-
-              {/* FITNESS LEVEL / ACTIVITY CARD */}
-              <div className="ath-metric-card">
-                <div className="ath-metric-top">
-                  <div className="ath-metric-icon purple">
-                    <Trophy size={20} />
+              <div>
+                <div className="ath-metric-label">Fitness Score</div>
+                {fitnessScore !== null ? (
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                    <span className="ath-metric-val">{fitnessScore}</span>
+                    <span style={{ fontSize: '0.78rem', color: '#64748b' }}>/ 100</span>
                   </div>
-                  <span className="ath-metric-tag">
-                    {dashboardData.profile?.activityLevel
-                      ? dashboardData.profile.activityLevel.toUpperCase()
-                      : 'LEVEL 1'}
-                  </span>
-                </div>
-                <span className="ath-metric-label">Fitness Level</span>
-                {dashboardData.assessment?.fitnessLevel || dashboardData.profile?.activityLevel ? (
-                  <>
-                    <div className="ath-metric-val-row">
-                      <span className="ath-metric-value" style={{ fontSize: '1.4rem' }}>
-                        {dashboardData.assessment?.fitnessLevel ||
-                          dashboardData.profile?.activityLevel?.toUpperCase()}
-                      </span>
-                    </div>
-                    <span className="ath-metric-sub">
-                      Target: {dashboardData.profile?.fitnessGoal || 'Overall Endurance'}
-                    </span>
-                  </>
                 ) : (
-                  <div className="ath-metric-empty">
-                    <p style={{ margin: 0 }}>Set up your fitness profile to track your activity tier.</p>
-                    <Link to="/student/profile" className="ath-metric-cta-link">
-                      Set Level →
-                    </Link>
-                  </div>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#64748b' }}>No test logged</span>
                 )}
               </div>
+              <div className="ath-metric-subtext">
+                {fitnessScore !== null ? (
+                  'Verified from test scores'
+                ) : (
+                  <Link to="/student/assessment" style={{ color: '#0f766e', fontWeight: 600, textDecoration: 'none' }}>
+                    Take Assessment →
+                  </Link>
+                )}
+              </div>
+            </div>
 
-              {/* STREAK CARD */}
-              <div className="ath-metric-card">
-                <div className="ath-metric-top">
-                  <div className="ath-metric-icon orange">
-                    <Flame size={20} />
-                  </div>
-                  <span className="ath-metric-tag">CONSISTENCY</span>
+            {/* Card 3: Fitness Level */}
+            <div className="ath-metric-card">
+              <div className="ath-metric-top">
+                <div className="ath-metric-icon purple">
+                  <Trophy size={20} />
                 </div>
-                <span className="ath-metric-label">Current Streak</span>
-                <div className="ath-metric-val-row">
-                  <span className="ath-metric-value">
-                    {dashboardData.assessment ? '3' : '0'}
-                  </span>
-                  <span className="ath-metric-sub">days active</span>
-                </div>
-                <span className="ath-metric-sub">
-                  {dashboardData.assessment
-                    ? '🔥 Keep up your daily activity rhythm!'
-                    : 'Complete workouts to build your streak.'}
+                <span className="ath-badge info">
+                  {dashboardData.profile?.activityLevel ? dashboardData.profile.activityLevel.toUpperCase() : 'LEVEL 1'}
                 </span>
               </div>
-            </section>
+              <div>
+                <div className="ath-metric-label">Fitness Tier</div>
+                <div className="ath-metric-val" style={{ fontSize: '1.45rem', textTransform: 'capitalize' }}>
+                  {dashboardData.assessment?.fitnessLevel || dashboardData.profile?.activityLevel || 'Active'}
+                </div>
+              </div>
+              <div className="ath-metric-subtext">
+                Goal: {dashboardData.profile?.fitnessGoal || 'Overall Endurance'}
+              </div>
+            </div>
 
-            {/* ================= LOWER TWO-COLUMN SECTION ================= */}
-            <div className="ath-two-col-grid">
-              {/* LEFT COLUMN: TODAY'S PLAN */}
+            {/* Card 4: Current Streak */}
+            <div className="ath-metric-card">
+              <div className="ath-metric-top">
+                <div className="ath-metric-icon orange">
+                  <Flame size={20} />
+                </div>
+                <span className="ath-badge">CONSISTENCY</span>
+              </div>
+              <div>
+                <div className="ath-metric-label">Current Streak</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                  <span className="ath-metric-val">{dashboardData.assessment ? '3' : '0'}</span>
+                  <span style={{ fontSize: '0.78rem', color: '#64748b' }}>active days</span>
+                </div>
+              </div>
+              <div className="ath-metric-subtext">
+                {dashboardData.assessment ? '🔥 3 workouts completed this week' : 'Complete a workout to build streak'}
+              </div>
+            </div>
+          </section>
+
+          {/* ================= TWO-COLUMN CONTENT GRID ================= */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
+            {/* TODAY'S WORKOUT SECTION */}
+            <div className="ath-card">
+              <div className="ath-card-header">
+                <h2>
+                  <Dumbbell size={19} color="#0f766e" />
+                  Today&apos;s Workout
+                </h2>
+                <Link to="/student/workout" className="ath-card-action">
+                  View Plan →
+                </Link>
+              </div>
+
+              {todayWorkout ? (
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 6px' }}>
+                        {todayWorkout.title}
+                      </h3>
+                      <div style={{ display: 'flex', gap: '14px', fontSize: '0.8rem', color: '#64748b' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Clock size={14} color="#0f766e" /> {todayWorkout.durationMinutes || 30} mins
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Activity size={14} color="#f97316" /> Moderate
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <CheckCircle2 size={14} color="#10b981" /> {todayWorkout.exercises?.length || 4} Exercises
+                        </span>
+                      </div>
+                    </div>
+                    <span className="ath-badge warning">
+                      {todayWorkout.dayOfWeek ? todayWorkout.dayOfWeek.toUpperCase() : 'TODAY'}
+                    </span>
+                  </div>
+
+                  {todayWorkout.exercises && todayWorkout.exercises.length > 0 && (
+                    <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {todayWorkout.exercises.slice(0, 3).map((ex, i) => (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
+                          <span style={{ fontWeight: 600, color: '#334155' }}>{ex.name}</span>
+                          <span style={{ color: '#64748b' }}>{ex.sets} sets × {ex.reps} reps</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <Link to="/student/workout" className="ath-btn ath-btn-primary" style={{ width: '100%', marginTop: '4px' }}>
+                    <Play size={15} fill="currentColor" /> Start Workout
+                  </Link>
+                </div>
+              ) : (
+                <div className="ath-empty-state">
+                  <Dumbbell size={32} color="#94a3b8" />
+                  <h3>No workout plan generated yet</h3>
+                  <p>
+                    Complete your fitness assessment so our AI training engine can configure your personalized daily workout routine.
+                  </p>
+                  <Link to="/student/assessment" className="ath-btn ath-btn-primary" style={{ marginTop: '8px' }}>
+                    Complete Fitness Assessment
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* NUTRITION & WEEKLY PROGRESS STACK */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {/* NUTRITION CARD */}
               <div className="ath-card">
                 <div className="ath-card-header">
                   <h2>
-                    <Dumbbell size={20} color="#0f766e" />
-                    Today&apos;s Workout
+                    <Apple size={19} color="#10b981" />
+                    Nutrition Plan
                   </h2>
-                  <Link to="/student/workout" className="ath-card-link">
-                    View Full Plan →
+                  <Link to="/student/nutrition" className="ath-card-action">
+                    Details →
                   </Link>
                 </div>
 
-                {todayWorkout ? (
-                  <div className="ath-workout-box">
-                    <span className="ath-workout-badge">
-                      {todayWorkout.dayOfWeek ? todayWorkout.dayOfWeek.toUpperCase() : 'TODAY'}
-                    </span>
-                    <div className="ath-workout-info">
-                      <h3>{todayWorkout.title}</h3>
-                      <div className="ath-workout-meta">
-                        <span className="ath-workout-meta-item">
-                          <Clock size={15} color="#0f766e" /> {todayWorkout.durationMinutes || 30} mins
-                        </span>
-                        <span className="ath-workout-meta-item">
-                          <Activity size={15} color="#f97316" /> Moderate Intensity
-                        </span>
-                        <span className="ath-workout-meta-item">
-                          <CheckCircle2 size={15} color="#10b981" /> {todayWorkout.exercises?.length || 4} Exercises
-                        </span>
-                      </div>
-
-                      {todayWorkout.exercises && todayWorkout.exercises.length > 0 && (
-                        <div className="ath-exercises-list">
-                          {todayWorkout.exercises.slice(0, 3).map((ex, idx) => (
-                            <div key={idx} className="ath-exercise-row">
-                              <span className="ath-exercise-name">{ex.name}</span>
-                              <span className="ath-exercise-reps">
-                                {ex.sets} sets × {ex.reps} reps
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                {dashboardData.profile?.dietPreference ? (
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 700, fontSize: '0.92rem', color: '#0f172a' }}>Dietary Profile</span>
+                      <span className="ath-badge success">{dashboardData.profile.dietPreference.toUpperCase()}</span>
                     </div>
-
-                    <Link to="/student/workout" className="ath-start-workout-btn">
-                      <Play size={16} fill="currentColor" /> Start Workout
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                      <div style={{ background: '#ffffff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Nutrition Goal</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 750, color: '#0f172a', marginTop: '2px' }}>
+                          {dashboardData.profile.fitnessGoal || 'Balanced Health'}
+                        </div>
+                      </div>
+                      <div style={{ background: '#ffffff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Daily Hydration</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 750, color: '#0f172a', marginTop: '2px' }}>
+                          2.5 L / day
+                        </div>
+                      </div>
+                    </div>
+                    <Link to="/student/nutrition" style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f766e', textDecoration: 'none' }}>
+                      View Full Meal Schedule →
                     </Link>
                   </div>
                 ) : (
-                  <div className="ath-empty-box">
-                    <Dumbbell size={32} color="#94a3b8" />
-                    <strong style={{ color: '#0f172a', fontSize: '0.95rem' }}>
-                      No workout plan generated yet
-                    </strong>
-                    <p>
-                      Complete your fitness assessment to have our AI coach generate a tailored daily routine for you.
-                    </p>
-                    <Link to="/student/assessment" className="ath-empty-cta">
-                      Complete Fitness Assessment
+                  <div className="ath-empty-state">
+                    <Apple size={28} color="#94a3b8" />
+                    <h3>Nutrition Onboarding</h3>
+                    <p>Your personalized nutrition plan will appear here after setting your dietary preferences.</p>
+                    <Link to="/student/profile" className="ath-btn ath-btn-primary" style={{ marginTop: '6px' }}>
+                      Set Up Nutrition
                     </Link>
                   </div>
                 )}
               </div>
 
-              {/* RIGHT COLUMN: NUTRITION & WEEKLY PROGRESS */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                {/* NUTRITION CARD */}
-                <div className="ath-card">
-                  <div className="ath-card-header">
-                    <h2>
-                      <Apple size={20} color="#16a34a" />
-                      Nutrition Focus
-                    </h2>
-                    <Link to="/student/nutrition" className="ath-card-link">
-                      Details →
-                    </Link>
-                  </div>
-
-                  {dashboardData.profile?.dietPreference ? (
-                    <div className="ath-nutrition-card">
-                      <div className="ath-nutrition-header">
-                        <span className="ath-nutrition-title">Personalized Diet</span>
-                        <span className="ath-nutrition-badge">
-                          {dashboardData.profile.dietPreference.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="ath-nutrition-details">
-                        <div className="ath-nutri-item">
-                          <div className="ath-nutri-label">Goal Focus</div>
-                          <div className="ath-nutri-val">
-                            {dashboardData.profile.fitnessGoal || 'General Health'}
-                          </div>
-                        </div>
-                        <div className="ath-nutri-item">
-                          <div className="ath-nutri-label">Hydration Target</div>
-                          <div className="ath-nutri-val">2.5 L / day</div>
-                        </div>
-                      </div>
-                      <Link to="/student/nutrition" className="ath-metric-cta-link" style={{ margin: 0 }}>
-                        View Meal Suggestions →
-                      </Link>
-                    </div>
-                  ) : (
-                    <div className="ath-empty-box">
-                      <Apple size={28} color="#94a3b8" />
-                      <p>Your personalized nutrition plan will appear here after onboarding.</p>
-                      <Link to="/student/profile" className="ath-empty-cta">
-                        Set Up Nutrition
-                      </Link>
-                    </div>
-                  )}
+              {/* WEEKLY PROGRESS */}
+              <div className="ath-card">
+                <div className="ath-card-header">
+                  <h2>
+                    <TrendingUp size={19} color="#3b82f6" />
+                    Weekly Progress
+                  </h2>
+                  <Link to="/student/progress" className="ath-card-action">
+                    Trends →
+                  </Link>
                 </div>
 
-                {/* WEEKLY PROGRESS */}
-                <div className="ath-card">
-                  <div className="ath-card-header">
-                    <h2>
-                      <TrendingUp size={20} color="#3b82f6" />
-                      Weekly Progress
-                    </h2>
-                    <Link to="/student/progress" className="ath-card-link">
-                      View Trends →
-                    </Link>
-                  </div>
-
-                  <div className="ath-weekly-progress">
-                    <div className="ath-days-grid">
-                      {daysOfWeek.map((day, idx) => {
-                        const isPastCompleted = dashboardData.assessment && idx < todayDayIndex
-                        const isToday = idx === todayDayIndex
-                        return (
-                          <div key={day} className="ath-day-col">
-                            <span className="ath-day-name">{day}</span>
-                            <div
-                              className={`ath-day-indicator ${
-                                isPastCompleted ? 'completed' : ''
-                              } ${isToday ? 'today' : ''}`}
-                            >
-                              {isPastCompleted ? '✓' : isToday ? '•' : '-'}
-                            </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', textAlign: 'center' }}>
+                    {daysOfWeek.map((day, idx) => {
+                      const isPastCompleted = dashboardData.assessment && idx < todayDayIndex
+                      const isToday = idx === todayDayIndex
+                      return (
+                        <div key={day} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#64748b' }}>{day}</span>
+                          <div
+                            style={{
+                              width: '100%',
+                              height: '46px',
+                              background: isPastCompleted ? '#e6f7f2' : '#f8fafc',
+                              border: isToday ? '2px solid #0f766e' : '1px solid #e2e8f0',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '0.82rem',
+                              fontWeight: 700,
+                              color: isPastCompleted || isToday ? '#0f766e' : '#94a3b8',
+                            }}
+                          >
+                            {isPastCompleted ? '✓' : isToday ? '•' : '-'}
                           </div>
-                        )
-                      })}
-                    </div>
-
-                    {!dashboardData.assessment && (
-                      <p style={{ fontSize: '0.78rem', color: '#94a3b8', textAlign: 'center', margin: '4px 0 0' }}>
-                        No weekly workouts recorded yet. Start today&apos;s routine to begin tracking!
-                      </p>
-                    )}
+                        </div>
+                      )
+                    })}
                   </div>
+                  {!dashboardData.assessment && (
+                    <p style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center', margin: '4px 0 0' }}>
+                      No weekly activity recorded yet. Complete today&apos;s workout to track your trend.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* ================= QUICK ACTIONS ================= */}
-            <section className="ath-card" aria-label="Quick Actions">
-              <div className="ath-card-header">
-                <h2>Quick Actions</h2>
-              </div>
-              <div className="ath-quick-actions-grid">
-                <Link to="/student/assessment" className="ath-quick-btn">
-                  <div className="ath-quick-icon" style={{ background: '#e6f7f2', color: '#0f766e' }}>
+          {/* ================= QUICK ACTIONS ================= */}
+          <section className="ath-card" aria-label="Quick Actions">
+            <div className="ath-card-header">
+              <h2>Quick Actions</h2>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px' }}>
+              <Link to="/student/assessment" style={{ textDecoration: 'none' }}>
+                <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#e6f7f2', color: '#0f766e', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <ClipboardCheck size={20} />
                   </div>
-                  <span>Take Fitness Assessment</span>
-                  <ArrowRight size={16} className="ath-quick-arrow" />
-                </Link>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>Take Assessment</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>Log test measurements</div>
+                  </div>
+                  <ArrowRight size={16} color="#94a3b8" />
+                </div>
+              </Link>
 
-                <Link to="/student/workout" className="ath-quick-btn">
-                  <div className="ath-quick-icon" style={{ background: '#fff7ed', color: '#f97316' }}>
+              <Link to="/student/workout" style={{ textDecoration: 'none' }}>
+                <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff7ed', color: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Dumbbell size={20} />
                   </div>
-                  <span>View Workout</span>
-                  <ArrowRight size={16} className="ath-quick-arrow" />
-                </Link>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>View Workout</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>AI tailored regimen</div>
+                  </div>
+                  <ArrowRight size={16} color="#94a3b8" />
+                </div>
+              </Link>
 
-                <Link to="/student/nutrition" className="ath-quick-btn">
-                  <div className="ath-quick-icon" style={{ background: '#f0fdf4', color: '#16a34a' }}>
+              <Link to="/student/nutrition" style={{ textDecoration: 'none' }}>
+                <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ecfdf5', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Apple size={20} />
                   </div>
-                  <span>View Nutrition</span>
-                  <ArrowRight size={16} className="ath-quick-arrow" />
-                </Link>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>View Nutrition</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>Meal schedule & macros</div>
+                  </div>
+                  <ArrowRight size={16} color="#94a3b8" />
+                </div>
+              </Link>
 
-                <Link to="/student/progress" className="ath-quick-btn">
-                  <div className="ath-quick-icon" style={{ background: '#eff6ff', color: '#3b82f6' }}>
+              <Link to="/student/progress" style={{ textDecoration: 'none' }}>
+                <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <TrendingUp size={20} />
                   </div>
-                  <span>Track Progress</span>
-                  <ArrowRight size={16} className="ath-quick-arrow" />
-                </Link>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>Track Progress</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>Score & weight trends</div>
+                  </div>
+                  <ArrowRight size={16} color="#94a3b8" />
+                </div>
+              </Link>
 
-                <Link to="/student/fitness-result" className="ath-quick-btn">
-                  <div className="ath-quick-icon" style={{ background: '#fdf4ff', color: '#a855f7' }}>
+              <Link to="/student/fitness-result" style={{ textDecoration: 'none' }}>
+                <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f5f3ff', color: '#8b5cf6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Award size={20} />
                   </div>
-                  <span>Fitness Passport</span>
-                  <ArrowRight size={16} className="ath-quick-arrow" />
-                </Link>
-              </div>
-            </section>
-          </main>
-        )}
-      </div>
-    </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>Fitness Passport</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>Verified student credential</div>
+                  </div>
+                  <ArrowRight size={16} color="#94a3b8" />
+                </div>
+              </Link>
+            </div>
+          </section>
+        </>
+      )}
+    </StudentAppLayout>
   )
 }
