@@ -6,7 +6,12 @@ export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem('athletica_token')
   const headers = new Headers(options.headers || {})
 
-  if (options.body && !headers.has('Content-Type') && !(options.body instanceof FormData)) {
+  let body = options.body
+  if (body && typeof body === 'object' && !(body instanceof FormData)) {
+    body = JSON.stringify(body)
+  }
+
+  if (body && !headers.has('Content-Type') && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json')
   }
 
@@ -17,6 +22,7 @@ export async function apiRequest(path, options = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers,
+    body,
   })
   const data = await response.json().catch(() => ({}))
 
