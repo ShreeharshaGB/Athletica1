@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
+  Activity as ActivityIcon,
   LayoutDashboard,
   ClipboardCheck,
   Dumbbell,
@@ -35,7 +36,10 @@ const studentNavItems = [
 
 const teacherNavItems = [
   { label: 'Dashboard', path: '/teacher/dashboard', icon: LayoutDashboard },
+  { label: 'Student Insights', path: '/teacher/dashboard#insights', icon: TrendingUp, hash: '#insights' },
+  { label: 'Talent Discovery', path: '/teacher/dashboard#talent', icon: Trophy, hash: '#talent' },
   { label: 'Students', path: '/teacher/dashboard#students', icon: Users, hash: '#students' },
+  { label: 'Activities', path: '/teacher/dashboard#activities', icon: ActivityIcon, hash: '#activities' },
 ]
 
 const communityNavItems = [
@@ -69,14 +73,16 @@ export default function StudentAppLayout({
   const defaultEyebrow = isTeacher
     ? 'ATHLETICA FACULTY PORTAL'
     : isCommunity
-    ? `ATHLETICA COMMUNITY • ${user?.communityId || 'MEMBER'}`
-    : 'ATHLETICA STUDENT PORTAL'
+      ? `ATHLETICA COMMUNITY • ${user?.communityId || 'MEMBER'}`
+      : 'ATHLETICA STUDENT PORTAL'
 
   const handleNavClick = (path) => {
     setMobileMenuOpen(false)
     if (path.includes('#')) {
       const [route, hash] = path.split('#')
       if (location.pathname === route) {
+        window.location.hash = hash
+        window.dispatchEvent(new HashChangeEvent('hashchange'))
         const el = document.getElementById(hash)
         if (el) el.scrollIntoView({ behavior: 'smooth' })
       } else {
@@ -118,8 +124,8 @@ export default function StudentAppLayout({
               {isTeacher
                 ? 'Faculty & Institution'
                 : isCommunity
-                ? `Community • ${user?.communityId || 'Member'}`
-                : 'Fitness & Wellness'}
+                  ? `Community • ${user?.communityId || 'Member'}`
+                  : 'Fitness & Wellness'}
             </span>
           </div>
         </Link>
@@ -197,8 +203,8 @@ export default function StudentAppLayout({
                   (isTeacher
                     ? `Faculty Portal • Institution: ${user?.institutionId || 'General'}`
                     : isCommunity
-                    ? `Community Portal • ${user?.communityId || 'General'}`
-                    : 'Ready to improve your fitness today?')}
+                      ? `Community Portal • ${user?.communityId || 'General'}`
+                      : 'Ready to improve your fitness today?')}
               </p>
             </div>
           </div>
@@ -223,8 +229,8 @@ export default function StudentAppLayout({
                   isTeacher
                     ? { background: '#0f766e' }
                     : isCommunity
-                    ? { background: '#d97706' }
-                    : undefined
+                      ? { background: '#d97706' }
+                      : undefined
                 }
               >
                 {userName.charAt(0).toUpperCase()}
@@ -235,8 +241,8 @@ export default function StudentAppLayout({
                   {isTeacher
                     ? `Teacher • ${user?.institutionId || 'Faculty'}`
                     : isCommunity
-                    ? `Community • ${user?.communityId || 'Member'}`
-                    : 'Student Athlete'}
+                      ? `Community • ${user?.communityId || 'Member'}`
+                      : 'Student Athlete'}
                 </span>
               </div>
             </div>

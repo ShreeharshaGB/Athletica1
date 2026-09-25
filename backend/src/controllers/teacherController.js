@@ -626,3 +626,326 @@ export const getTeacherActivities = async (req, res) => {
     });
   }
 };
+
+/**
+ * GET /api/teacher/talent-discovery
+ * Identifies students who may show strengths in different fitness areas
+ * based on verified real fitness assessments strictly within the teacher's institution.
+ */
+export const getTalentDiscovery = async (req, res) => {
+  try {
+    const teacher = await getAuthenticatedTeacher(req.user.id);
+    const institutionId = teacher.institutionId;
+
+    if (!institutionId) {
+      return res.status(200).json({
+        institutionId: null,
+        talentList: [],
+        totalStudents: 0,
+        assessedCount: 0,
+        unassessedCount: 0,
+        message: 'No institution assigned to this teacher account',
+      });
+    }
+
+    // Query ONLY students belonging to the teacher's institution
+    const students = await User.find({
+      role: 'student',
+      institutionId: institutionId,
+    })
+      .select('_id name email institutionId studentId createdAt')
+      .sort({ name: 1 })
+      .lean();
+
+    const studentIds = students.map((s) => s._id);
+
+    // Retrieve assessments for these students
+    const assessments = await FitnessAssessment.find({
+      userId: { $in: studentIds },
+    })
+      .sort({ assessmentDate: -1, createdAt: -1 })
+      .lean();
+
+    const latestAssessmentsByStudentId = new Map();
+    for (const a of assessments) {
+      const sid = a.userId.toString();
+      if (!latestAssessmentsByStudentId.has(sid)) {
+        latestAssessmentsByStudentId.set(sid, a);
+      }
+    }
+
+    let assessedCount = 0;
+    let unassessedCount = 0;
+
+    const talentList = students.map((student) => {
+      const sid = student._id.toString();
+      const assessment = latestAssessmentsByStudentId.get(sid) || null;
+      const formattedStudentId = student.studentId || `ATH-${student._id.toString().slice(-6).toUpperCase()}`;
+
+      if (!assessment) {
+        unassessedCount += 1;
+        return {
+          id: student._id,
+          studentId: formattedStudentId,
+          name: student.name,
+          email: student.email,
+          institutionId: student.institutionId,
+          hasAssessment: false,
+          area: 'Not assessed',
+          score: null,
+          statusLabel: 'Needs Assessment',
+          fitnessLevel: 'Not assessed',
+          overallScore: null,
+          metrics: null,
+          assessmentDate: null,
+        };
+      }
+
+      assessedCount += 1;
+
+      // Calculate area indicators based on actual standardized tests:
+      // Strength: Push-ups & Sit-ups (upper body & core power)
+      const pushUps = Number(assessment.pushUps) || 0;
+      const sitUps = Number(assessment.sitUps) || 0;
+      const runTime = Number(assessment.runTime) || 0;
+      const flexibility = Number(assessment.flexibility) || 0;
+      const shuttleRun = Number(assessment.shuttleRun) || 0;
+
+      const strengthScore = Math.min(100, Math.round(((Math.min(pushUps, 35) / 35) * 60) + ((Math.min(sitUps, 40) / 40) * 40)));
+
+      // Endurance: sprint velocity (shorter runTime is faster), shuttle agility, sit-up stamina
+      const runScore = Math.max(30, Math.min(100, Math.round(100 - (Math.max(8, runTime) - 8) * 8)));
+      const shuttleScore = Math.max(30, Math.min(100, Math.round(100 - (Math.max(9, shuttleRun) - 9) * 12)));
+      const enduranceScore = Math.min(100, Math.round((runScore * 0.4) + (shuttleScore * 0.35) + ((Math.min(sitUps, 40) / 40) * 25)));
+
+      // Flexibility: sit-and-reach hamstring & lower back range
+      const flexibilityScore = Math.max(30, Math.min(100, Math.round((Math.min(flexibility, 30) / 30) * 100)));
+
+      // Overall Score
+      const overallFitnessScore = assessment.overallScore !== undefined && assessment.overallScore !== null
+        ? Number(assessment.overallScore)
+        : Math.round((strengthScore + enduranceScore + flexibilityScore) / 3);
+
+      // Determine area of relative strength
+      let area = 'Overall Fitness';
+      let statusLabel = 'Balanced Fitness';
+      let score = overallFitnessScore;
+
+      if (enduranceScore >= strengthScore && enduranceScore >= flexibilityScore && enduranceScore > 70) {
+        area = 'Endurance';
+        statusLabel = 'Strong in Endurance';
+        score = enduranceScore;
+      } else if (flexibilityScore >= strengthScore && flexibilityScore >= enduranceScore && flexibilityScore > 70) {
+        area = 'Flexibility';
+        statusLabel = 'Strong in Flexibility';
+        score = flexibilityScore;
+      } else if (strengthScore >= enduranceScore && strengthScore >= flexibilityScore && strengthScore > 70) {
+        area = 'Strength';
+        statusLabel = 'Strong in Strength';
+        score = strengthScore;
+      } else {
+        area = 'Overall Fitness';
+        statusLabel = overallFitnessScore >= 75 ? 'Strong Overall Fitness' : 'Balanced Fitness';
+        score = overallFitnessScore;
+      }
+
+      return {
+        id: student._id,
+        studentId: formattedStudentId,
+        name: student.name,
+        email: student.email,
+        institutionId: student.institutionId,
+        hasAssessment: true,
+        area,
+        score,
+        statusLabel,
+        fitnessLevel: assessment.fitnessLevel || 'intermediate',
+        overallScore: overallFitnessScore,
+        metrics: {
+          pushUps,
+          sitUps,
+          runTime,
+          flexibility,
+          shuttleRun,
+          strengthScore,
+          enduranceScore,
+          flexibilityScore,
+        },
+        assessmentDate: assessment.assessmentDate || assessment.createdAt,
+      };
+    });
+
+    return res.status(200).json({
+      institutionId,
+      talentList,
+      totalStudents: students.length,
+      assessedCount,
+      unassessedCount,
+    });
+  } catch (error) {
+    console.error('Error fetching talent discovery:', error);
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      message: error.message || 'Server error while evaluating talent discovery',
+    });
+  }
+};
+
+/**
+ * GET /api/teacher/student-insights
+ * Aggregates institution-level statistics based on verified real student assessment data.
+ */
+export const getStudentInsights = async (req, res) => {
+  try {
+    const teacher = await getAuthenticatedTeacher(req.user.id);
+    const institutionId = teacher.institutionId;
+
+    if (!institutionId) {
+      return res.status(200).json({
+        institutionId: null,
+        totalStudents: 0,
+        assessedStudents: 0,
+        unassessedStudents: 0,
+        completionPercentage: 0,
+        averageFitnessScore: null,
+        distributionByLevel: { beginner: 0, intermediate: 0, advanced: 0, unassessed: 0 },
+        fitnessAreasAverages: { strength: 0, endurance: 0, flexibility: 0 },
+      });
+    }
+
+    // Query students belonging to teacher's institution
+    const students = await User.find({
+      role: 'student',
+      institutionId: institutionId,
+    })
+      .select('_id')
+      .lean();
+
+    const totalStudents = students.length;
+    if (totalStudents === 0) {
+      return res.status(200).json({
+        institutionId,
+        totalStudents: 0,
+        assessedStudents: 0,
+        unassessedStudents: 0,
+        completionPercentage: 0,
+        averageFitnessScore: null,
+        distributionByLevel: { beginner: 0, intermediate: 0, advanced: 0, unassessed: 0 },
+        fitnessAreasAverages: { strength: 0, endurance: 0, flexibility: 0 },
+      });
+    }
+
+    const studentIds = students.map((s) => s._id);
+
+    const assessments = await FitnessAssessment.find({
+      userId: { $in: studentIds },
+    })
+      .sort({ assessmentDate: -1, createdAt: -1 })
+      .lean();
+
+    const latestAssessmentsByStudentId = new Map();
+    for (const a of assessments) {
+      const sid = a.userId.toString();
+      if (!latestAssessmentsByStudentId.has(sid)) {
+        latestAssessmentsByStudentId.set(sid, a);
+      }
+    }
+
+    const assessedStudents = latestAssessmentsByStudentId.size;
+    const unassessedStudents = Math.max(0, totalStudents - assessedStudents);
+    const completionPercentage = Math.round((assessedStudents / totalStudents) * 100);
+
+    let totalScoreSum = 0;
+    let scoredCount = 0;
+    const levelCounts = { beginner: 0, intermediate: 0, advanced: 0, unassessed: unassessedStudents };
+
+    let totalStrengthSum = 0;
+    let totalEnduranceSum = 0;
+    let totalFlexibilitySum = 0;
+    let rawPushUpsSum = 0;
+    let rawSitUpsSum = 0;
+    let rawRunTimeSum = 0;
+    let rawFlexibilitySum = 0;
+
+    for (const a of latestAssessmentsByStudentId.values()) {
+      const score = Number(a.overallScore);
+      if (!isNaN(score)) {
+        totalScoreSum += score;
+        scoredCount += 1;
+      }
+
+      const level = (a.fitnessLevel || 'intermediate').toLowerCase();
+      if (levelCounts[level] !== undefined) {
+        levelCounts[level] += 1;
+      } else {
+        levelCounts.intermediate += 1;
+      }
+
+      const pu = Number(a.pushUps) || 0;
+      const su = Number(a.sitUps) || 0;
+      const rt = Number(a.runTime) || 0;
+      const fl = Number(a.flexibility) || 0;
+      const sh = Number(a.shuttleRun) || 0;
+
+      rawPushUpsSum += pu;
+      rawSitUpsSum += su;
+      rawRunTimeSum += rt;
+      rawFlexibilitySum += fl;
+
+      const sScore = Math.min(100, Math.round(((Math.min(pu, 35) / 35) * 60) + ((Math.min(su, 40) / 40) * 40)));
+      const runScore = Math.max(30, Math.min(100, Math.round(100 - (Math.max(8, rt) - 8) * 8)));
+      const shuttleScore = Math.max(30, Math.min(100, Math.round(100 - (Math.max(9, sh) - 9) * 12)));
+      const eScore = Math.min(100, Math.round((runScore * 0.4) + (shuttleScore * 0.35) + ((Math.min(su, 40) / 40) * 25)));
+      const fScore = Math.max(30, Math.min(100, Math.round((Math.min(fl, 30) / 30) * 100)));
+
+      totalStrengthSum += sScore;
+      totalEnduranceSum += eScore;
+      totalFlexibilitySum += fScore;
+    }
+
+    const averageFitnessScore = scoredCount > 0 ? Math.round((totalScoreSum / scoredCount) * 10) / 10 : null;
+
+    const fitnessAreasAverages = assessedStudents > 0
+      ? {
+          strength: Math.round(totalStrengthSum / assessedStudents),
+          endurance: Math.round(totalEnduranceSum / assessedStudents),
+          flexibility: Math.round(totalFlexibilitySum / assessedStudents),
+          avgPushUps: Math.round((rawPushUpsSum / assessedStudents) * 10) / 10,
+          avgSitUps: Math.round((rawSitUpsSum / assessedStudents) * 10) / 10,
+          avgRunTime: Math.round((rawRunTimeSum / assessedStudents) * 10) / 10,
+          avgFlexibilityCm: Math.round((rawFlexibilitySum / assessedStudents) * 10) / 10,
+        }
+      : {
+          strength: 0,
+          endurance: 0,
+          flexibility: 0,
+          avgPushUps: 0,
+          avgSitUps: 0,
+          avgRunTime: 0,
+          avgFlexibilityCm: 0,
+        };
+
+    return res.status(200).json({
+      institutionId,
+      totalStudents,
+      assessedStudents,
+      unassessedStudents,
+      completionPercentage,
+      averageFitnessScore,
+      distributionByLevel: {
+        beginner: { count: levelCounts.beginner, percentage: Math.round((levelCounts.beginner / totalStudents) * 100) },
+        intermediate: { count: levelCounts.intermediate, percentage: Math.round((levelCounts.intermediate / totalStudents) * 100) },
+        advanced: { count: levelCounts.advanced, percentage: Math.round((levelCounts.advanced / totalStudents) * 100) },
+        unassessed: { count: levelCounts.unassessed, percentage: Math.round((levelCounts.unassessed / totalStudents) * 100) },
+      },
+      fitnessAreasAverages,
+    });
+  } catch (error) {
+    console.error('Error fetching student insights:', error);
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      message: error.message || 'Server error while calculating student insights',
+    });
+  }
+};
+

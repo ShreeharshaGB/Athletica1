@@ -22,6 +22,8 @@ import {
   ShieldCheck,
   UserCheck,
   Zap,
+  TrendingUp,
+  Info,
 } from 'lucide-react'
 import StudentAppLayout from '../components/StudentAppLayout'
 import { apiRequest } from '../lib/api'
@@ -246,16 +248,126 @@ const DEMO_RECENT_ACTIVITIES = [
   { id: 'demo-rec-5', type: 'assessment', title: 'Completed physical baseline fitness assessment', studentName: 'Ananya Shetty', score: 65, date: '2026-03-15T11:00:00.000Z' }
 ]
 
+const DEMO_TALENT_LIST = [
+  {
+    id: 'demo-1',
+    studentId: 'ATH-10492',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@demo.athletica.edu',
+    institutionId: 'DEMO-INST',
+    hasAssessment: true,
+    area: 'Strength',
+    score: 79,
+    statusLabel: 'Strong in Strength',
+    fitnessLevel: 'intermediate',
+    overallScore: 78,
+    metrics: { pushUps: 28, sitUps: 32, runTime: 12.1, flexibility: 24, shuttleRun: 10.4 },
+    assessmentDate: '2026-03-20T10:00:00.000Z',
+  },
+  {
+    id: 'demo-2',
+    studentId: 'ATH-10583',
+    name: 'Priya Nair',
+    email: 'priya.nair@demo.athletica.edu',
+    institutionId: 'DEMO-INST',
+    hasAssessment: true,
+    area: 'Endurance',
+    score: 92,
+    statusLabel: 'Strong in Endurance',
+    fitnessLevel: 'advanced',
+    overallScore: 92,
+    metrics: { pushUps: 35, sitUps: 40, runTime: 11.2, flexibility: 28, shuttleRun: 9.6 },
+    assessmentDate: '2026-03-22T08:30:00.000Z',
+  },
+  {
+    id: 'demo-3',
+    studentId: 'ATH-10641',
+    name: 'Rahul Kumar',
+    email: 'rahul.kumar@demo.athletica.edu',
+    institutionId: 'DEMO-INST',
+    hasAssessment: true,
+    area: 'Endurance',
+    score: 87,
+    statusLabel: 'Strong in Endurance',
+    fitnessLevel: 'intermediate',
+    overallScore: 84,
+    metrics: { pushUps: 26, sitUps: 36, runTime: 11.8, flexibility: 22, shuttleRun: 10.1 },
+    assessmentDate: '2026-03-18T10:00:00.000Z',
+  },
+  {
+    id: 'demo-4',
+    studentId: 'ATH-10788',
+    name: 'Ananya Shetty',
+    email: 'ananya.shetty@demo.athletica.edu',
+    institutionId: 'DEMO-INST',
+    hasAssessment: true,
+    area: 'Flexibility',
+    score: 82,
+    statusLabel: 'Strong in Flexibility',
+    fitnessLevel: 'intermediate',
+    overallScore: 80,
+    metrics: { pushUps: 18, sitUps: 24, runTime: 13.5, flexibility: 29, shuttleRun: 11.0 },
+    assessmentDate: '2026-03-15T11:00:00.000Z',
+  },
+  {
+    id: 'demo-5',
+    studentId: 'ATH-10812',
+    name: 'Karthik Rao',
+    email: 'karthik.rao@demo.athletica.edu',
+    institutionId: 'DEMO-INST',
+    hasAssessment: false,
+    area: 'Not assessed',
+    score: null,
+    statusLabel: 'Needs Assessment',
+    fitnessLevel: 'Not assessed',
+    overallScore: null,
+    metrics: null,
+    assessmentDate: null,
+  },
+]
+
+const DEMO_INSIGHTS = {
+  totalStudents: 5,
+  assessedStudents: 4,
+  unassessedStudents: 1,
+  completionPercentage: 80,
+  averageFitnessScore: 83.5,
+  distributionByLevel: {
+    beginner: { count: 0, percentage: 0 },
+    intermediate: { count: 3, percentage: 60 },
+    advanced: { count: 1, percentage: 20 },
+    unassessed: { count: 1, percentage: 20 },
+  },
+  fitnessAreasAverages: {
+    strength: 78,
+    endurance: 86,
+    flexibility: 81,
+    avgPushUps: 26.8,
+    avgSitUps: 33.0,
+    avgRunTime: 12.2,
+    avgFlexibilityCm: 25.8,
+  },
+}
+
 export default function TeacherDashboard() {
   const { user } = useAuth()
   const [students, setStudents] = useState([])
   const [stats, setStats] = useState(null)
+  const [talentData, setTalentData] = useState(null)
+  const [insightsData, setInsightsData] = useState(null)
   const [activities, setActivities] = useState([])
   const [recentActivities, setRecentActivities] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Filters & Search
+  // Navigation tabs (Overview, Insights, Talent, Students, Activities)
+  const [activeSection, setActiveSection] = useState('overview')
+
+  // Talent Discovery Filters & Search
+  const [talentFilter, setTalentFilter] = useState('ALL')
+  const [talentSearch, setTalentSearch] = useState('')
+
+  // Filters & Search for Enrolled Students
   const [searchQuery, setSearchQuery] = useState('')
   const [assessmentFilter, setAssessmentFilter] = useState('ALL')
   const [fitnessLevelFilter, setFitnessLevelFilter] = useState('ALL')
@@ -279,19 +391,55 @@ export default function TeacherDashboard() {
   const [activityError, setActivityError] = useState(null)
   const [activitySuccess, setActivitySuccess] = useState(null)
 
+  // Sync with URL Hash for seamless sidebar navigation
+  useEffect(() => {
+    const syncWithHash = () => {
+      const h = (window.location.hash || '').toLowerCase()
+      if (h.includes('insight')) {
+        setActiveSection('insights')
+      } else if (h.includes('talent')) {
+        setActiveSection('talent')
+      } else if (h.includes('student')) {
+        setActiveSection('students')
+      } else if (h.includes('activit')) {
+        setActiveSection('activities')
+      } else if (h === '' || h === '#') {
+        setActiveSection('overview')
+      }
+    }
+    syncWithHash()
+    window.addEventListener('hashchange', syncWithHash)
+    return () => window.removeEventListener('hashchange', syncWithHash)
+  }, [])
+
   const fetchData = async () => {
     setLoading(true)
     setError(null)
     try {
-      const [studentsRes, statsRes, activitiesRes] = await Promise.all([
+      const [studentsRes, statsRes, activitiesRes, talentRes, insightsRes] = await Promise.allSettled([
         apiRequest('/teacher/students'),
         apiRequest('/teacher/stats'),
-        apiRequest('/teacher/activities')
+        apiRequest('/teacher/activities'),
+        apiRequest('/teacher/talent-discovery'),
+        apiRequest('/teacher/student-insights'),
       ])
-      setStudents(studentsRes.students || [])
-      setRecentActivities(studentsRes.recentActivities || [])
-      setStats(statsRes || null)
-      setActivities(activitiesRes.activities || [])
+
+      if (studentsRes.status === 'fulfilled') {
+        setStudents(studentsRes.value?.students || [])
+        setRecentActivities(studentsRes.value?.recentActivities || [])
+      }
+      if (statsRes.status === 'fulfilled') {
+        setStats(statsRes.value || null)
+      }
+      if (activitiesRes.status === 'fulfilled') {
+        setActivities(activitiesRes.value?.activities || [])
+      }
+      if (talentRes.status === 'fulfilled') {
+        setTalentData(talentRes.value || null)
+      }
+      if (insightsRes.status === 'fulfilled') {
+        setInsightsData(insightsRes.value || null)
+      }
     } catch (err) {
       console.error('Failed to fetch teacher dashboard data:', err)
       setError(err.message || 'Unable to load dashboard data. Please try again.')
@@ -439,6 +587,33 @@ export default function TeacherDashboard() {
     })
   }, [displayStudents, searchQuery, assessmentFilter, fitnessLevelFilter, activityFilter])
 
+  // Filtered Talent Discovery list
+  const displayTalentList = useMemo(() => {
+    const rawList = talentData?.talentList?.length > 0 ? talentData.talentList : isUsingDemo ? DEMO_TALENT_LIST : []
+    return rawList.filter((item) => {
+      const q = talentSearch.toLowerCase().trim()
+      const matchesSearch =
+        !q ||
+        item.name.toLowerCase().includes(q) ||
+        item.email.toLowerCase().includes(q) ||
+        (item.studentId || '').toLowerCase().includes(q)
+
+      const matchesArea =
+        talentFilter === 'ALL' ||
+        item.area.toLowerCase() === talentFilter.toLowerCase()
+
+      return matchesSearch && matchesArea
+    })
+  }, [talentData, isUsingDemo, talentSearch, talentFilter])
+
+  // Institution Insights
+  const displayInsights = useMemo(() => {
+    if (insightsData && (insightsData.totalStudents > 0 || !isUsingDemo)) {
+      return insightsData
+    }
+    return DEMO_INSIGHTS
+  }, [insightsData, isUsingDemo])
+
   // Greeting
   const currentHour = new Date().getHours()
   const greeting =
@@ -513,82 +688,598 @@ export default function TeacherDashboard() {
         </div>
       )}
 
-      {/* 1. TEACHER OVERVIEW CARDS (Total, Assessments, Active, Needs Attention) */}
-      <div className="ath-metrics-row" style={{ marginBottom: '28px' }}>
-        {/* Total Students */}
-        <div className="ath-metric-card">
-          <div className="ath-metric-top">
-            <div className="ath-metric-icon blue">
-              <Users size={20} />
-            </div>
-            <span className="ath-badge info">{institutionId}</span>
-          </div>
-          <div>
-            <div className="ath-metric-label">Total Students</div>
-            <div className="ath-metric-val">
-              {loading ? '—' : displayStats.totalStudents}
-            </div>
-          </div>
-          <div className="ath-metric-subtext">
-            {isUsingDemo ? 'Demo preview dataset' : 'Enrolled in your institution'}
-          </div>
-        </div>
-
-        {/* Assessments Completed */}
-        <div className="ath-metric-card">
-          <div className="ath-metric-top">
-            <div className="ath-metric-icon teal">
-              <ClipboardCheck size={20} />
-            </div>
-            <span className="ath-badge success">VERIFIED</span>
-          </div>
-          <div>
-            <div className="ath-metric-label">Assessments Completed</div>
-            <div className="ath-metric-val">
-              {loading ? '—' : displayStats.assessmentsCompleted}
-            </div>
-          </div>
-          <div className="ath-metric-subtext">Logged fitness index tests</div>
-        </div>
-
-        {/* Active Students */}
-        <div className="ath-metric-card">
-          <div className="ath-metric-top">
-            <div className="ath-metric-icon purple">
-              <Flame size={20} />
-            </div>
-            <span className="ath-badge info">ENGAGED</span>
-          </div>
-          <div>
-            <div className="ath-metric-label">Active Students</div>
-            <div className="ath-metric-val">
-              {loading ? '—' : displayStats.activeStudents}
-            </div>
-          </div>
-          <div className="ath-metric-subtext">Assessed or challenge participants</div>
-        </div>
-
-        {/* Students Needing Attention */}
-        <div className="ath-metric-card">
-          <div className="ath-metric-top">
-            <div className="ath-metric-icon orange">
-              <Clock size={20} />
-            </div>
-            <span className="ath-badge" style={{ background: '#fff7ed', color: '#ea580c', border: '1px solid #ffedd5' }}>
-              ACTION NEEDED
-            </span>
-          </div>
-          <div>
-            <div className="ath-metric-label">Needs Attention</div>
-            <div className="ath-metric-val" style={{ color: displayStats.needsAttention > 0 ? '#ea580c' : 'inherit' }}>
-              {loading ? '—' : displayStats.needsAttention}
-            </div>
-          </div>
-          <div className="ath-metric-subtext">Pending tests or inactive profiles</div>
-        </div>
+      {/* SECTION NAVIGATION TABS */}
+      <div className="ath-tabs" style={{ marginBottom: '24px' }}>
+        <button
+          type="button"
+          className={`ath-tab ${activeSection === 'overview' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveSection('overview')
+            window.location.hash = ''
+          }}
+        >
+          Cohort Overview
+        </button>
+        <button
+          type="button"
+          className={`ath-tab ${activeSection === 'insights' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveSection('insights')
+            window.location.hash = '#insights'
+          }}
+        >
+          Student Insights
+        </button>
+        <button
+          type="button"
+          className={`ath-tab ${activeSection === 'talent' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveSection('talent')
+            window.location.hash = '#talent'
+          }}
+        >
+          Talent Discovery
+        </button>
+        <button
+          type="button"
+          className={`ath-tab ${activeSection === 'students' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveSection('students')
+            window.location.hash = '#students'
+          }}
+        >
+          Enrolled Students
+        </button>
+        <button
+          type="button"
+          className={`ath-tab ${activeSection === 'activities' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveSection('activities')
+            window.location.hash = '#activities'
+          }}
+        >
+          Activities & Challenges
+        </button>
       </div>
 
+      {/* 1. TEACHER OVERVIEW CARDS (Total, Assessments, Active, Needs Attention) */}
+      {(activeSection === 'overview' || activeSection === 'students') && (
+        <div className="ath-metrics-row" style={{ marginBottom: '28px' }}>
+          {/* Total Students */}
+          <div className="ath-metric-card">
+            <div className="ath-metric-top">
+              <div className="ath-metric-icon blue">
+                <Users size={20} />
+              </div>
+              <span className="ath-badge info">{institutionId}</span>
+            </div>
+            <div>
+              <div className="ath-metric-label">Total Students</div>
+              <div className="ath-metric-val">
+                {loading ? '—' : displayStats.totalStudents}
+              </div>
+            </div>
+            <div className="ath-metric-subtext">
+              {isUsingDemo ? 'Demo preview dataset' : 'Enrolled in your institution'}
+            </div>
+          </div>
+
+          {/* Assessments Completed */}
+          <div className="ath-metric-card">
+            <div className="ath-metric-top">
+              <div className="ath-metric-icon teal">
+                <ClipboardCheck size={20} />
+              </div>
+              <span className="ath-badge success">VERIFIED</span>
+            </div>
+            <div>
+              <div className="ath-metric-label">Assessments Completed</div>
+              <div className="ath-metric-val">
+                {loading ? '—' : displayStats.assessmentsCompleted}
+              </div>
+            </div>
+            <div className="ath-metric-subtext">Logged fitness index tests</div>
+          </div>
+
+          {/* Active Students */}
+          <div className="ath-metric-card">
+            <div className="ath-metric-top">
+              <div className="ath-metric-icon purple">
+                <Flame size={20} />
+              </div>
+              <span className="ath-badge info">ENGAGED</span>
+            </div>
+            <div>
+              <div className="ath-metric-label">Active Students</div>
+              <div className="ath-metric-val">
+                {loading ? '—' : displayStats.activeStudents}
+              </div>
+            </div>
+            <div className="ath-metric-subtext">Assessed or challenge participants</div>
+          </div>
+
+          {/* Students Needing Attention */}
+          <div className="ath-metric-card">
+            <div className="ath-metric-top">
+              <div className="ath-metric-icon orange">
+                <Clock size={20} />
+              </div>
+              <span className="ath-badge" style={{ background: '#fff7ed', color: '#ea580c', border: '1px solid #ffedd5' }}>
+                ACTION NEEDED
+              </span>
+            </div>
+            <div>
+              <div className="ath-metric-label">Needs Attention</div>
+              <div className="ath-metric-val" style={{ color: displayStats.needsAttention > 0 ? '#ea580c' : 'inherit' }}>
+                {loading ? '—' : displayStats.needsAttention}
+              </div>
+            </div>
+            <div className="ath-metric-subtext">Pending tests or inactive profiles</div>
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================================
+          STUDENT INSIGHTS SECTION (Institution-Level Analytics)
+         ===================================================================== */}
+      {(activeSection === 'insights' || activeSection === 'overview') && (
+        <section
+          id="insights"
+          className="ath-card"
+          style={{
+            gap: '20px',
+            marginBottom: '28px',
+            borderTop: activeSection === 'insights' ? '4px solid #0f766e' : '1px solid #e2e8f0',
+          }}
+        >
+          <div className="ath-card-header">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <TrendingUp size={22} color="#0f766e" />
+              <div>
+                <h2 style={{ margin: 0 }}>Student Insights</h2>
+                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  Institution-level analytics calculated from verified student baseline assessments
+                </span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className="ath-badge info" style={{ fontWeight: 700 }}>
+                INSTITUTION: {institutionId}
+              </span>
+              <span className="ath-badge success">
+                SCOPED DATA
+              </span>
+            </div>
+          </div>
+
+          {/* INSIGHTS METRIC CARDS ROW */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+            <div className="insight-metric-box">
+              <span className="insight-metric-label">Total Students</span>
+              <div className="insight-metric-val">{displayInsights.totalStudents}</div>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Enrolled in {institutionId}</span>
+            </div>
+
+            <div className="insight-metric-box">
+              <span className="insight-metric-label">Assessed Students</span>
+              <div className="insight-metric-val" style={{ color: '#0f766e' }}>
+                {displayInsights.assessedStudents}
+              </div>
+              <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>
+                Verified assessment records
+              </span>
+            </div>
+
+            <div className="insight-metric-box">
+              <span className="insight-metric-label">Unassessed Students</span>
+              <div className="insight-metric-val" style={{ color: displayInsights.unassessedStudents > 0 ? '#ea580c' : '#0f172a' }}>
+                {displayInsights.unassessedStudents}
+              </div>
+              <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 }}>
+                Pending baseline testing
+              </span>
+            </div>
+
+            <div className="insight-metric-box">
+              <span className="insight-metric-label">Average Fitness Score</span>
+              <div className="insight-metric-val" style={{ color: '#0f766e' }}>
+                {displayInsights.averageFitnessScore != null ? `${displayInsights.averageFitnessScore}/100` : '—'}
+              </div>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                {displayInsights.averageFitnessScore != null ? 'Empirical cohort average' : 'Insufficient real data'}
+              </span>
+            </div>
+          </div>
+
+          {/* ASSESSMENT COMPLETION BAR */}
+          <div className="insight-metric-box" style={{ gap: '8px' }}>
+            <div className="insight-metric-header">
+              <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>Assessment Completion</strong>
+              <span style={{ fontSize: '0.84rem', fontWeight: 700, color: '#0f766e' }}>
+                Completed: {displayInsights.assessedStudents} ({displayInsights.completionPercentage}%) • Pending: {displayInsights.unassessedStudents}
+              </span>
+            </div>
+            <div className="insight-bar-track" style={{ height: '12px' }}>
+              <div
+                className="insight-bar-fill"
+                style={{
+                  width: `${displayInsights.completionPercentage}%`,
+                  background: 'linear-gradient(90deg, #10b981 0%, #0f766e 100%)',
+                }}
+              />
+            </div>
+            <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+              Teacher access security: Students from other institutions are strictly blocked at backend database level.
+            </span>
+          </div>
+
+          {/* TWO COLUMNS: FITNESS LEVEL DISTRIBUTION & DOMAIN BENCHMARKS */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+            {/* DISTRIBUTION BY FITNESS LEVEL */}
+            <div className="insight-metric-box" style={{ gap: '14px' }}>
+              <div className="insight-metric-header">
+                <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>Summary by Fitness Level</strong>
+                <span className="ath-badge">{displayInsights.totalStudents} Total</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 600, color: '#0f172a' }}>Advanced Level</span>
+                    <span style={{ color: '#64748b' }}>
+                      {displayInsights.distributionByLevel?.advanced?.count || 0} students ({displayInsights.distributionByLevel?.advanced?.percentage || 0}%)
+                    </span>
+                  </div>
+                  <div className="insight-bar-track">
+                    <div
+                      className="insight-bar-fill"
+                      style={{
+                        width: `${displayInsights.distributionByLevel?.advanced?.percentage || 0}%`,
+                        background: '#7c3aed',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 600, color: '#0f172a' }}>Intermediate Level</span>
+                    <span style={{ color: '#64748b' }}>
+                      {displayInsights.distributionByLevel?.intermediate?.count || 0} students ({displayInsights.distributionByLevel?.intermediate?.percentage || 0}%)
+                    </span>
+                  </div>
+                  <div className="insight-bar-track">
+                    <div
+                      className="insight-bar-fill"
+                      style={{
+                        width: `${displayInsights.distributionByLevel?.intermediate?.percentage || 0}%`,
+                        background: '#0f766e',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 600, color: '#0f172a' }}>Beginner Level</span>
+                    <span style={{ color: '#64748b' }}>
+                      {displayInsights.distributionByLevel?.beginner?.count || 0} students ({displayInsights.distributionByLevel?.beginner?.percentage || 0}%)
+                    </span>
+                  </div>
+                  <div className="insight-bar-track">
+                    <div
+                      className="insight-bar-fill"
+                      style={{
+                        width: `${displayInsights.distributionByLevel?.beginner?.percentage || 0}%`,
+                        background: '#0284c7',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 600, color: '#0f172a' }}>Unassessed / Pending</span>
+                    <span style={{ color: '#64748b' }}>
+                      {displayInsights.distributionByLevel?.unassessed?.count || 0} students ({displayInsights.distributionByLevel?.unassessed?.percentage || 0}%)
+                    </span>
+                  </div>
+                  <div className="insight-bar-track">
+                    <div
+                      className="insight-bar-fill"
+                      style={{
+                        width: `${displayInsights.distributionByLevel?.unassessed?.percentage || 0}%`,
+                        background: '#cbd5e1',
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* FITNESS AREAS BENCHMARKS */}
+            <div className="insight-metric-box" style={{ gap: '14px' }}>
+              <div className="insight-metric-header">
+                <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>Fitness Areas Benchmark</strong>
+                <span className="ath-badge success">Empirical Test Averages</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 700, color: '#0f172a' }}>💪 Strength</span>
+                    <span style={{ fontWeight: 700, color: '#be185d' }}>
+                      {displayInsights.fitnessAreasAverages?.strength || 0}/100
+                    </span>
+                  </div>
+                  <div className="insight-bar-track">
+                    <div
+                      className="insight-bar-fill"
+                      style={{
+                        width: `${displayInsights.fitnessAreasAverages?.strength || 0}%`,
+                        background: '#ec4899',
+                      }}
+                    />
+                  </div>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px', display: 'block' }}>
+                    Cohort avg: {displayInsights.fitnessAreasAverages?.avgPushUps || 0} push-ups • {displayInsights.fitnessAreasAverages?.avgSitUps || 0} sit-ups
+                  </span>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 700, color: '#0f172a' }}>⚡ Endurance</span>
+                    <span style={{ fontWeight: 700, color: '#1d4ed8' }}>
+                      {displayInsights.fitnessAreasAverages?.endurance || 0}/100
+                    </span>
+                  </div>
+                  <div className="insight-bar-track">
+                    <div
+                      className="insight-bar-fill"
+                      style={{
+                        width: `${displayInsights.fitnessAreasAverages?.endurance || 0}%`,
+                        background: '#3b82f6',
+                      }}
+                    />
+                  </div>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px', display: 'block' }}>
+                    Cohort avg sprint: {displayInsights.fitnessAreasAverages?.avgRunTime || 0}s (50m dash)
+                  </span>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 700, color: '#0f172a' }}>🌿 Flexibility</span>
+                    <span style={{ fontWeight: 700, color: '#6d28d9' }}>
+                      {displayInsights.fitnessAreasAverages?.flexibility || 0}/100
+                    </span>
+                  </div>
+                  <div className="insight-bar-track">
+                    <div
+                      className="insight-bar-fill"
+                      style={{
+                        width: `${displayInsights.fitnessAreasAverages?.flexibility || 0}%`,
+                        background: '#8b5cf6',
+                      }}
+                    />
+                  </div>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px', display: 'block' }}>
+                    Cohort avg sit-and-reach: {displayInsights.fitnessAreasAverages?.avgFlexibilityCm || 0} cm
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* =====================================================================
+          TALENT DISCOVERY SECTION (Neutral Strengths Identification)
+         ===================================================================== */}
+      {(activeSection === 'talent' || activeSection === 'overview') && (
+        <section
+          id="talent"
+          className="ath-card"
+          style={{
+            gap: '18px',
+            marginBottom: '28px',
+            borderTop: activeSection === 'talent' ? '4px solid #0f766e' : '1px solid #e2e8f0',
+          }}
+        >
+          <div className="ath-card-header">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Trophy size={22} color="#0f766e" />
+              <div>
+                <h2 style={{ margin: 0 }}>Talent Discovery</h2>
+                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  Help teachers identify students who may show strengths in different fitness areas
+                </span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className="ath-badge success">
+                {displayTalentList.length} IDENTIFIED
+              </span>
+            </div>
+          </div>
+
+          {/* NEUTRAL GUIDANCE BANNER */}
+          <div style={{ padding: '12px 16px', borderRadius: '10px', background: '#f8fafc', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Info size={18} color="#0f766e" />
+            <span style={{ fontSize: '0.82rem', color: '#475569' }}>
+              This is an identification and insight tool to help teachers notice areas of strength, not an athletic ranking. Categories reflect empirical standardized fitness test results.
+            </span>
+          </div>
+
+          {/* TOOLBAR: SEARCH & AREA FILTERS */}
+          <div className="teacher-toolbar" style={{ flexWrap: 'wrap', gap: '12px' }}>
+            <div className="teacher-search-group" style={{ flex: '1 1 260px' }}>
+              <Search size={18} color="#94a3b8" />
+              <input
+                type="text"
+                className="teacher-search-input"
+                placeholder="Search students by name, email, or ID..."
+                value={talentSearch}
+                onChange={(e) => setTalentSearch(e.target.value)}
+              />
+              {talentSearch && (
+                <button
+                  type="button"
+                  onClick={() => setTalentSearch('')}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 0 }}
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            {/* AREA FILTER PILLS */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {[
+                { label: 'All Areas', val: 'ALL' },
+                { label: 'Endurance', val: 'Endurance' },
+                { label: 'Strength', val: 'Strength' },
+                { label: 'Flexibility', val: 'Flexibility' },
+                { label: 'Overall Fitness', val: 'Overall Fitness' },
+              ].map((f) => (
+                <button
+                  key={f.val}
+                  type="button"
+                  className={`ath-badge ${talentFilter === f.val ? 'success' : ''}`}
+                  onClick={() => setTalentFilter(f.val)}
+                  style={{
+                    cursor: 'pointer',
+                    padding: '8px 14px',
+                    fontSize: '0.82rem',
+                    background: talentFilter === f.val ? '#0f766e' : '#f1f5f9',
+                    color: talentFilter === f.val ? '#ffffff' : '#334155',
+                    border: 'none',
+                    fontWeight: 750,
+                  }}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* TALENT DISCOVERY LIST / TABLE */}
+          {displayTalentList.length === 0 ? (
+            <div className="teacher-state-box">
+              <Trophy size={32} color="#94a3b8" />
+              <p style={{ fontWeight: 600, color: '#334155', marginTop: '8px' }}>
+                No students match the selected talent filter.
+              </p>
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table className="teacher-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', fontSize: '0.78rem', color: '#64748b' }}>STUDENT</th>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', fontSize: '0.78rem', color: '#64748b' }}>AREA</th>
+                    <th style={{ textAlign: 'center', padding: '12px 14px', fontSize: '0.78rem', color: '#64748b' }}>SCORE / STATUS</th>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', fontSize: '0.78rem', color: '#64748b' }}>STATUS LABEL</th>
+                    <th style={{ textAlign: 'left', padding: '12px 14px', fontSize: '0.78rem', color: '#64748b' }}>ASSESSMENT METRICS</th>
+                    <th style={{ textAlign: 'right', padding: '12px 14px', fontSize: '0.78rem', color: '#64748b' }}>ACTION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayTalentList.map((item) => {
+                    const pillClass =
+                      item.area === 'Endurance'
+                        ? 'talent-pill-endurance'
+                        : item.area === 'Strength'
+                        ? 'talent-pill-strength'
+                        : item.area === 'Flexibility'
+                        ? 'talent-pill-flexibility'
+                        : item.hasAssessment
+                        ? 'talent-pill-overall'
+                        : 'talent-pill-pending'
+
+                    return (
+                      <tr key={item.id} className="talent-table-row" style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div className="student-avatar" style={{ width: '36px', height: '36px', fontSize: '0.9rem' }}>
+                              {item.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>{item.name}</strong>
+                              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                                {item.studentId || 'ATH-N/A'} • {item.email}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td style={{ padding: '14px' }}>
+                          <span className={`ath-badge ${pillClass}`} style={{ fontWeight: 750, fontSize: '0.82rem' }}>
+                            {item.area}
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '14px', textAlign: 'center' }}>
+                          <span style={{ fontSize: '1.05rem', fontWeight: 800, color: item.score != null ? '#0f766e' : '#94a3b8' }}>
+                            {item.score != null ? item.score : 'Not assessed'}
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '14px' }}>
+                          <span
+                            className="ath-badge"
+                            style={{
+                              background: item.hasAssessment ? '#e6f7f2' : '#fff7ed',
+                              color: item.hasAssessment ? '#0f766e' : '#ea580c',
+                              fontWeight: 700,
+                              fontSize: '0.8rem',
+                            }}
+                          >
+                            {item.statusLabel}
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '14px' }}>
+                          {item.metrics ? (
+                            <div style={{ fontSize: '0.78rem', color: '#475569', lineHeight: 1.4 }}>
+                              <span>Push-ups: <strong>{item.metrics.pushUps}</strong> reps</span> •{' '}
+                              <span>Sit-ups: <strong>{item.metrics.sitUps}</strong> reps</span><br />
+                              <span>50m Run: <strong>{item.metrics.runTime}s</strong></span> •{' '}
+                              <span>Flexibility: <strong>{item.metrics.flexibility}cm</strong></span>
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                              Assessment pending
+                            </span>
+                          )}
+                        </td>
+
+                        <td style={{ padding: '14px', textAlign: 'right' }}>
+                          <button
+                            type="button"
+                            className="ath-btn ath-btn-secondary"
+                            onClick={() => {
+                              const found = displayStudents.find((s) => s.id === item.id)
+                              if (found) handleViewStudent(found)
+                              else handleViewStudent(item)
+                            }}
+                            style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                          >
+                            <Eye size={13} style={{ marginRight: '4px' }} /> View Student
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
+
       {/* 2. ENROLLED STUDENTS SECTION (Search + Filters + Table) */}
+      {(activeSection === 'students' || activeSection === 'overview') && (
       <section id="students" className="ath-card" style={{ gap: '18px', marginBottom: '28px' }}>
         <div className="ath-card-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -811,8 +1502,10 @@ export default function TeacherDashboard() {
           </div>
         )}
       </section>
+      )}
 
       {/* 3. TWO-COLUMN: STUDENTS NEEDING ATTENTION & RECENT ACTIVITY */}
+      {(activeSection === 'overview' || activeSection === 'students') && (
       <div className="teacher-two-col">
         {/* LEFT COLUMN: STUDENTS NEEDING ATTENTION */}
         <section id="needs-attention" className="ath-card" style={{ gap: '16px' }}>
@@ -919,8 +1612,10 @@ export default function TeacherDashboard() {
           )}
         </section>
       </div>
+      )}
 
       {/* 4. ACTIVITIES & CHALLENGES SECTION */}
+      {(activeSection === 'overview' || activeSection === 'activities') && (
       <section id="activities" className="ath-card" style={{ gap: '18px', marginBottom: '28px' }}>
         <div className="ath-card-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1044,6 +1739,7 @@ export default function TeacherDashboard() {
           </div>
         )}
       </section>
+      )}
 
       {/* =====================================================================
           STUDENT DETAILS MODAL (Profile, Fitness, Activity, AI Insights)

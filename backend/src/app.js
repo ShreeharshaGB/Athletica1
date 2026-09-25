@@ -65,6 +65,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/student/profile', studentProfileRoutes);
 app.use('/api/student/assessment', fitnessAssessmentRoutes);
 app.use('/api/student/workout-plan', workoutPlanRoutes);
+app.use('/api/community/workout-plan', workoutPlanRoutes);
+app.use('/api/workout-plan', workoutPlanRoutes);
 app.use('/api/student/physique-analysis', physiqueAnalysisRoutes);
 app.use('/api/student/activities', studentActivityRoutes);
 app.use('/api/student/nutrition', nutritionRoutes);

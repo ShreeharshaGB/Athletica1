@@ -2,29 +2,64 @@ import mongoose from 'mongoose';
 
 const exerciseSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+      default: () => new mongoose.Types.ObjectId().toString(),
+    },
     name: {
       type: String,
       required: true,
       trim: true,
     },
+    category: {
+      type: String,
+      trim: true,
+      default: 'General',
+    },
     sets: {
       type: Number,
       required: true,
       min: 0,
+      default: 3,
     },
     reps: {
       type: Number,
       required: true,
       min: 0,
+      default: 10,
+    },
+    duration: {
+      type: String,
+      trim: true,
+      default: '',
     },
     durationSeconds: {
       type: Number,
       min: 0,
+      default: 0,
+    },
+    difficulty: {
+      type: String,
+      trim: true,
+      default: 'Beginner',
+    },
+    instructions: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    completedAt: {
+      type: Date,
+      default: null,
     },
     restSeconds: {
       type: Number,
       min: 0,
-      default: 0,
+      default: 30,
     },
     equipment: {
       type: String,
@@ -49,6 +84,11 @@ const workoutSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    focus: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     title: {
       type: String,
       required: true,
@@ -58,6 +98,7 @@ const workoutSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 0,
+      default: 30,
     },
     exercises: {
       type: [exerciseSchema],
@@ -79,16 +120,54 @@ const workoutPlanSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    role: {
+      type: String,
+      enum: ['student', 'community', 'teacher'],
+      default: 'student',
+      index: true,
+    },
     source: {
       type: String,
       required: true,
-      enum: ['ai_generated', 'teacher_assigned', 'self_created'],
+      enum: ['ai_generated', 'deterministic_fallback', 'teacher_assigned', 'self_created'],
       default: 'self_created',
     },
     goal: {
       type: String,
       required: true,
       trim: true,
+    },
+    fitnessLevel: {
+      type: String,
+      trim: true,
+      default: 'beginner',
+    },
+    availableTimeMinutes: {
+      type: Number,
+      default: 30,
+      min: 10,
+      max: 120,
+    },
+    dailyActivityContext: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    weeklyCompletionPercentage: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+    completedActivitiesCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    totalActivitiesCount: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
     startDate: {
       type: Date,
@@ -125,3 +204,4 @@ const WorkoutPlan = mongoose.model('WorkoutPlan', workoutPlanSchema);
 
 export default WorkoutPlan;
 export { WorkoutPlan };
+
