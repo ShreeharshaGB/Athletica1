@@ -1,0 +1,576 @@
+* {
+  box-sizing: border-box;
+}
+
+.progress-page {
+  min-height: 100vh;
+  background: #f7fbfa;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: #183b3a;
+  display: flex;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.progress-sidebar {
+  width: 205px;
+  min-height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e7efed;
+  padding: 24px 14px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.progress-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 10px 30px;
+}
+
+.logo-mark {
+  width: 24px;
+  height: 28px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #159b7a;
+  font-style: italic;
+}
+
+.progress-logo h2 {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: #173b3b;
+}
+
+
+/* Navigation */
+
+.progress-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progress-nav-item {
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-decoration: none;
+  color: #647777;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 11px;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.progress-nav-item:hover {
+  background: #f0f8f5;
+  color: #159b7a;
+}
+
+.progress-nav-item.active {
+  background: #dff5ed;
+  color: #119675;
+  font-weight: 600;
+}
+
+.nav-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 16px;
+}
+
+
+/* Language */
+
+.progress-language {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #687777;
+  font-size: 11px;
+  padding: 10px;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.progress-main {
+  margin-left: 205px;
+  width: calc(100% - 205px);
+  padding: 0 28px 35px;
+}
+
+
+/* =====================================================
+   TOP BAR
+===================================================== */
+
+.progress-topbar {
+  height: 65px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-search {
+  width: 170px;
+  height: 30px;
+  border-radius: 20px;
+  background: #f0f5f4;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  color: #8a9999;
+  font-size: 10px;
+}
+
+.progress-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.notification-icon {
+  color: #536b6b;
+  font-size: 18px;
+}
+
+.profile-circle {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #083d3a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.progress-header {
+  margin-top: 4px;
+}
+
+.progress-header h1 {
+  font-size: 21px;
+  margin: 0;
+  color: #163c3a;
+  font-weight: 700;
+}
+
+.progress-header p {
+  margin: 5px 0 0;
+  font-size: 11px;
+  color: #829090;
+}
+
+
+/* =====================================================
+   PERIOD TABS
+===================================================== */
+
+.period-tabs {
+  width: 100%;
+  height: 43px;
+  background: #edf5f3;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  margin-top: 22px;
+}
+
+.period-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  height: 37px;
+  border-radius: 20px;
+  color: #6e8180;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.period-tab:hover {
+  color: #159b7a;
+}
+
+.period-tab.active {
+  background: #159b7a;
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(21, 155, 122, 0.2);
+}
+
+
+/* =====================================================
+   SUMMARY CARDS
+===================================================== */
+
+.progress-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 14px;
+}
+
+.summary-card {
+  background: white;
+  min-height: 104px;
+  border: 1px solid #e7efed;
+  border-radius: 11px;
+  padding: 17px 20px;
+  box-shadow: 0 2px 8px rgba(20, 70, 60, 0.03);
+}
+
+.summary-title {
+  color: #687c7b;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.summary-value {
+  margin-top: 9px;
+  font-size: 21px;
+  font-weight: 700;
+  color: #183d3a;
+  letter-spacing: 0.2px;
+}
+
+.summary-change {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.fitness-change {
+  color: #169d7b;
+}
+
+.weight-change {
+  color: #4f79c9;
+}
+
+.endurance-change {
+  color: #e9a43d;
+}
+
+
+/* =====================================================
+   LOWER SECTION
+===================================================== */
+
+.progress-lower {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 0.75fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+
+/* =====================================================
+   CHART CARD
+===================================================== */
+
+.chart-card,
+.achievements-card {
+  background: #ffffff;
+  border: 1px solid #e7efed;
+  border-radius: 11px;
+  box-shadow: 0 2px 8px rgba(20, 70, 60, 0.03);
+}
+
+.chart-card {
+  padding: 17px 18px 14px;
+  min-height: 285px;
+}
+
+.chart-card h2,
+.achievements-card h2 {
+  font-size: 13px;
+  margin: 0;
+  color: #183d3a;
+}
+
+
+/* Chart wrapper */
+
+.chart-wrapper {
+  display: flex;
+  margin-top: 20px;
+  height: 215px;
+}
+
+.y-axis {
+  width: 34px;
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #8c9c9b;
+  font-size: 9px;
+  text-align: right;
+  padding-right: 7px;
+}
+
+.chart-area {
+  position: relative;
+  flex: 1;
+  height: 205px;
+  border-left: 1px solid #e6eeee;
+  border-bottom: 1px solid #e6eeee;
+}
+
+
+/* Grid lines */
+
+.horizontal-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #edf2f1;
+}
+
+.line-1 {
+  top: 0;
+}
+
+.line-2 {
+  top: 34px;
+}
+
+.line-3 {
+  top: 68px;
+}
+
+.line-4 {
+  top: 102px;
+}
+
+.line-5 {
+  top: 136px;
+}
+
+
+/* SVG */
+
+.progress-chart {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 165px;
+  overflow: visible;
+}
+
+.chart-area-fill {
+  fill: rgba(29, 191, 143, 0.10);
+  stroke: none;
+}
+
+.chart-line {
+  fill: none;
+  stroke: #20b987;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.progress-chart circle {
+  fill: #20b987;
+  stroke: white;
+  stroke-width: 2;
+}
+
+
+/* X axis */
+
+.x-axis {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 173px;
+  display: flex;
+  justify-content: space-between;
+  color: #879796;
+  font-size: 8px;
+}
+
+
+/* =====================================================
+   ACHIEVEMENTS
+===================================================== */
+
+.achievements-card {
+  padding: 18px 16px;
+}
+
+.achievement-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.achievement-icon {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.achievement-icon.fire {
+  background: #fff0ce;
+}
+
+.achievement-icon.trophy {
+  background: #fff2d2;
+}
+
+.achievement-icon.nutrition {
+  background: #e5f6c9;
+}
+
+.achievement-content h3 {
+  margin: 0;
+  font-size: 11px;
+  color: #284541;
+  font-weight: 600;
+}
+
+.achievement-content p {
+  margin: 4px 0 0;
+  font-size: 9px;
+  color: #849190;
+  line-height: 1.4;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+
+  .progress-sidebar {
+    width: 175px;
+  }
+
+  .progress-main {
+    margin-left: 175px;
+    width: calc(100% - 175px);
+    padding: 0 20px 30px;
+  }
+
+  .progress-lower {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 760px) {
+
+  .progress-sidebar {
+    width: 65px;
+    padding: 20px 8px;
+  }
+
+  .progress-logo {
+    justify-content: center;
+    padding: 0 0 25px;
+  }
+
+  .progress-logo h2 {
+    display: none;
+  }
+
+  .progress-nav-item {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .progress-nav-item span:last-child {
+    display: none;
+  }
+
+  .progress-language span:not(:first-child) {
+    display: none;
+  }
+
+  .progress-language {
+    justify-content: center;
+  }
+
+  .progress-main {
+    margin-left: 65px;
+    width: calc(100% - 65px);
+    padding: 0 15px 25px;
+  }
+
+  .progress-summary {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 520px) {
+
+  .progress-main {
+    padding: 0 10px 20px;
+  }
+
+  .progress-header h1 {
+    font-size: 18px;
+  }
+
+  .period-tabs {
+    overflow-x: auto;
+  }
+
+  .period-tab {
+    min-width: 100px;
+  }
+
+  .chart-card {
+    overflow-x: auto;
+  }
+
+  .chart-wrapper {
+    min-width: 500px;
+  }
+
+}

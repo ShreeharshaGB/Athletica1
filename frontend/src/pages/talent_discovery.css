@@ -1,0 +1,665 @@
+* {
+  box-sizing: border-box;
+}
+
+.talent-page {
+  min-height: 100vh;
+  background: #f7fbfa;
+  color: #183d3a;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  display: flex;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.talent-sidebar {
+  width: 205px;
+  min-height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e5eeeb;
+
+  padding: 23px 13px;
+
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Logo */
+
+.talent-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 0 10px 30px;
+}
+
+.talent-logo-mark {
+  font-size: 23px;
+  font-weight: 800;
+  font-style: italic;
+  color: #129879;
+}
+
+.talent-logo-text {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #183b3a;
+}
+
+
+/* Navigation */
+
+.talent-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.talent-nav-item {
+  border: none;
+  background: transparent;
+  width: 100%;
+  border: none;
+  background: transparent;
+  width: 100%;
+  height: 37px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 0 11px;
+
+  border-radius: 9px;
+
+  text-decoration: none;
+
+  color: #647675;
+
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+  text-align: left;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.talent-nav-item:hover {
+  background: #eef8f5;
+  color: #139876;
+}
+
+.talent-nav-item.active {
+  background: #dff4ec;
+  color: #119576;
+  font-weight: 600;
+}
+
+.talent-nav-icon {
+  width: 17px;
+  text-align: center;
+  font-size: 15px;
+}
+
+
+/* Language */
+
+.talent-language {
+  margin-top: auto;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 10px;
+
+  color: #72817f;
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
+
+.talent-main {
+  margin-left: 205px;
+
+  width: calc(100% - 205px);
+
+  padding: 0 28px 35px;
+}
+
+
+/* =====================================================
+   TOP BAR
+===================================================== */
+
+.talent-topbar {
+  height: 64px;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+}
+
+.talent-search {
+  width: 170px;
+  height: 30px;
+
+  border-radius: 18px;
+
+  background: #f0f5f4;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 12px;
+
+  color: #8b9998;
+
+  font-size: 10px;
+}
+
+.search-icon {
+  font-size: 14px;
+}
+
+.talent-top-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 19px;
+}
+
+.talent-notification {
+  font-size: 17px;
+  color: #526866;
+}
+
+.talent-profile {
+  width: 27px;
+  height: 27px;
+
+  border-radius: 50%;
+
+  background: #083d3a;
+
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.talent-header {
+  margin-top: 4px;
+}
+
+.talent-header h1 {
+  margin: 0;
+
+  font-size: 21px;
+
+  font-weight: 700;
+
+  color: #173d3a;
+}
+
+.talent-header p {
+  margin: 5px 0 0;
+
+  font-size: 10px;
+
+  color: #82918f;
+}
+
+
+/* =====================================================
+   INSIGHTS
+===================================================== */
+
+.talent-insights {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 15px;
+
+  margin-top: 19px;
+}
+
+
+/* =====================================================
+   POTENTIAL CARD
+===================================================== */
+
+.potential-card,
+.other-insights-card {
+  background: #ffffff;
+
+  border: 1px solid #e5eeeb;
+
+  border-radius: 11px;
+
+  box-shadow:
+    0 2px 8px rgba(20, 70, 60, 0.035);
+
+  padding: 16px 18px;
+}
+
+.potential-card h2,
+.other-insights-card h2 {
+  margin: 0;
+
+  font-size: 12px;
+
+  color: #1b403d;
+
+  font-weight: 700;
+}
+
+
+/* Potential item */
+
+.potential-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  margin-top: 13px;
+}
+
+.potential-icon {
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+
+  font-weight: bold;
+}
+
+
+/* Icon backgrounds */
+
+.speed-icon {
+  background: #d7f4e9;
+  color: #159d7c;
+}
+
+.strength-icon {
+  background: #fff0cf;
+  color: #e9a437;
+}
+
+.flexibility-icon {
+  background: #f8dcef;
+  color: #d56aa9;
+}
+
+.agility-icon {
+  background: #d9eafa;
+  color: #3b91ce;
+}
+
+
+/* Potential text */
+
+.potential-info h3 {
+  margin: 0;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  color: #36504d;
+}
+
+.potential-info p {
+  margin: 3px 0 0;
+
+  font-size: 9px;
+}
+
+.high-potential {
+  color: #159a78;
+}
+
+.good-potential {
+  color: #dda032;
+}
+
+.moderate-potential {
+  color: #8b8f94;
+}
+
+
+/* =====================================================
+   OTHER INSIGHTS
+===================================================== */
+
+.other-insight {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 11px;
+
+  margin-top: 15px;
+}
+
+.other-insight-icon {
+  width: 28px;
+  height: 28px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #eef6f4;
+
+  color: #319f88;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+}
+
+.other-insight p {
+  margin: 2px 0 0;
+
+  font-size: 9px;
+
+  line-height: 1.5;
+
+  color: #667876;
+}
+
+
+/* Detailed report */
+
+.detailed-report-button {
+  width: 100%;
+
+  height: 31px;
+
+  margin-top: 17px;
+
+  border: none;
+
+  border-radius: 7px;
+
+  background: #159b7a;
+
+  color: white;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.detailed-report-button:hover {
+  background: #108667;
+}
+
+
+/* =====================================================
+   TALENT PROFILE
+===================================================== */
+
+.talent-summary {
+  margin-top: 15px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5eeeb;
+
+  border-radius: 11px;
+
+  padding: 17px 18px;
+
+  box-shadow:
+    0 2px 8px rgba(20, 70, 60, 0.035);
+}
+
+.summary-heading h2 {
+  margin: 0;
+
+  font-size: 13px;
+
+  color: #1b403d;
+}
+
+.summary-heading p {
+  margin: 4px 0 0;
+
+  font-size: 9px;
+
+  color: #879492;
+}
+
+
+/* =====================================================
+   TALENT PROGRESS
+===================================================== */
+
+.talent-progress-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 16px 28px;
+
+  margin-top: 19px;
+}
+
+.talent-progress-item {
+  width: 100%;
+}
+
+.progress-item-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  font-size: 10px;
+
+  color: #536966;
+}
+
+.progress-item-header strong {
+  color: #159b7a;
+
+  font-size: 10px;
+}
+
+
+/* Track */
+
+.progress-track {
+  width: 100%;
+
+  height: 7px;
+
+  background: #edf3f1;
+
+  border-radius: 10px;
+
+  margin-top: 7px;
+
+  overflow: hidden;
+}
+
+
+/* Fill */
+
+.progress-fill {
+  height: 100%;
+
+  border-radius: 10px;
+}
+
+.speed-fill {
+  background: #21b78d;
+}
+
+.strength-fill {
+  background: #f1b447;
+}
+
+.flexibility-fill {
+  background: #d978b2;
+}
+
+.agility-fill {
+  background: #5da5d8;
+}
+
+.talent-progress-item small {
+  display: block;
+
+  margin-top: 5px;
+
+  font-size: 8px;
+
+  color: #8b9694;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 900px) {
+
+  .talent-sidebar {
+    width: 175px;
+  }
+
+  .talent-main {
+    margin-left: 175px;
+
+    width: calc(100% - 175px);
+
+    padding: 0 20px 30px;
+  }
+
+  .talent-insights {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .talent-sidebar {
+    width: 65px;
+
+    padding: 20px 8px;
+  }
+
+  .talent-logo {
+    justify-content: center;
+
+    padding: 0 0 25px;
+  }
+
+  .talent-logo-text {
+    display: none;
+  }
+
+  .talent-nav-item {
+    justify-content: center;
+
+    padding: 0;
+  }
+
+  .talent-nav-item span:last-child {
+    display: none;
+  }
+
+  .talent-language {
+    justify-content: center;
+  }
+
+  .talent-language span:not(:first-child) {
+    display: none;
+  }
+
+  .talent-main {
+    margin-left: 65px;
+
+    width: calc(100% - 65px);
+
+    padding: 0 15px 25px;
+  }
+
+  .talent-progress-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .talent-main {
+    padding: 0 10px 20px;
+  }
+
+  .talent-header h1 {
+    font-size: 18px;
+  }
+
+  .talent-insights {
+    grid-template-columns: 1fr;
+  }
+
+}

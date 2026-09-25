@@ -1,0 +1,607 @@
+* {
+  box-sizing: border-box;
+}
+
+.gamification-page {
+  min-height: 100vh;
+  background: #f7fbfa;
+  color: #253d42;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.gamification-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 205px;
+  height: 100vh;
+
+  background: #ffffff;
+  border-right: 1px solid #edf2f1;
+
+  padding: 24px 14px;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 10;
+}
+
+.gamification-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 0 8px 28px;
+}
+
+.logo-symbol {
+  color: #159b7a;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.gamification-logo span {
+  color: #18393d;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.gamification-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.g-nav-item {
+  border: none;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px;
+
+  border-radius: 9px;
+
+  color: #6d7f82;
+  text-decoration: none;
+
+  font-size: 11px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.g-nav-item:hover {
+  background: #f0f8f5;
+  color: #159b7a;
+}
+
+.g-nav-item.active {
+  background: #dff4ec;
+  color: #159b7a;
+  font-weight: 700;
+}
+
+.g-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 15px;
+}
+
+
+/* =========================
+   LANGUAGE
+========================= */
+
+.g-language {
+  margin-top: auto;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px;
+
+  color: #718386;
+  font-size: 10px;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.gamification-main {
+  margin-left: 205px;
+  min-height: 100vh;
+
+  padding: 0 32px 40px;
+}
+
+
+/* =========================
+   TOP BAR
+========================= */
+
+.g-topbar {
+  height: 68px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.g-search {
+  width: 180px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 0 12px;
+
+  background: #ffffff;
+  border: 1px solid #edf2f1;
+  border-radius: 16px;
+
+  color: #a1adaf;
+  font-size: 10px;
+}
+
+.search-icon {
+  font-size: 15px;
+}
+
+.g-top-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.g-notification {
+  border: none;
+  background: transparent;
+
+  color: #687a7d;
+  font-size: 17px;
+
+  cursor: pointer;
+}
+
+.g-profile {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #116b59;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* =========================
+   JOURNEY HEADER
+========================= */
+
+.journey-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+}
+
+.journey-header h1 {
+  margin: 0 0 6px;
+
+  color: #213b40;
+  font-size: 22px;
+}
+
+.journey-header p {
+  margin: 0;
+
+  color: #8b999c;
+  font-size: 10px;
+}
+
+.xp-total {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #45595d;
+  font-size: 12px;
+}
+
+.xp-star {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fff5cc;
+  color: #f1b91b;
+
+  font-size: 15px;
+}
+
+
+/* =========================
+   LEVEL CARD
+========================= */
+
+.level-card {
+  background: #ffffff;
+
+  border: 1px solid #edf2f1;
+  border-radius: 10px;
+
+  padding: 15px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin-bottom: 18px;
+}
+
+.level-badge {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e5f4ff;
+  border: 5px solid #d5ecff;
+
+  color: #176f9f;
+
+  font-size: 18px;
+}
+
+.level-information {
+  flex: 1;
+}
+
+.level-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 8px;
+}
+
+.level-top h3 {
+  margin: 0 0 4px;
+
+  color: #324a4e;
+  font-size: 12px;
+}
+
+.level-top p {
+  margin: 0;
+
+  color: #96a3a5;
+  font-size: 9px;
+}
+
+.xp-progress-text {
+  color: #738487;
+  font-size: 9px;
+}
+
+.level-progress-background {
+  width: 100%;
+  height: 10px;
+
+  background: #edf3f1;
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.level-progress {
+  width: 50%;
+  height: 100%;
+
+  background: #21b487;
+  border-radius: 10px;
+}
+
+
+/* =========================
+   SECTION HEADINGS
+========================= */
+
+.challenges-section h2,
+.achievements-section h2 {
+  margin: 0 0 12px;
+
+  color: #30474b;
+  font-size: 14px;
+}
+
+
+/* =========================
+   DAILY CHALLENGES
+========================= */
+
+.challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+.challenge-card {
+  min-height: 105px;
+
+  padding: 13px;
+
+  background: #ffffff;
+
+  border: 1px solid #edf2f1;
+  border-radius: 9px;
+
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  column-gap: 9px;
+  align-items: start;
+}
+
+.challenge-icon {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 13px;
+}
+
+.challenge-icon.green {
+  background: #dff8e9;
+  color: #23a66e;
+}
+
+.challenge-icon.mint {
+  background: #e1f8f0;
+  color: #26a986;
+}
+
+.challenge-icon.purple {
+  background: #eee9ff;
+  color: #7865d5;
+}
+
+.challenge-content h3 {
+  margin: 2px 0 5px;
+
+  color: #52666a;
+  font-size: 10px;
+}
+
+.challenge-content p {
+  margin: 0;
+
+  color: #9aa6a8;
+  font-size: 8px;
+}
+
+.challenge-status {
+  grid-column: 1 / -1;
+
+  margin-top: 10px;
+
+  width: 90px;
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.challenge-status.completed {
+  background: #e1f7ee;
+  color: #209c75;
+}
+
+.challenge-status.in-progress {
+  background: #fff3d9;
+  color: #e9a929;
+}
+
+
+/* =========================
+   ACHIEVEMENTS
+========================= */
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.achievement-card {
+  min-height: 95px;
+
+  padding: 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  background: #ffffff;
+
+  border: 1px solid #edf2f1;
+  border-radius: 9px;
+}
+
+.achievement-badge {
+  width: 43px;
+  height: 43px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.achievement-badge.orange {
+  background: #fff0d2;
+  color: #e99518;
+  border: 4px solid #ffe4aa;
+}
+
+.achievement-badge.blue {
+  background: #e4f0ff;
+  color: #4b91e8;
+  border: 4px solid #cde2ff;
+}
+
+.achievement-badge.red {
+  background: #ffe5dd;
+  color: #ef6048;
+  border: 4px solid #ffd0c4;
+}
+
+.achievement-card h3 {
+  margin: 0 0 6px;
+
+  color: #596b6e;
+  font-size: 10px;
+}
+
+.achievement-card p {
+  margin: 0;
+
+  color: #9ba6a8;
+  font-size: 8px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 950px) {
+
+  .gamification-main {
+    margin-left: 180px;
+    padding: 0 22px 30px;
+  }
+
+  .gamification-sidebar {
+    width: 180px;
+  }
+
+  .challenge-grid,
+  .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 700px) {
+
+  .gamification-sidebar {
+    position: relative;
+
+    width: 100%;
+    height: auto;
+  }
+
+  .gamification-main {
+    margin-left: 0;
+  }
+
+  .gamification-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .g-language {
+    display: none;
+  }
+
+  .journey-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+
+@media (max-width: 480px) {
+
+  .gamification-main {
+    padding: 0 12px 25px;
+  }
+
+  .g-search {
+    width: 140px;
+  }
+
+  .journey-header h1 {
+    font-size: 19px;
+  }
+
+  .level-card {
+    padding: 12px;
+  }
+
+  .level-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}

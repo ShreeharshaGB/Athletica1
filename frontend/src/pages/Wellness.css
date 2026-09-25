@@ -1,0 +1,923 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #f5faf9;
+  color: #17343b;
+}
+
+button,
+select,
+input {
+  font-family: inherit;
+}
+
+
+/* =====================================
+   MAIN LAYOUT
+===================================== */
+
+.wellness-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5faf9;
+}
+
+
+/* =====================================
+   SIDEBAR
+===================================== */
+
+.wellness-sidebar {
+  width: 205px;
+  min-height: 100vh;
+
+  background: #ffffff;
+
+  border-right: 1px solid #e5eeee;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 13px 14px;
+
+  position: fixed;
+
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+
+/* BRAND */
+
+.wellness-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 4px 8px 28px;
+
+  color: #17343b;
+
+  font-size: 12px;
+
+  letter-spacing: 0.5px;
+}
+
+.wellness-logo {
+  width: 27px;
+  height: 27px;
+
+  border-radius: 7px;
+
+  background: linear-gradient(
+    135deg,
+    #009b78,
+    #43c9a7
+  );
+
+  color: white;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 17px;
+
+  font-weight: 800;
+}
+
+
+/* NAVIGATION */
+
+.wellness-navigation {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.sidebar-item {
+  width: 100%;
+
+  height: 38px;
+
+  border: none;
+
+  background: transparent;
+
+  border-radius: 9px;
+
+  padding: 0 11px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  color: #607278;
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition: 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background: #eef9f6;
+
+  color: #008d70;
+}
+
+.sidebar-item.active {
+  background: #dff7ef;
+
+  color: #008f70;
+
+  font-weight: 600;
+}
+
+.sidebar-icon {
+  width: 17px;
+
+  text-align: center;
+
+  font-size: 14px;
+}
+
+
+/* LANGUAGE */
+
+.wellness-language {
+  margin-top: auto;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #77888c;
+
+  font-size: 10px;
+
+  padding: 8px;
+}
+
+.language-arrow {
+  margin-left: auto;
+}
+
+
+/* =====================================
+   MAIN
+===================================== */
+
+.wellness-main {
+  margin-left: 205px;
+
+  width: calc(100% - 205px);
+
+  min-height: 100vh;
+}
+
+
+/* =====================================
+   TOP BAR
+===================================== */
+
+.wellness-topbar {
+  height: 66px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e9f0ef;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 0 31px;
+}
+
+.wellness-search {
+  width: 220px;
+
+  height: 32px;
+
+  border-radius: 17px;
+
+  background: #f3f8f8;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 12px;
+
+  color: #8a9b9f;
+}
+
+.wellness-search input {
+  width: 100%;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  font-size: 10px;
+}
+
+.wellness-search input::placeholder {
+  color: #9aabad;
+}
+
+.wellness-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 17px;
+}
+
+.notification-button {
+  border: none;
+
+  background: transparent;
+
+  color: #587176;
+
+  font-size: 17px;
+
+  cursor: pointer;
+}
+
+.profile-circle {
+  width: 27px;
+  height: 27px;
+
+  border-radius: 50%;
+
+  background: #008f70;
+
+  color: white;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+
+/* =====================================
+   PAGE CONTENT
+===================================== */
+
+.wellness-content {
+  padding: 25px 34px 45px;
+
+  max-width: 1000px;
+}
+
+
+/* HEADING */
+
+.wellness-heading {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+.wellness-heading h1 {
+  margin: 0;
+
+  font-size: 18px;
+
+  color: #17343b;
+
+  font-weight: 700;
+}
+
+.wellness-heading p {
+  margin: 5px 0 0;
+
+  color: #7a8c90;
+
+  font-size: 10px;
+}
+
+.wellness-date {
+  font-size: 9px;
+
+  color: #829397;
+
+  white-space: nowrap;
+}
+
+
+/* =====================================
+   WELLNESS METRICS
+===================================== */
+
+.wellness-metrics {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 10px;
+
+  margin-bottom: 15px;
+}
+
+.wellness-metric {
+  min-height: 72px;
+
+  border-radius: 11px;
+
+  border: 1px solid #e5eeee;
+
+  padding: 11px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  background: white;
+
+  box-shadow:
+    0 2px 8px rgba(20, 70, 60, 0.035);
+}
+
+
+/* CARD BACKGROUNDS */
+
+.wellness-metric.hydration {
+  background: #eff9ff;
+}
+
+.wellness-metric.sleep {
+  background: #f3f0ff;
+}
+
+.wellness-metric.mood {
+  background: #fff8e9;
+}
+
+.wellness-metric.stress {
+  background: #fff1fa;
+}
+
+.wellness-metric.nutrition {
+  background: #effbf6;
+}
+
+.wellness-metric.steps {
+  background: #eef8ff;
+}
+
+
+/* ICON */
+
+.metric-icon {
+  width: 31px;
+  height: 31px;
+
+  border-radius: 9px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 17px;
+}
+
+
+/* TEXT */
+
+.metric-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.metric-title {
+  color: #718286;
+
+  font-size: 8px;
+}
+
+.metric-content strong {
+  color: #17343b;
+
+  font-size: 13px;
+}
+
+.metric-subtitle {
+  color: #7e8f92;
+
+  font-size: 8px;
+}
+
+
+/* =====================================
+   DAILY WELLNESS CHECK
+===================================== */
+
+.wellness-check-section {
+  background: #ffffff;
+
+  border: 1px solid #e6eeee;
+
+  border-radius: 12px;
+
+  padding: 16px;
+
+  margin-bottom: 13px;
+
+  box-shadow:
+    0 2px 9px rgba(22, 70, 65, 0.035);
+}
+
+
+/* HEADING */
+
+.section-heading {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 13px;
+}
+
+.section-heading h2 {
+  margin: 0;
+
+  font-size: 13px;
+
+  color: #17343b;
+}
+
+.section-heading p {
+  margin: 4px 0 0;
+
+  font-size: 9px;
+
+  color: #829195;
+}
+
+.daily-badge {
+  padding: 5px 9px;
+
+  border-radius: 10px;
+
+  background: #e8f7f2;
+
+  color: #008f70;
+
+  font-size: 8px;
+
+  font-weight: 600;
+}
+
+
+/* =====================================
+   QUESTIONS
+===================================== */
+
+.wellness-questions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 9px;
+}
+
+.question-card {
+  min-height: 78px;
+
+  border: 1px solid #e8eeee;
+
+  border-radius: 10px;
+
+  padding: 11px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  background: #fbfdfd;
+}
+
+.question-icon {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 17px;
+}
+
+.water-question {
+  background: #e9f7ff;
+}
+
+.sleep-question {
+  background: #f1edff;
+}
+
+.meditation-question {
+  background: #fff0f8;
+}
+
+.mood-question {
+  background: #fff5df;
+}
+
+.question-content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.question-content label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #25454b;
+
+  font-size: 9px;
+
+  font-weight: 600;
+}
+
+
+/* DROPDOWN */
+
+.question-content select {
+  width: 100%;
+
+  height: 29px;
+
+  padding: 0 9px;
+
+  border: 1px solid #dce8e6;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #53696d;
+
+  outline: none;
+
+  font-size: 9px;
+
+  cursor: pointer;
+}
+
+.question-content select:focus {
+  border-color: #00a17d;
+
+  box-shadow:
+    0 0 0 2px rgba(0, 161, 125, 0.08);
+}
+
+
+/* SAVE BUTTON */
+
+.save-wellness-button {
+  width: 100%;
+
+  height: 34px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  margin-top: 12px;
+
+  background: #008f70;
+
+  color: #ffffff;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.save-wellness-button:hover {
+  background: #00785e;
+}
+
+.save-wellness-button:active {
+  transform: scale(0.99);
+}
+
+
+/* =====================================
+   EXISTING BOTTOM SECTION
+===================================== */
+
+.bottom-section {
+  display: grid;
+
+  grid-template-columns: 1.2fr 0.8fr;
+
+  gap: 12px;
+}
+
+
+/* WELLNESS CHECK CARD */
+
+.wellness-check-card,
+.ai-coach-card {
+  background: #ffffff;
+
+  border: 1px solid #e7eeee;
+
+  border-radius: 11px;
+
+  padding: 15px;
+
+  box-shadow:
+    0 2px 8px rgba(20, 70, 60, 0.035);
+}
+
+.card-heading h2 {
+  margin: 0;
+
+  font-size: 12px;
+
+  color: #17343b;
+}
+
+.card-heading p {
+  margin: 4px 0 13px;
+
+  font-size: 9px;
+
+  color: #829195;
+}
+
+
+/* MOODS */
+
+.mood-options {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 7px;
+}
+
+.mood-option {
+  height: 48px;
+
+  border: 1px solid #e5eeee;
+
+  background: #ffffff;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 2px;
+}
+
+.mood-option span {
+  font-size: 15px;
+}
+
+.mood-option small {
+  font-size: 7px;
+
+  color: #6f8084;
+}
+
+.mood-option:hover {
+  border-color: #00a17d;
+
+  background: #f0fbf8;
+}
+
+
+/* =====================================
+   AI COACH
+===================================== */
+
+.ai-coach-heading {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 8px;
+}
+
+.ai-coach-heading h2 {
+  margin: 0;
+
+  font-size: 12px;
+
+  color: #17343b;
+}
+
+.ai-icon {
+  width: 25px;
+  height: 25px;
+
+  border-radius: 50%;
+
+  background: #e6f5ff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 13px;
+}
+
+.ai-coach-card p {
+  margin: 0;
+
+  color: #718286;
+
+  font-size: 9px;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 900px) {
+
+  .wellness-sidebar {
+    width: 175px;
+  }
+
+  .wellness-main {
+    margin-left: 175px;
+
+    width: calc(100% - 175px);
+  }
+
+  .wellness-content {
+    padding: 25px 22px;
+  }
+
+  .wellness-metrics {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+}
+
+
+@media (max-width: 700px) {
+
+  .wellness-sidebar {
+    width: 64px;
+
+    padding: 15px 8px;
+  }
+
+  .wellness-brand strong,
+  .sidebar-item span:last-child,
+  .wellness-language span:not(:first-child) {
+    display: none;
+  }
+
+  .wellness-brand {
+    justify-content: center;
+
+    padding-bottom: 25px;
+  }
+
+  .sidebar-item {
+    justify-content: center;
+
+    padding: 0;
+  }
+
+  .wellness-main {
+    margin-left: 64px;
+
+    width: calc(100% - 64px);
+  }
+
+  .wellness-topbar {
+    padding: 0 15px;
+  }
+
+  .wellness-search {
+    width: 160px;
+  }
+
+  .wellness-content {
+    padding: 22px 15px;
+  }
+
+  .wellness-questions {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 500px) {
+
+  .wellness-heading {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+  .wellness-heading h1 {
+    font-size: 16px;
+  }
+
+  .wellness-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .mood-options {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .wellness-summary {
+    flex-direction: column;
+  }
+}

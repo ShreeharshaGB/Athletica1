@@ -1,0 +1,30 @@
+:root {
+  font-family: 'DM Sans', 'Avenir Next', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #173b3d;
+  background: #f7fbf8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+
+

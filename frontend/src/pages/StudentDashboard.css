@@ -1,0 +1,1023 @@
+/* ============================================================
+   ATHLETICA STUDENT DASHBOARD DESIGN SYSTEM
+   Modern, Clean, Fitness & Wellness Aesthetic
+   ============================================================ */
+
+:root {
+  --ath-primary: #0f766e;
+  --ath-primary-hover: #0d655e;
+  --ath-primary-light: #e6f7f2;
+  --ath-primary-subtle: #f0fdf9;
+  --ath-accent-orange: #f97316;
+  --ath-accent-orange-light: #fff7ed;
+  --ath-accent-blue: #3b82f6;
+  --ath-accent-blue-light: #eff6ff;
+  --ath-accent-purple: #8b5cf6;
+  --ath-accent-purple-light: #f5f3ff;
+  --ath-dark: #0f172a;
+  --ath-text: #1e293b;
+  --ath-text-muted: #64748b;
+  --ath-text-light: #94a3b8;
+  --ath-border: #e2e8f0;
+  --ath-border-subtle: #f1f5f9;
+  --ath-bg: #f8fafc;
+  --ath-card-bg: #ffffff;
+  --ath-radius: 16px;
+  --ath-radius-sm: 10px;
+  --ath-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --ath-shadow-md: 0 4px 16px rgba(15, 23, 42, 0.05), 0 2px 6px rgba(15, 23, 42, 0.03);
+  --ath-sidebar-w: 260px;
+}
+
+/* App Container */
+.ath-dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--ath-bg);
+  color: var(--ath-text);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.ath-sidebar {
+  width: var(--ath-sidebar-w);
+  background: #ffffff;
+  border-right: 1px solid var(--ath-border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  transition: transform 0.25s ease;
+}
+
+.ath-sidebar-brand {
+  height: 76px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  border-bottom: 1px solid var(--ath-border-subtle);
+  text-decoration: none;
+}
+
+.ath-brand-badge {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.05em;
+  box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);
+}
+
+.ath-brand-badge span {
+  font-size: 0.75rem;
+  color: #a7f3d0;
+  margin-left: 1px;
+}
+
+.ath-brand-text h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--ath-dark);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.ath-brand-text span {
+  font-size: 0.7rem;
+  color: var(--ath-text-muted);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.ath-sidebar-nav {
+  flex: 1;
+  padding: 16px 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ath-nav-section-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ath-text-light);
+  padding: 8px 12px 4px;
+  margin-top: 4px;
+}
+
+.ath-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--ath-radius-sm);
+  color: var(--ath-text-muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ath-nav-item:hover {
+  background: var(--ath-border-subtle);
+  color: var(--ath-dark);
+}
+
+.ath-nav-item.active {
+  background: var(--ath-primary-light);
+  color: var(--ath-primary);
+  font-weight: 700;
+}
+
+.ath-nav-item svg {
+  flex-shrink: 0;
+}
+
+.ath-sidebar-footer {
+  padding: 14px 12px;
+  border-top: 1px solid var(--ath-border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ============================================================
+   MAIN CONTENT WRAPPER
+   ============================================================ */
+.ath-main-wrapper {
+  flex: 1;
+  margin-left: var(--ath-sidebar-w);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.ath-topbar {
+  height: 72px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--ath-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.ath-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ath-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--ath-dark);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.ath-topbar-heading h1 {
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: var(--ath-dark);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ath-topbar-heading p {
+  font-size: 0.8rem;
+  color: var(--ath-text-muted);
+  margin: 2px 0 0;
+}
+
+.ath-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ath-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--ath-border);
+  background: #ffffff;
+  color: var(--ath-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.ath-icon-btn:hover {
+  background: var(--ath-border-subtle);
+  color: var(--ath-dark);
+  border-color: #cbd5e1;
+}
+
+.ath-notify-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ath-accent-orange);
+  border: 2px solid #ffffff;
+}
+
+.ath-user-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ath-bg);
+  border: 1px solid var(--ath-border);
+  padding: 5px 12px 5px 6px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ath-user-profile-btn:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.ath-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.ath-user-meta {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.ath-user-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ath-dark);
+  line-height: 1.1;
+}
+
+.ath-user-role {
+  font-size: 0.68rem;
+  color: var(--ath-primary);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* ============================================================
+   DASHBOARD BODY
+   ============================================================ */
+.ath-dashboard-body {
+  padding: 28px 32px 48px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ============================================================
+   HERO / DAILY SUMMARY
+   ============================================================ */
+.ath-hero-banner {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+  border-radius: var(--ath-radius);
+  padding: 24px 28px;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 118, 110, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ath-hero-banner::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.3) 0%, rgba(20, 184, 166, 0) 70%);
+  pointer-events: none;
+}
+
+.ath-hero-content {
+  max-width: 600px;
+  position: relative;
+  z-index: 1;
+}
+
+.ath-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.ath-hero-title {
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  margin: 0 0 6px;
+  line-height: 1.15;
+}
+
+.ath-hero-subtitle {
+  font-size: 0.92rem;
+  color: #ccfbf1;
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.ath-hero-stats-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ath-hero-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
+.ath-hero-chip strong {
+  color: #5eead4;
+  font-weight: 700;
+}
+
+.ath-hero-action {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.ath-hero-btn {
+  background: #ffffff;
+  color: var(--ath-primary);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+}
+
+.ath-hero-btn:hover {
+  background: #f0fdf9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* ============================================================
+   METRICS GRID (3-4 Cards)
+   ============================================================ */
+.ath-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.ath-metric-card {
+  background: var(--ath-card-bg);
+  border: 1px solid var(--ath-border);
+  border-radius: var(--ath-radius);
+  padding: 20px 22px;
+  box-shadow: var(--ath-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.ath-metric-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: var(--ath-shadow-md);
+}
+
+.ath-metric-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.ath-metric-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ath-metric-icon.teal { background: var(--ath-primary-light); color: var(--ath-primary); }
+.ath-metric-icon.orange { background: var(--ath-accent-orange-light); color: var(--ath-accent-orange); }
+.ath-metric-icon.blue { background: var(--ath-accent-blue-light); color: var(--ath-accent-blue); }
+.ath-metric-icon.purple { background: var(--ath-accent-purple-light); color: var(--ath-accent-purple); }
+
+.ath-metric-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--ath-bg);
+  color: var(--ath-text-muted);
+}
+
+.ath-metric-tag.positive {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.ath-metric-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ath-text-muted);
+  margin-bottom: 6px;
+}
+
+.ath-metric-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ath-metric-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--ath-dark);
+  line-height: 1;
+}
+
+.ath-metric-sub {
+  font-size: 0.78rem;
+  color: var(--ath-text-muted);
+}
+
+.ath-metric-empty {
+  font-size: 0.82rem;
+  color: var(--ath-text-muted);
+  line-height: 1.45;
+  margin-top: 4px;
+}
+
+.ath-metric-cta-link {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ath-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.ath-metric-cta-link:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   TWO-COLUMN CONTENT SECTION
+   ============================================================ */
+.ath-two-col-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 992px) {
+  .ath-two-col-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Section Box */
+.ath-card {
+  background: var(--ath-card-bg);
+  border: 1px solid var(--ath-border);
+  border-radius: var(--ath-radius);
+  padding: 24px;
+  box-shadow: var(--ath-shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.ath-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.ath-card-header h2 {
+  font-size: 1.1rem;
+  font-weight: 750;
+  color: var(--ath-dark);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ath-card-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ath-primary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ath-card-link:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   TODAY'S WORKOUT SECTION
+   ============================================================ */
+.ath-workout-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ath-workout-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.ath-workout-info h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--ath-dark);
+  margin: 0 0 8px;
+}
+
+.ath-workout-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.82rem;
+  color: var(--ath-text-muted);
+  margin-bottom: 14px;
+}
+
+.ath-workout-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ath-exercises-list {
+  background: var(--ath-bg);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ath-exercise-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.ath-exercise-name {
+  font-weight: 600;
+  color: var(--ath-text);
+}
+
+.ath-exercise-reps {
+  color: var(--ath-text-muted);
+  font-size: 0.78rem;
+}
+
+.ath-start-workout-btn {
+  background: var(--ath-primary);
+  color: #ffffff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  width: 100%;
+}
+
+.ath-start-workout-btn:hover {
+  background: var(--ath-primary-hover);
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+}
+
+/* ============================================================
+   NUTRITION CARD
+   ============================================================ */
+.ath-nutrition-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ath-nutrition-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ath-nutrition-title {
+  font-size: 1rem;
+  font-weight: 750;
+  color: var(--ath-dark);
+  margin: 0;
+}
+
+.ath-nutrition-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.ath-nutrition-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ath-nutri-item {
+  background: var(--ath-bg);
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.ath-nutri-label {
+  font-size: 0.72rem;
+  color: var(--ath-text-muted);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.ath-nutri-val {
+  font-size: 0.88rem;
+  font-weight: 750;
+  color: var(--ath-dark);
+}
+
+/* ============================================================
+   PROGRESS SECTION (WEEKLY VISUALIZER)
+   ============================================================ */
+.ath-weekly-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ath-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.ath-day-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ath-day-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ath-text-muted);
+}
+
+.ath-day-indicator {
+  width: 100%;
+  height: 52px;
+  background: var(--ath-bg);
+  border: 1px solid var(--ath-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ath-text-light);
+  transition: all 0.15s ease;
+}
+
+.ath-day-indicator.completed {
+  background: var(--ath-primary-light);
+  border-color: #a7f3d0;
+  color: var(--ath-primary);
+}
+
+.ath-day-indicator.today {
+  border: 2px solid var(--ath-primary);
+  color: var(--ath-primary);
+  font-weight: 800;
+}
+
+/* ============================================================
+   QUICK ACTIONS SECTION
+   ============================================================ */
+.ath-quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.ath-quick-btn {
+  background: #ffffff;
+  border: 1px solid var(--ath-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ath-dark);
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: all 0.2s ease;
+  box-shadow: var(--ath-shadow-sm);
+}
+
+.ath-quick-btn:hover {
+  border-color: var(--ath-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.08);
+  color: var(--ath-primary);
+}
+
+.ath-quick-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ath-quick-btn span {
+  flex: 1;
+}
+
+.ath-quick-arrow {
+  color: var(--ath-text-light);
+  transition: transform 0.15s ease;
+}
+
+.ath-quick-btn:hover .ath-quick-arrow {
+  transform: translateX(3px);
+  color: var(--ath-primary);
+}
+
+/* ============================================================
+   EMPTY STATES
+   ============================================================ */
+.ath-empty-box {
+  padding: 24px 20px;
+  text-align: center;
+  background: var(--ath-bg);
+  border: 1px dashed var(--ath-border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.ath-empty-box p {
+  font-size: 0.88rem;
+  color: var(--ath-text-muted);
+  max-width: 380px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ath-empty-cta {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--ath-primary);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.ath-empty-cta:hover {
+  background: var(--ath-primary-hover);
+}
+
+/* ============================================================
+   LOADING & ERROR STATES
+   ============================================================ */
+.ath-status-screen {
+  display: flex;
+  min-height: calc(100vh - 72px);
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.ath-status-box {
+  text-align: center;
+  max-width: 440px;
+  background: #ffffff;
+  padding: 36px 32px;
+  border-radius: 16px;
+  border: 1px solid var(--ath-border);
+  box-shadow: var(--ath-shadow-md);
+}
+
+.ath-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid #e2e8f0;
+  border-top-color: var(--ath-primary);
+  border-radius: 50%;
+  animation: ath-spin 0.8s linear infinite;
+  margin: 0 auto 18px;
+}
+
+@keyframes ath-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   RESPONSIVE QUERIES
+   ============================================================ */
+@media (max-width: 1024px) {
+  :root {
+    --ath-sidebar-w: 0px;
+  }
+
+  .ath-sidebar {
+    transform: translateX(-100%);
+    width: 260px;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .ath-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .ath-main-wrapper {
+    margin-left: 0;
+  }
+
+  .ath-mobile-toggle {
+    display: flex;
+  }
+
+  .ath-topbar {
+    padding: 0 20px;
+  }
+
+  .ath-dashboard-body {
+    padding: 20px 20px 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ath-hero-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .ath-hero-action {
+    width: 100%;
+  }
+
+  .ath-hero-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ath-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ath-quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ath-topbar-heading h1 {
+    font-size: 1rem;
+  }
+
+  .ath-user-meta {
+    display: none;
+  }
+}
