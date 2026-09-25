@@ -38,6 +38,18 @@ const teacherNavItems = [
   { label: 'Students', path: '/teacher/dashboard#students', icon: Users, hash: '#students' },
 ]
 
+const communityNavItems = [
+  { label: 'Community Hub', path: '/community/dashboard', icon: LayoutDashboard },
+  { label: 'Challenges', path: '/community/dashboard#challenges', icon: Trophy, hash: '#challenges' },
+  { label: 'Leaderboard', path: '/community/dashboard#leaderboard', icon: Award, hash: '#leaderboard' },
+  { label: 'Members', path: '/community/dashboard#members', icon: Users, hash: '#members' },
+  { label: 'Fitness Assessment', path: '/student/assessment', icon: ClipboardCheck },
+  { label: 'Physique Analysis', path: '/student/physique-analysis', icon: Sparkles },
+  { label: 'Nutrition', path: '/student/nutrition', icon: Apple },
+  { label: 'Workout Plan', path: '/student/workout', icon: Dumbbell },
+  { label: 'Progress', path: '/student/progress', icon: TrendingUp },
+]
+
 export default function StudentAppLayout({
   children,
   pageTitle,
@@ -51,9 +63,14 @@ export default function StudentAppLayout({
   const { user, logout } = useAuth()
 
   const isTeacher = user?.role === 'teacher'
-  const userName = user?.name || (isTeacher ? 'Faculty Coach' : 'Athlete')
-  const navItems = isTeacher ? teacherNavItems : studentNavItems
-  const defaultEyebrow = isTeacher ? 'ATHLETICA FACULTY PORTAL' : 'ATHLETICA STUDENT PORTAL'
+  const isCommunity = user?.role === 'community'
+  const userName = user?.name || (isTeacher ? 'Faculty Coach' : isCommunity ? 'Community Athlete' : 'Athlete')
+  const navItems = isTeacher ? teacherNavItems : isCommunity ? communityNavItems : studentNavItems
+  const defaultEyebrow = isTeacher
+    ? 'ATHLETICA FACULTY PORTAL'
+    : isCommunity
+    ? `ATHLETICA COMMUNITY • ${user?.communityId || 'MEMBER'}`
+    : 'ATHLETICA STUDENT PORTAL'
 
   const handleNavClick = (path) => {
     setMobileMenuOpen(false)
@@ -97,11 +114,19 @@ export default function StudentAppLayout({
           </div>
           <div className="ath-brand-text">
             <h2>ATHLETICA</h2>
-            <span>{isTeacher ? 'Faculty & Institution' : 'Fitness & Wellness'}</span>
+            <span>
+              {isTeacher
+                ? 'Faculty & Institution'
+                : isCommunity
+                ? `Community • ${user?.communityId || 'Member'}`
+                : 'Fitness & Wellness'}
+            </span>
           </div>
         </Link>
 
-        <p className="ath-sidebar-menu-kicker">{isTeacher ? 'Faculty Portal' : 'Menu'}</p>
+        <p className="ath-sidebar-menu-kicker">
+          {isTeacher ? 'Faculty Portal' : isCommunity ? 'Community Hub' : 'Menu'}
+        </p>
 
         <nav className="ath-sidebar-nav" aria-label={isTeacher ? 'Faculty Navigation' : 'Student Navigation'}>
           {navItems.map((item) => {
@@ -171,6 +196,8 @@ export default function StudentAppLayout({
                 {pageSubtitle ||
                   (isTeacher
                     ? `Faculty Portal • Institution: ${user?.institutionId || 'General'}`
+                    : isCommunity
+                    ? `Community Portal • ${user?.communityId || 'General'}`
                     : 'Ready to improve your fitness today?')}
               </p>
             </div>
@@ -190,13 +217,26 @@ export default function StudentAppLayout({
             </button>
 
             <div className="ath-user-profile-btn" style={{ cursor: 'default' }}>
-              <div className="ath-avatar" style={isTeacher ? { background: '#0f766e' } : undefined}>
+              <div
+                className="ath-avatar"
+                style={
+                  isTeacher
+                    ? { background: '#0f766e' }
+                    : isCommunity
+                    ? { background: '#d97706' }
+                    : undefined
+                }
+              >
                 {userName.charAt(0).toUpperCase()}
               </div>
               <div className="ath-user-meta">
                 <span className="ath-user-name">{userName}</span>
                 <span className="ath-user-role">
-                  {isTeacher ? `Teacher • ${user?.institutionId || 'Faculty'}` : 'Student Athlete'}
+                  {isTeacher
+                    ? `Teacher • ${user?.institutionId || 'Faculty'}`
+                    : isCommunity
+                    ? `Community • ${user?.communityId || 'Member'}`
+                    : 'Student Athlete'}
                 </span>
               </div>
             </div>

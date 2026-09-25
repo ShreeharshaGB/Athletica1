@@ -30,11 +30,19 @@ const userSchema = new mongoose.Schema(
       uppercase: true,
       default: null,
     },
+    communityId: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      default: null,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.index({ communityId: 1, role: 1 });
 
 const User = mongoose.model('User', userSchema);
 

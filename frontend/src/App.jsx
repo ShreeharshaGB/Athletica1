@@ -17,6 +17,7 @@ import TeacherDashboard from './pages/teacher_dashboard.jsx'
 import Gamification from './pages/gamification.jsx'
 import TalentDiscovery from './pages/talent_discovery.jsx'
 import PhysiqueAnalysis from './pages/PhysiqueAnalysis.jsx'
+import CommunityDashboard from './pages/CommunityDashboard.jsx'
 
 function DashboardRedirect() {
   const { isAuthenticated, user, isInitializing } = useAuth()
@@ -34,7 +35,7 @@ function DashboardRedirect() {
   }
 
   if (user?.role === 'community') {
-    return <Navigate to="/community/portal" replace />
+    return <Navigate to="/community/dashboard" replace />
   }
 
   return <Navigate to="/student/dashboard" replace />
@@ -151,9 +152,13 @@ function AppRoutes() {
       {/* Universal Dashboard Redirect */}
       <Route path="/dashboard" element={<DashboardRedirect />} />
 
-      {/* Protected Student Routes */}
+      {/* Protected Student-Only Route */}
       <Route element={<ProtectedRoute allowedRoles={['student']} redirectTo="/student/login" />}>
         <Route path="/student/dashboard" element={<StudentDashboard />} />
+      </Route>
+
+      {/* Shared Personal Fitness Routes (Student & Community) */}
+      <Route element={<ProtectedRoute allowedRoles={['student', 'community']} redirectTo="/student/login" />}>
         <Route path="/student/physique-analysis" element={<PhysiqueAnalysis />} />
         <Route path="/student/assessment" element={<StudentAssessment />} />
         <Route path="/student/fitness-result" element={<FitnessPassport />} />
@@ -173,8 +178,8 @@ function AppRoutes() {
 
       {/* Protected Community Routes */}
       <Route element={<ProtectedRoute allowedRoles={['community']} redirectTo="/community/login" />}>
-        <Route path="/community/portal" element={<CommunityPortal />} />
-        <Route path="/community/dashboard" element={<CommunityPortal />} />
+        <Route path="/community/dashboard" element={<CommunityDashboard />} />
+        <Route path="/community/portal" element={<Navigate to="/community/dashboard" replace />} />
       </Route>
 
       {/* Catch-all */}

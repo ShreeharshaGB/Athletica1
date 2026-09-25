@@ -16,10 +16,17 @@ const activityParticipationSchema = new mongoose.Schema(
     },
     institutionId: {
       type: String,
-      required: true,
       uppercase: true,
       trim: true,
       index: true,
+      default: null,
+    },
+    communityId: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      index: true,
+      default: null,
     },
     joinedAt: {
       type: Date,

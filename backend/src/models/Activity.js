@@ -21,10 +21,17 @@ const activitySchema = new mongoose.Schema(
     },
     institutionId: {
       type: String,
-      required: true,
       uppercase: true,
       trim: true,
       index: true,
+      default: null,
+    },
+    communityId: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      index: true,
+      default: null,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

@@ -1,0 +1,466 @@
+/* ============================================================
+   ATHLETICA COMMUNITY DASHBOARD STYLES
+   Dark UI, Emerald/Teal Accents, Rounded Cards, Responsive
+   ============================================================ */
+
+.community-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 1160px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Banner */
+.community-hero-banner {
+  background: linear-gradient(135deg, #0f172a 0%, #134e4a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 32px 36px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+}
+
+.community-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(45, 212, 191, 0.15);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 9999px;
+  font-size: 0.76rem;
+  font-weight: 750;
+  color: #2dd4bf;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.community-hero-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 10px 0 6px;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.community-hero-desc {
+  font-size: 0.92rem;
+  color: #ccfbf1;
+  margin: 0;
+  max-width: 580px;
+  line-height: 1.5;
+}
+
+/* 4 STATS ROW */
+.community-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .community-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .community-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.community-stat-card {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 22px;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.community-stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.community-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0f766e, #10b981);
+}
+
+.community-stat-card.teal::before {
+  background: linear-gradient(90deg, #0f766e, #2dd4bf);
+}
+
+.community-stat-card.amber::before {
+  background: linear-gradient(90deg, #d97706, #fbbf24);
+}
+
+.community-stat-card.purple::before {
+  background: linear-gradient(90deg, #7c3aed, #a78bfa);
+}
+
+.community-stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.community-stat-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.community-stat-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(15, 118, 110, 0.2);
+  color: #2dd4bf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.community-stat-icon-wrap.amber {
+  background: rgba(217, 119, 6, 0.2);
+  color: #fbbf24;
+}
+
+.community-stat-icon-wrap.purple {
+  background: rgba(124, 58, 237, 0.2);
+  color: #a78bfa;
+}
+
+.community-stat-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+}
+
+.community-stat-sub {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* CARDS */
+.community-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.community-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.community-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* CHALLENGES GRID */
+.community-challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.community-challenge-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.community-challenge-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.challenge-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.challenge-title {
+  font-size: 1.1rem;
+  font-weight: 750;
+  color: #0f172a;
+  margin: 0 0 6px;
+}
+
+.challenge-desc {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.challenge-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+  font-size: 0.78rem;
+  color: #64748b;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.challenge-points-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  color: #0f766e;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-weight: 750;
+  font-size: 0.8rem;
+}
+
+/* LEADERBOARD TABLE */
+.community-leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.community-leaderboard-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  padding: 10px 14px;
+  border-bottom: 2px solid #f1f5f9;
+  letter-spacing: 0.05em;
+}
+
+.community-leaderboard-table td {
+  padding: 14px;
+  font-size: 0.88rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.leaderboard-row.current-user {
+  background: #f0fdfa;
+  font-weight: 700;
+}
+
+.leaderboard-row:hover {
+  background: #f8fafc;
+}
+
+.leaderboard-rank-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.leaderboard-rank-badge.rank-1 {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.leaderboard-rank-badge.rank-2 {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.leaderboard-rank-badge.rank-3 {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.leaderboard-rank-badge.rank-other {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+/* MY FITNESS QUICK LAUNCH */
+.fitness-launch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.fitness-launch-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.fitness-launch-card:hover {
+  background: #ffffff;
+  border-color: #0f766e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.12);
+}
+
+.fitness-launch-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #e6f7f2;
+  color: #0f766e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fitness-launch-title {
+  font-size: 0.95rem;
+  font-weight: 750;
+  color: #0f172a;
+  margin: 0;
+}
+
+.fitness-launch-desc {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* RECENT COMMUNITY ACTIVITY FEED */
+.community-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.community-feed-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  font-size: 0.85rem;
+}
+
+.community-feed-icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e6f7f2;
+  color: #0f766e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.community-feed-text {
+  flex: 1;
+  color: #334155;
+  margin: 0;
+}
+
+.community-feed-time {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* CREATE CHALLENGE MODAL */
+.create-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.create-modal-card {
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.create-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+}
+
+.create-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

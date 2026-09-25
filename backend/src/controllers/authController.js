@@ -4,7 +4,7 @@ import User from '../models/User.js';
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role, institutionId } = req.body;
+    const { name, email, password, role, institutionId, communityId } = req.body;
 
     if (
       !name ||
@@ -38,6 +38,14 @@ export const register = async (req, res) => {
       }
     }
 
+    if (role === 'community') {
+      if (!communityId || typeof communityId !== 'string' || !communityId.trim()) {
+        return res.status(400).json({
+          message: 'Community ID is required for community registration'
+        });
+      }
+    }
+
     const normalizedEmail = email.trim().toLowerCase();
     if (!/^\S+@\S+\.\S+$/.test(normalizedEmail)) {
       return res.status(400).json({ message: 'A valid email address is required' });
@@ -58,12 +66,18 @@ export const register = async (req, res) => {
         ? institutionId.trim().toUpperCase()
         : null;
 
+    const normalizedCommunityId =
+      communityId && typeof communityId === 'string' && communityId.trim()
+        ? communityId.trim().toUpperCase()
+        : null;
+
     const user = await User.create({
       name: name.trim(),
       email: normalizedEmail,
       password: hashedPassword,
       role,
-      institutionId: normalizedInstitutionId
+      institutionId: normalizedInstitutionId,
+      communityId: normalizedCommunityId,
     });
 
     return res.status(201).json({
@@ -73,7 +87,8 @@ export const register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        institutionId: user.institutionId || null
+        institutionId: user.institutionId || null,
+        communityId: user.communityId || null,
       }
     });
   } catch (error) {
@@ -135,7 +150,12 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      {
+        id: user._id,
+        role: user.role,
+        institutionId: user.institutionId || null,
+        communityId: user.communityId || null,
+      },
       jwtSecret,
       { expiresIn: '7d' }
     );
@@ -148,7 +168,8 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        institutionId: user.institutionId || null
+        institutionId: user.institutionId || null,
+        communityId: user.communityId || null,
       }
     });
   } catch (error) {

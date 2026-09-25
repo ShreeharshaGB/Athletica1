@@ -12,8 +12,8 @@ import {
 
 const router = Router();
 
-// Protect all nutrition endpoints: authenticated student only
-router.use(authenticate, requireRole('student'));
+// Protect all nutrition endpoints: authenticated student or community member
+router.use(authenticate, requireRole('student', 'community'));
 
 router.post('/analyze', uploadSingleImage('image'), analyzeFood);
 router.post('/describe', describeFood);

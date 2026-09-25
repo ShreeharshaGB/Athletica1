@@ -9,8 +9,8 @@ import {
 
 const router = Router();
 
-// Protect all routes: must be authenticated student
-router.use(authenticate, requireRole('student'));
+// Protect all routes: must be authenticated student or community member
+router.use(authenticate, requireRole('student', 'community'));
 
 router.get('/', getLatestAnalysis);
 router.post('/', uploadSingleImage('image'), analyzePhysique);

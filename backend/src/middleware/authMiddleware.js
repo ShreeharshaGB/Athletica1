@@ -38,7 +38,9 @@ export const authenticate = (req, res, next) => {
 
     req.user = {
       id: decoded.id,
-      role: decoded.role
+      role: decoded.role,
+      institutionId: decoded.institutionId || null,
+      communityId: decoded.communityId || null,
     };
 
     next();

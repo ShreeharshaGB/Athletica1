@@ -52,6 +52,7 @@ export default function Login({ initialRole = 'student', onLogin }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [institutionId, setInstitutionId] = useState('')
+  const [communityId, setCommunityId] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [feedback, setFeedback] = useState('')
   const [feedbackType, setFeedbackType] = useState('error') // 'error' or 'success'
@@ -100,6 +101,12 @@ export default function Login({ initialRole = 'student', onLogin }) {
       return false
     }
 
+    if (isRegistering && role === 'community' && !communityId.trim()) {
+      setFeedback('Please enter your Community ID (e.g. MANGALORE-FITNESS).')
+      setFeedbackType('error')
+      return false
+    }
+
     return true
   }
 
@@ -116,19 +123,21 @@ export default function Login({ initialRole = 'student', onLogin }) {
     setLoading(true)
 
     try {
+      const payload = isRegistering
+        ? {
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            password,
+            role,
+            ...(role === 'community'
+              ? { communityId: communityId.trim().toUpperCase() }
+              : { institutionId: institutionId.trim().toUpperCase() }),
+          }
+        : { email: email.trim().toLowerCase(), password, role }
+
       const data = await apiRequest(isRegistering ? '/auth/register' : '/auth/login', {
         method: 'POST',
-        body: JSON.stringify(
-          isRegistering
-            ? {
-                name: name.trim(),
-                email: email.trim().toLowerCase(),
-                password,
-                role,
-                institutionId: institutionId.trim().toUpperCase(),
-              }
-            : { email: email.trim().toLowerCase(), password, role }
-        ),
+        body: JSON.stringify(payload),
       })
 
       if (isRegistering) {
@@ -137,6 +146,7 @@ export default function Login({ initialRole = 'student', onLogin }) {
         setFeedbackType('success')
         setPassword('')
         setInstitutionId('')
+        setCommunityId('')
         return
       }
 
@@ -155,7 +165,7 @@ export default function Login({ initialRole = 'student', onLogin }) {
         } else if (data.user.role === 'teacher') {
           navigate('/teacher/dashboard', { replace: true })
         } else if (data.user.role === 'community') {
-          navigate('/community/portal', { replace: true })
+          navigate('/community/dashboard', { replace: true })
         } else {
           navigate('/student/dashboard', { replace: true })
         }
@@ -311,6 +321,22 @@ export default function Login({ initialRole = 'student', onLogin }) {
                     placeholder="e.g. COLLEGE-001"
                     value={institutionId}
                     onChange={(event) => { setInstitutionId(event.target.value.toUpperCase()); setFeedback('') }}
+                  />
+                </div>
+              </>
+            )}
+
+            {isRegistering && role === 'community' && (
+              <>
+                <label className="field-label" htmlFor="communityId">Community ID</label>
+                <div className="input-field">
+                  <Icon name="building" size={18} />
+                  <input
+                    id="communityId"
+                    type="text"
+                    placeholder="e.g. MANGALORE-FITNESS"
+                    value={communityId}
+                    onChange={(event) => { setCommunityId(event.target.value.toUpperCase()); setFeedback('') }}
                   />
                 </div>
               </>

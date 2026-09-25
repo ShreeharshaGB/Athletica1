@@ -8,6 +8,7 @@ import teacherRoutes from './routes/teacherRoutes.js';
 import physiqueAnalysisRoutes from './routes/physiqueAnalysisRoutes.js';
 import studentActivityRoutes from './routes/studentActivityRoutes.js';
 import nutritionRoutes from './routes/nutritionRoutes.js';
+import communityRoutes from './routes/communityRoutes.js';
 
 const app = express();
 
@@ -68,6 +69,7 @@ app.use('/api/student/physique-analysis', physiqueAnalysisRoutes);
 app.use('/api/student/activities', studentActivityRoutes);
 app.use('/api/student/nutrition', nutritionRoutes);
 app.use('/api/teacher', teacherRoutes);
+app.use('/api/community', communityRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
