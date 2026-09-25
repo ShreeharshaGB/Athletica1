@@ -16,6 +16,7 @@ import Progress from './pages/progress.jsx'
 import TeacherDashboard from './pages/teacher_dashboard.jsx'
 import Gamification from './pages/gamification.jsx'
 import TalentDiscovery from './pages/talent_discovery.jsx'
+import PhysiqueAnalysis from './pages/PhysiqueAnalysis.jsx'
 
 function DashboardRedirect() {
   const { isAuthenticated, user, isInitializing } = useAuth()
@@ -153,6 +154,7 @@ function AppRoutes() {
       {/* Protected Student Routes */}
       <Route element={<ProtectedRoute allowedRoles={['student']} redirectTo="/student/login" />}>
         <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route path="/student/physique-analysis" element={<PhysiqueAnalysis />} />
         <Route path="/student/assessment" element={<StudentAssessment />} />
         <Route path="/student/fitness-result" element={<FitnessPassport />} />
         <Route path="/student/workout" element={<WorkoutPlan />} />

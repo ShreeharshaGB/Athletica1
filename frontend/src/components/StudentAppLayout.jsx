@@ -16,11 +16,13 @@ import {
   Bell,
   Menu,
   X,
+  Sparkles,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const studentNavItems = [
   { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
+  { label: 'Physique Analysis', path: '/student/physique-analysis', icon: Sparkles },
   { label: 'Fitness Assessment', path: '/student/assessment', icon: ClipboardCheck },
   { label: 'Workout Plan', path: '/student/workout', icon: Dumbbell },
   { label: 'Nutrition', path: '/student/nutrition', icon: Apple },

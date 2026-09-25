@@ -567,6 +567,19 @@ export default function StudentDashboard() {
                 </div>
               </Link>
 
+              <Link to="/student/physique-analysis" style={{ textDecoration: 'none' }}>
+                <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%', border: '1px solid #ccfbf1' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#e6f7f2', color: '#0f766e', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Sparkles size={20} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f766e' }}>AI Physique Analysis</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>Visual posture & conditioning</div>
+                  </div>
+                  <ArrowRight size={16} color="#0f766e" />
+                </div>
+              </Link>
+
               <Link to="/student/workout" style={{ textDecoration: 'none' }}>
                 <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff7ed', color: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

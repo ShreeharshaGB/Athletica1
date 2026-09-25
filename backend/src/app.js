@@ -5,6 +5,7 @@ import studentProfileRoutes from './routes/studentProfileRoutes.js';
 import fitnessAssessmentRoutes from './routes/fitnessAssessmentRoutes.js';
 import workoutPlanRoutes from './routes/workoutPlanRoutes.js';
 import teacherRoutes from './routes/teacherRoutes.js';
+import physiqueAnalysisRoutes from './routes/physiqueAnalysisRoutes.js';
 
 const app = express();
 
@@ -61,6 +62,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/student/profile', studentProfileRoutes);
 app.use('/api/student/assessment', fitnessAssessmentRoutes);
 app.use('/api/student/workout-plan', workoutPlanRoutes);
+app.use('/api/student/physique-analysis', physiqueAnalysisRoutes);
 app.use('/api/teacher', teacherRoutes);
 
 app.use((req, res) => {
