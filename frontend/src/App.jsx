@@ -157,18 +157,6 @@ function AppRoutes() {
       <Route path="/community/login" element={<Login initialRole="community" />} />
       <Route path="/login" element={<Navigate to="/roles" replace />} />
 
-      {/* Local camera testing only; production always requires authentication. */}
-      <Route
-        path="/student/form-check"
-        element={import.meta.env.DEV ? <FormCheck /> : <Navigate to="/student/login" replace />}
-      />
-
-      {/* Local AI Coach UI testing only; production always requires authentication. */}
-      <Route
-        path="/student/coach"
-        element={import.meta.env.DEV ? <Coach /> : <Navigate to="/student/login" replace />}
-      />
-
       {/* Universal Dashboard Redirect */}
       <Route path="/dashboard" element={<DashboardRedirect />} />
 
@@ -177,13 +165,14 @@ function AppRoutes() {
         <Route path="/student/dashboard" element={<StudentDashboard />} />
       </Route>
 
-      {/* Shared Personal Fitness Routes (Student & Community) */}
+      {/* Shared Personal Fitness Routes (Student & Community & Teacher) */}
       <Route element={<ProtectedRoute allowedRoles={['student', 'community', 'teacher']} redirectTo="/student/login" />}>
         <Route path="/student/physique-analysis" element={<PhysiqueAnalysis />} />
         <Route path="/student/assessment" element={<StudentAssessment />} />
         <Route path="/student/fitness-result" element={<FitnessPassport />} />
         <Route path="/student/workout" element={<WorkoutPlan />} />
         <Route path="/student/form-check" element={<FormCheck />} />
+        <Route path="/student/coach" element={<Coach />} />
         <Route path="/student/nutrition" element={<Nutrition />} />
         <Route path="/student/wellness" element={<Wellness />} />
         <Route path="/student/progress" element={<Progress />} />

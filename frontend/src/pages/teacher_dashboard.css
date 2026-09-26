@@ -240,7 +240,8 @@
 }
 
 .ath-modal-dialog {
-  background: #ffffff;
+  background: var(--ath-surface, #ffffff);
+  border: 1px solid var(--ath-border, #e2e8f0);
   border-radius: var(--ath-radius-lg, 20px);
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
   width: 100%;
@@ -258,7 +259,7 @@
   justify-content: space-between;
   padding: 20px 24px;
   border-bottom: 1px solid var(--ath-border, #e2e8f0);
-  background: #f8fafc;
+  background: var(--ath-surface-hover, #f8fafc);
 }
 
 .ath-modal-header h3 {
@@ -307,8 +308,8 @@
 }
 
 .modal-info-card {
-  background: #f8fafc;
-  border: 1px solid var(--ath-border-subtle, #f1f5f9);
+  background: var(--ath-bg, #f8fafc);
+  border: 1px solid var(--ath-border, #f1f5f9);
   border-radius: var(--ath-radius-md, 12px);
   padding: 12px 14px;
 }
@@ -330,7 +331,7 @@
 .ath-modal-footer {
   padding: 16px 24px;
   border-top: 1px solid var(--ath-border, #e2e8f0);
-  background: #f8fafc;
+  background: var(--ath-surface-hover, #f8fafc);
   display: flex;
   justify-content: flex-end;
 }

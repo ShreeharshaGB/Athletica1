@@ -4,6 +4,9 @@ import StudentProfile from '../models/StudentProfile.js';
 import Activity from '../models/Activity.js';
 import ActivityParticipation from '../models/ActivityParticipation.js';
 import PhysiqueAnalysis from '../models/PhysiqueAnalysis.js';
+import WorkoutPlan from '../models/WorkoutPlan.js';
+import AnalyzedMeal from '../models/AnalyzedMeal.js';
+import DietPlan from '../models/DietPlan.js';
 
 /**
  * Helper to fetch and validate the authenticated teacher and their institutionId
@@ -383,14 +386,17 @@ export const getStudentDetails = async (req, res) => {
       });
     }
 
-    const [profile, assessments, participations, physiqueDoc] = await Promise.all([
+    const [profile, assessments, participations, physiqueDoc, workoutPlanDoc, meals, dietPlanDoc] = await Promise.all([
       StudentProfile.findOne({ userId: student._id }).lean(),
       FitnessAssessment.find({ userId: student._id }).sort({ assessmentDate: -1, createdAt: -1 }).lean(),
       ActivityParticipation.find({ studentId: student._id })
         .populate('activityId', 'title type points startDate endDate status')
         .sort({ joinedAt: -1 })
         .lean(),
-      PhysiqueAnalysis.findOne({ userId: student._id }).select('createdAt').lean()
+      PhysiqueAnalysis.findOne({ userId: student._id }).select('createdAt').lean(),
+      WorkoutPlan.findOne({ userId: student._id }).sort({ createdAt: -1 }).lean(),
+      AnalyzedMeal.find({ userId: student._id }).sort({ createdAt: -1 }).limit(10).lean(),
+      DietPlan.findOne({ userId: student._id, status: 'active' }).sort({ createdAt: -1 }).lean(),
     ]);
 
     const latestAssessment = assessments.length > 0 ? assessments[0] : null;
@@ -402,6 +408,46 @@ export const getStudentDetails = async (req, res) => {
 
     const formattedStudentId = student.studentId || `ATH-${student._id.toString().slice(-6).toUpperCase()}`;
     const pointsEarned = participations.reduce((sum, p) => sum + (p.pointsAwarded || 0), 0);
+
+    const workoutOverview = workoutPlanDoc ? {
+      goal: workoutPlanDoc.goal || 'General Fitness',
+      weeklyCompletionPercentage: workoutPlanDoc.weeklyCompletionPercentage || 0,
+      completedActivitiesCount: workoutPlanDoc.completedActivitiesCount || 0,
+      totalActivitiesCount: workoutPlanDoc.totalActivitiesCount || 0,
+      daysPerWeek: workoutPlanDoc.daysPerWeek || (workoutPlanDoc.workouts ? workoutPlanDoc.workouts.length : 0),
+      focusAreas: workoutPlanDoc.focusAreas || [],
+      lastUpdated: workoutPlanDoc.updatedAt || workoutPlanDoc.createdAt
+    } : null;
+
+    const nutritionOverview = {
+      totalMealsLogged: meals.length,
+      averageCalories: meals.length > 0
+        ? Math.round(meals.reduce((sum, m) => sum + (m.totalEstimatedCalories || 0), 0) / meals.length)
+        : null,
+      recentMeals: meals.slice(0, 5).map(m => ({
+        id: m._id,
+        loggedAt: m.createdAt,
+        totalCalories: m.totalEstimatedCalories,
+        totalProtein: m.totalProteinGrams || 0,
+        foods: m.foods ? m.foods.map(f => f.name).join(', ') : 'Meal log'
+      }))
+    };
+
+    const dietPlanOverview = dietPlanDoc ? {
+      name: dietPlanDoc.name,
+      goal: dietPlanDoc.goal,
+      dietPreference: dietPlanDoc.dietPreference,
+      restrictions: dietPlanDoc.restrictions || [],
+      allergies: dietPlanDoc.allergies || [],
+      mealsCount: dietPlanDoc.meals?.length || 0,
+      meals: (dietPlanDoc.meals || []).map(m => ({
+        mealType: m.mealType,
+        foods: m.foods,
+        calories: m.calories,
+        protein: m.proteinGrams,
+        notes: m.notes
+      }))
+    } : null;
 
     return res.status(200).json({
       student: {
@@ -420,6 +466,9 @@ export const getStudentDetails = async (req, res) => {
         pointsEarned: pointsEarned,
         hasPhysiqueAnalysis: Boolean(physiqueDoc),
         physiqueStatus: physiqueDoc ? 'Physique analysis completed' : 'Not completed',
+        workoutOverview,
+        nutritionOverview,
+        dietPlanOverview,
         joinedActivities: participations.map(p => ({
           id: p._id,
           title: p.activityId?.title || 'Institution Challenge',

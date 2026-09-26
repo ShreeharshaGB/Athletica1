@@ -187,7 +187,7 @@ export default function WorkoutPlan() {
           : 'Calibrated to your standardized physical baseline test, stamina, and fitness goals.'
       }
       actions={
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <button
             type="button"
             className="ath-btn ath-btn-primary"
@@ -195,25 +195,27 @@ export default function WorkoutPlan() {
               setUpdateError(null)
               setShowUpdateModal(true)
             }}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', height: '38px', padding: '0 14px' }}
           >
             <Sliders size={15} /> Update Plan
           </button>
           <Link
             to="/student/custom-workout"
             className="ath-btn ath-btn-secondary"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', height: '38px', padding: '0 14px' }}
           >
-            <Dumbbell size={15} /> Create Your Own Plan
+            <Dumbbell size={15} /> Custom Plan
           </Link>
           <button
             type="button"
             className="ath-btn ath-btn-secondary"
             onClick={loadPlan}
             disabled={loading}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            title="Refresh plan"
+            aria-label="Refresh workout plan"
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', minWidth: '38px', padding: 0 }}
           >
-            <RefreshCw size={14} className={loading ? 'ath-spin' : ''} /> Refresh
+            <RefreshCw size={15} className={loading ? 'ath-spin' : ''} />
           </button>
         </div>
       }
@@ -348,10 +350,10 @@ export default function WorkoutPlan() {
       <div className="ath-card" style={{ padding: '20px 24px', marginBottom: '22px', gap: '14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <div>
-            <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--ath-text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Weekly Consistency & Completion
             </span>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--ath-dark, #0f172a)', marginTop: '2px' }}>
               {completedExercises} of {totalExercises} Activities Completed ({completionPercentage}%)
             </div>
           </div>

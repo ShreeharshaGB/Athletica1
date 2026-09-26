@@ -145,7 +145,7 @@ export default function StudentAppLayout({
       {/* ================= SIDEBAR ================= */}
       <aside className={`ath-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <Link
-          to="/"
+          to={isTeacher ? '/teacher/dashboard' : isCommunity ? '/community/dashboard' : '/student/dashboard'}
           className="ath-sidebar-brand"
           onClick={() => setMobileMenuOpen(false)}
           aria-label="Athletica home"

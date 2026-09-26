@@ -753,7 +753,7 @@ nav.ath-sidebar-nav {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #f1f5f9;
+  background: var(--ath-border-subtle);
   padding: 4px;
   border-radius: var(--ath-radius-sm);
   width: fit-content;
@@ -899,4 +899,99 @@ nav.ath-sidebar-nav {
   .ath-topbar-heading h1 {
     font-size: 1rem;
   }
+}
+
+/* ============================================================
+   GLOBAL THEME CONSISTENCY OVERRIDES
+   Ensures all dialogs, tables, cards, inputs, and text switch cleanly
+   ============================================================ */
+[data-theme="dark"] body,
+[data-theme="dark"] #root {
+  background-color: var(--ath-bg) !important;
+  color: var(--ath-text) !important;
+}
+
+[data-theme="dark"] .ath-card,
+[data-theme="dark"] .ath-metric-card,
+[data-theme="dark"] .ath-modal-dialog,
+[data-theme="dark"] .ath-topbar,
+[data-theme="dark"] .ath-sidebar,
+[data-theme="dark"] .ath-sidebar-footer,
+[data-theme="dark"] .camera-card,
+[data-theme="dark"] .form-feedback-card,
+[data-theme="dark"] .diet-modal-dialog,
+[data-theme="dark"] .workout-modal-dialog {
+  background-color: var(--ath-surface) !important;
+  color: var(--ath-text) !important;
+  border-color: var(--ath-border) !important;
+}
+
+[data-theme="dark"] .ath-modal-header,
+[data-theme="dark"] .ath-modal-footer,
+[data-theme="dark"] .modal-info-card {
+  background-color: var(--ath-surface-hover) !important;
+  border-color: var(--ath-border) !important;
+}
+
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .ath-input,
+[data-theme="dark"] .ath-select {
+  background-color: var(--ath-input-bg) !important;
+  color: var(--ath-dark) !important;
+  border-color: var(--ath-border) !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--ath-text-light) !important;
+}
+
+[data-theme="dark"] table,
+[data-theme="dark"] th,
+[data-theme="dark"] td {
+  border-color: var(--ath-border) !important;
+}
+
+[data-theme="dark"] th {
+  background-color: var(--ath-surface-hover) !important;
+  color: var(--ath-dark) !important;
+}
+
+[data-theme="dark"] tr:hover td {
+  background-color: var(--ath-surface-hover) !important;
+}
+
+[data-theme="dark"] .ath-tab.active {
+  background-color: var(--ath-surface);
+  color: var(--ath-dark);
+}
+
+[data-theme="dark"] .ath-tab:not(.active) {
+  color: var(--ath-text-muted);
+}
+
+[data-theme="dark"] .ath-badge {
+  background: var(--ath-surface-hover);
+  color: var(--ath-text);
+  border: 1px solid var(--ath-border);
+}
+
+[data-theme="dark"] .ath-badge.success {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .ath-badge.warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="dark"] .ath-badge.info {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.3);
 }

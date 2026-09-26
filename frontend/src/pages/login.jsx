@@ -207,9 +207,9 @@ export default function Login({ initialRole = 'student', onLogin }) {
             <BrandMark />
             <span>ATHLETICA</span>
           </Link>
-          <Link to="/roles" className="header-status" style={{ textDecoration: 'none' }}>
-            <i /> Switch Role
-          </Link>
+          <span className="header-status">
+            <i /> {roleTitle} Portal
+          </span>
         </header>
 
         <div className="login-intro">
@@ -247,21 +247,6 @@ export default function Login({ initialRole = 'student', onLogin }) {
                 </div>
               </>
             )}
-
-            <label className="field-label" htmlFor="role">Account Role</label>
-            <div className="select-field">
-              <select
-                id="role"
-                value={role}
-                onChange={(event) => { setRole(event.target.value); setFeedback('') }}
-              >
-                <option value="">Select your role</option>
-                {roleOptions.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
-              <Icon name="chevron" size={18} />
-            </div>
 
             <label className="field-label" htmlFor="username">Email Address</label>
             <div className="input-field">

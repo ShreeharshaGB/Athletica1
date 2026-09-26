@@ -40,7 +40,8 @@ app.use((req, res, next) => {
 
   if (origin) {
     const normalizedOrigin = origin.replace(/\/+$/, '');
-    if (allowedOrigins.has(normalizedOrigin)) {
+    const isRenderDomain = /^https:\/\/[a-zA-Z0-9-]+\.onrender\.com$/.test(normalizedOrigin);
+    if (allowedOrigins.has(normalizedOrigin) || isRenderDomain) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Vary', 'Origin');
     }

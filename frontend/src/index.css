@@ -2,8 +2,8 @@
   font-family: 'DM Sans', 'Avenir Next', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #173b3d;
-  background: #f7fbf8;
+  color: var(--ath-text, #173b3d);
+  background-color: var(--ath-bg, #f7fbf8);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -14,6 +14,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--ath-bg, #f7fbf8);
+  color: var(--ath-text, #173b3d);
 }
 
 button,

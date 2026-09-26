@@ -40,8 +40,15 @@ function Icon({ name, size = 20 }) {
 }
 
 function Brand() {
+  const { isAuthenticated, user } = useAuth()
+  const dashboardPath = user?.role === 'teacher' ? '/teacher/dashboard' : user?.role === 'community' ? '/community/dashboard' : '/student/dashboard'
   return (
-    <Link className="brand" to="/" aria-label="Athletica home">
+    <Link className="brand" to={isAuthenticated ? dashboardPath : '#top'} onClick={(e) => {
+      if (!isAuthenticated) {
+        e.preventDefault()
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    }} aria-label="Athletica home">
       <span className="brand-mark">A<span>+</span></span>
       <span>ATHLETICA</span>
     </Link>

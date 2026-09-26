@@ -86,6 +86,30 @@ const DEMO_STUDENTS = [
       { id: 'demo-h-1', assessmentDate: '2026-03-20T10:00:00.000Z', overallScore: 78, fitnessLevel: 'intermediate', pushUps: 28, sitUps: 32, runTime: 12.1, flexibility: 24, shuttleRun: 10.4 },
       { id: 'demo-h-2', assessmentDate: '2026-02-16T10:00:00.000Z', overallScore: 71, fitnessLevel: 'intermediate', pushUps: 22, sitUps: 26, runTime: 13.0, flexibility: 20, shuttleRun: 11.0 }
     ],
+    workoutOverview: {
+      goal: 'Speed & Stamina',
+      weeklyCompletionPercentage: 75,
+      completedActivitiesCount: 6,
+      totalActivitiesCount: 8,
+      daysPerWeek: 4,
+      focusAreas: ['Sprint intervals', 'Core endurance', 'Hamstring mobility']
+    },
+    nutritionOverview: {
+      totalMealsLogged: 14,
+      averageCalories: 2150,
+      recentMeals: [
+        { id: 'm1', foods: 'Oats with Almonds & Banana', totalCalories: 450, totalProtein: 16 },
+        { id: 'm2', foods: 'Dal Khichdi & Steamed Veggies', totalCalories: 620, totalProtein: 22 }
+      ]
+    },
+    dietPlanOverview: {
+      name: 'High-Protein Vegetarian Athlete Plan',
+      goal: 'Stamina & Lean Mass',
+      dietPreference: 'Vegetarian',
+      restrictions: ['Egg-free'],
+      allergies: [],
+      mealsCount: 4
+    },
     isDemo: true
   },
   {
@@ -133,6 +157,30 @@ const DEMO_STUDENTS = [
       { id: 'demo-act-1', title: '10K Steps Challenge', type: 'challenge', pointsAwarded: 50, status: 'joined', activityStatus: 'Active', joinedAt: '2026-03-19' },
       { id: 'demo-act-3', title: 'Hydration 7-Day Sprint', type: 'challenge', pointsAwarded: 60, status: 'joined', activityStatus: 'Active', joinedAt: '2026-03-21' }
     ],
+    workoutOverview: {
+      goal: 'Agility & Endurance',
+      weeklyCompletionPercentage: 90,
+      completedActivitiesCount: 9,
+      totalActivitiesCount: 10,
+      daysPerWeek: 5,
+      focusAreas: ['Agility ladders', 'VO2 max runs', 'Hip flexor mobility']
+    },
+    nutritionOverview: {
+      totalMealsLogged: 21,
+      averageCalories: 2350,
+      recentMeals: [
+        { id: 'm3', foods: 'Grilled Chicken & Quinoa Bowl', totalCalories: 580, totalProtein: 42 },
+        { id: 'm4', foods: 'Sprouted Moong Salad & Curd', totalCalories: 360, totalProtein: 18 }
+      ]
+    },
+    dietPlanOverview: {
+      name: 'Performance Endurance Protocol',
+      goal: 'Endurance & Fast Recovery',
+      dietPreference: 'Balanced Non-Veg',
+      restrictions: [],
+      allergies: ['Peanuts'],
+      mealsCount: 5
+    },
     isDemo: true
   },
   {
@@ -1963,7 +2011,132 @@ export default function TeacherDashboard() {
                 )}
               </div>
 
-              {/* 5. AI INSIGHTS STATUS (PRIVACY-COMPLIANT) */}
+              {/* 5. WORKOUT, NUTRITION & DIET OVERVIEW */}
+              <div>
+                <div className="modal-section-title">Workout, Nutrition & Diet Overview</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {/* Workout Plan Brief */}
+                  <div
+                    style={{
+                      background: 'var(--ath-bg, #f8fafc)',
+                      border: '1px solid var(--ath-border, #e2e8f0)',
+                      borderRadius: '12px',
+                      padding: '14px 16px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '1.1rem' }}>🏋️</span>
+                        <div>
+                          <strong style={{ fontSize: '0.92rem', color: 'var(--ath-dark, #0f172a)' }}>
+                            Personalized Workout Plan
+                          </strong>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--ath-text-muted, #64748b)', marginLeft: '8px' }}>
+                            {selectedStudent.workoutOverview?.goal || selectedStudent.profile?.fitnessGoal || 'General Fitness'}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="ath-badge info" style={{ fontSize: '0.78rem' }}>
+                        {selectedStudent.workoutOverview ? `${selectedStudent.workoutOverview.weeklyCompletionPercentage}% Completed` : 'Not Started'}
+                      </span>
+                    </div>
+
+                    {selectedStudent.workoutOverview ? (
+                      <div>
+                        <div style={{ width: '100%', height: '8px', background: 'var(--ath-border-subtle, #f1f5f9)', borderRadius: '6px', overflow: 'hidden', margin: '8px 0 10px' }}>
+                          <div
+                            style={{
+                              width: `${selectedStudent.workoutOverview.weeklyCompletionPercentage}%`,
+                              height: '100%',
+                              background: 'linear-gradient(90deg, #10b981 0%, #0f766e 100%)',
+                              borderRadius: '6px',
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--ath-text-muted, #64748b)' }}>
+                          <span>Activities: {selectedStudent.workoutOverview.completedActivitiesCount} / {selectedStudent.workoutOverview.totalActivitiesCount} done</span>
+                          <span>Weekly Schedule: {selectedStudent.workoutOverview.daysPerWeek} days/wk</span>
+                        </div>
+                        {selectedStudent.workoutOverview.focusAreas && selectedStudent.workoutOverview.focusAreas.length > 0 && (
+                          <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            {selectedStudent.workoutOverview.focusAreas.map((f, i) => (
+                              <span key={i} className="ath-badge" style={{ fontSize: '0.72rem' }}>{f}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: 'var(--ath-text-muted, #64748b)' }}>
+                        No active workout plan generated yet.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Nutrition & Diet Brief Cards */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                    {/* Nutrition Card */}
+                    <div
+                      style={{
+                        background: 'var(--ath-bg, #f8fafc)',
+                        border: '1px solid var(--ath-border, #e2e8f0)',
+                        borderRadius: '12px',
+                        padding: '14px 16px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '1.1rem' }}>🥗</span>
+                        <strong style={{ fontSize: '0.88rem', color: 'var(--ath-dark, #0f172a)' }}>Nutrition & Meals</strong>
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--ath-text-muted, #64748b)' }}>
+                        <div>Logged Meals: <strong style={{ color: 'var(--ath-dark, #0f172a)' }}>{selectedStudent.nutritionOverview?.totalMealsLogged || 0}</strong></div>
+                        {selectedStudent.nutritionOverview?.averageCalories != null && (
+                          <div style={{ marginTop: '2px' }}>
+                            Avg Calories: <strong style={{ color: 'var(--ath-dark, #0f172a)' }}>{selectedStudent.nutritionOverview.averageCalories} kcal</strong>
+                          </div>
+                        )}
+                        {selectedStudent.nutritionOverview?.recentMeals && selectedStudent.nutritionOverview.recentMeals.length > 0 ? (
+                          <div style={{ marginTop: '6px', fontSize: '0.78rem', color: 'var(--ath-text-light, #94a3b8)' }}>
+                            Recent: {selectedStudent.nutritionOverview.recentMeals[0].foods} ({selectedStudent.nutritionOverview.recentMeals[0].totalCalories} kcal, {selectedStudent.nutritionOverview.recentMeals[0].totalProtein}g protein)
+                          </div>
+                        ) : (
+                          <div style={{ marginTop: '4px', fontSize: '0.78rem' }}>No recent meals logged</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Diet Plan Card */}
+                    <div
+                      style={{
+                        background: 'var(--ath-bg, #f8fafc)',
+                        border: '1px solid var(--ath-border, #e2e8f0)',
+                        borderRadius: '12px',
+                        padding: '14px 16px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '1.1rem' }}>📋</span>
+                        <strong style={{ fontSize: '0.88rem', color: 'var(--ath-dark, #0f172a)' }}>Diet Plan & Protocol</strong>
+                      </div>
+                      {selectedStudent.dietPlanOverview ? (
+                        <div style={{ fontSize: '0.82rem', color: 'var(--ath-text-muted, #64748b)' }}>
+                          <div>Plan: <strong style={{ color: 'var(--ath-dark, #0f172a)' }}>{selectedStudent.dietPlanOverview.name}</strong></div>
+                          <div>Preference: <span style={{ textTransform: 'capitalize' }}>{selectedStudent.dietPlanOverview.dietPreference}</span></div>
+                          {selectedStudent.dietPlanOverview.mealsCount > 0 && (
+                            <div>Scheduled: {selectedStudent.dietPlanOverview.mealsCount} meals configured</div>
+                          )}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '0.82rem', color: 'var(--ath-text-muted, #64748b)' }}>
+                          <div>Preference: <strong style={{ color: 'var(--ath-dark, #0f172a)' }}>{selectedStudent.profile?.dietPreference || 'Standard'}</strong></div>
+                          <div style={{ marginTop: '2px' }}>No custom diet plan created.</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 6. AI INSIGHTS STATUS (PRIVACY-COMPLIANT) */}
               <div>
                 <div className="modal-section-title">AI Physical Insights</div>
                 <div style={{
