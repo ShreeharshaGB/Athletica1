@@ -15,6 +15,66 @@ const classroomMemberSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const classroomTaskCompletionSchema = new mongoose.Schema(
+  {
+    studentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    completedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    notes: {
+      type: String,
+      trim: true,
+      default: '',
+      maxlength: 300,
+    },
+  },
+  { _id: false }
+);
+
+const classroomTaskSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 120,
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: '',
+      maxlength: 500,
+    },
+    type: {
+      type: String,
+      enum: ['challenge', 'task', 'workout', 'yoga', 'assessment'],
+      default: 'challenge',
+    },
+    points: {
+      type: Number,
+      default: 50,
+      min: 0,
+    },
+    dueDate: {
+      type: Date,
+      default: null,
+    },
+    completions: {
+      type: [classroomTaskCompletionSchema],
+      default: [],
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  }
+);
+
 const classroomSchema = new mongoose.Schema(
   {
     teacherId: {
@@ -51,6 +111,10 @@ const classroomSchema = new mongoose.Schema(
     },
     members: {
       type: [classroomMemberSchema],
+      default: [],
+    },
+    tasks: {
+      type: [classroomTaskSchema],
       default: [],
     },
   },

@@ -176,11 +176,12 @@ function AppRoutes() {
       </Route>
 
       {/* Shared Personal Fitness Routes (Student & Community) */}
-      <Route element={<ProtectedRoute allowedRoles={['student', 'community']} redirectTo="/student/login" />}>
+      <Route element={<ProtectedRoute allowedRoles={['student', 'community', 'teacher']} redirectTo="/student/login" />}>
         <Route path="/student/physique-analysis" element={<PhysiqueAnalysis />} />
         <Route path="/student/assessment" element={<StudentAssessment />} />
         <Route path="/student/fitness-result" element={<FitnessPassport />} />
         <Route path="/student/workout" element={<WorkoutPlan />} />
+        <Route path="/student/form-check" element={<FormCheck />} />
         <Route path="/student/nutrition" element={<Nutrition />} />
         <Route path="/student/wellness" element={<Wellness />} />
         <Route path="/student/progress" element={<Progress />} />

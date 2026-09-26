@@ -20,6 +20,7 @@ function formatClassroom(classroom, teacher = null) {
       ? { id: teacher._id, name: teacher.name, email: teacher.email }
       : undefined,
     memberCount: classroom.members?.length || 0,
+    tasksCount: classroom.tasks?.length || 0,
     createdAt: classroom.createdAt,
     updatedAt: classroom.updatedAt,
   };
@@ -116,5 +117,195 @@ export async function getStudentClassrooms(req, res) {
   } catch (error) {
     console.error('Get student classrooms error:', error);
     return res.status(500).json({ message: 'Server error while loading joined classrooms.' });
+  }
+}
+
+export async function getClassroomDetails(req, res) {
+  try {
+    const { id } = req.params;
+    const classroom = await Classroom.findById(id)
+      .populate('teacherId', 'name email institutionId')
+      .populate('members.userId', 'name email institutionId')
+      .populate('tasks.completions.studentId', 'name email');
+
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found.' });
+    }
+
+    const teacherIdStr = classroom.teacherId?._id ? classroom.teacherId._id.toString() : classroom.teacherId?.toString();
+    const isTeacher = teacherIdStr === req.user.id;
+    const isMember = classroom.members.some(
+      (m) => m.userId && (m.userId._id ? m.userId._id.toString() : m.userId.toString()) === req.user.id
+    );
+
+    if (!isTeacher && !isMember) {
+      return res.status(403).json({ message: 'You do not have access to view this classroom.' });
+    }
+
+    const currentUserId = req.user.id;
+    const formattedTasks = (classroom.tasks || []).map((t) => {
+      const completion = t.completions?.find(
+        (c) => c.studentId && (c.studentId._id ? c.studentId._id.toString() : c.studentId.toString()) === currentUserId
+      );
+
+      return {
+        id: t._id,
+        title: t.title,
+        description: t.description,
+        type: t.type,
+        points: t.points,
+        dueDate: t.dueDate,
+        createdAt: t.createdAt,
+        completedCount: t.completions?.length || 0,
+        hasCompleted: Boolean(completion),
+        completedAt: completion?.completedAt || null,
+        completions: isTeacher
+          ? (t.completions || []).map((c) => ({
+              student: c.studentId ? { id: c.studentId._id, name: c.studentId.name, email: c.studentId.email } : null,
+              completedAt: c.completedAt,
+              notes: c.notes,
+            }))
+          : undefined,
+      };
+    });
+
+    const membersList = (classroom.members || [])
+      .filter((m) => m.userId)
+      .map((m) => ({
+        id: m.userId._id,
+        name: m.userId.name,
+        email: m.userId.email,
+        institutionId: m.userId.institutionId,
+        joinedAt: m.joinedAt,
+      }));
+
+    return res.status(200).json({
+      classroom: {
+        id: classroom._id,
+        name: classroom.name,
+        description: classroom.description,
+        inviteCode: classroom.inviteCode,
+        institutionId: classroom.institutionId,
+        isTeacher,
+        teacher: classroom.teacherId
+          ? {
+              id: classroom.teacherId._id,
+              name: classroom.teacherId.name,
+              email: classroom.teacherId.email,
+            }
+          : undefined,
+        memberCount: membersList.length,
+        members: membersList,
+        tasks: formattedTasks,
+        createdAt: classroom.createdAt,
+        updatedAt: classroom.updatedAt,
+      },
+    });
+  } catch (error) {
+    console.error('Get classroom details error:', error);
+    return res.status(500).json({ message: 'Server error while loading classroom details.' });
+  }
+}
+
+export async function createClassroomTask(req, res) {
+  try {
+    const { id } = req.params;
+    const { title, description = '', type = 'challenge', points = 50, dueDate = null } = req.body || {};
+
+    if (typeof title !== 'string' || !title.trim()) {
+      return res.status(400).json({ message: 'Challenge or task title is required.' });
+    }
+
+    const classroom = await Classroom.findById(id);
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found.' });
+    }
+
+    if (classroom.teacherId.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Only the classroom teacher can assign tasks.' });
+    }
+
+    const newTask = {
+      title: title.trim(),
+      description: String(description).trim(),
+      type: ['challenge', 'task', 'workout', 'yoga', 'assessment'].includes(type) ? type : 'challenge',
+      points: Number(points) > 0 ? Number(points) : 50,
+      dueDate: dueDate ? new Date(dueDate) : null,
+      completions: [],
+      createdAt: new Date(),
+    };
+
+    classroom.tasks.push(newTask);
+    await classroom.save();
+
+    const created = classroom.tasks[classroom.tasks.length - 1];
+
+    return res.status(201).json({
+      message: 'Task assigned successfully.',
+      task: {
+        id: created._id,
+        title: created.title,
+        description: created.description,
+        type: created.type,
+        points: created.points,
+        dueDate: created.dueDate,
+        completedCount: 0,
+        hasCompleted: false,
+        createdAt: created.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error('Create classroom task error:', error);
+    return res.status(500).json({ message: 'Server error while creating task.' });
+  }
+}
+
+export async function completeClassroomTask(req, res) {
+  try {
+    const { id, taskId } = req.params;
+    const { notes = '' } = req.body || {};
+
+    const classroom = await Classroom.findById(id);
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found.' });
+    }
+
+    const isMember = classroom.members.some(
+      (m) => m.userId.toString() === req.user.id
+    );
+    if (!isMember) {
+      return res.status(403).json({ message: 'You must be an enrolled student in this classroom.' });
+    }
+
+    const task = classroom.tasks.id(taskId);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found in this classroom.' });
+    }
+
+    const alreadyCompleted = task.completions.some(
+      (c) => c.studentId.toString() === req.user.id
+    );
+
+    if (alreadyCompleted) {
+      return res.status(200).json({ message: 'You have already completed this task.', alreadyCompleted: true });
+    }
+
+    task.completions.push({
+      studentId: req.user.id,
+      completedAt: new Date(),
+      notes: String(notes).trim(),
+    });
+
+    await classroom.save();
+
+    return res.status(200).json({
+      message: 'Task marked as completed! Points awarded.',
+      pointsAwarded: task.points,
+      taskId: task._id,
+      completedAt: new Date(),
+    });
+  } catch (error) {
+    console.error('Complete classroom task error:', error);
+    return res.status(500).json({ message: 'Server error while completing task.' });
   }
 }

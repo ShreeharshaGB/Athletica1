@@ -20,15 +20,16 @@ import {
   Sparkles,
   MessageCircle,
   ScanLine,
+  BookOpen,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const studentNavItems = [
   { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
+  { label: 'Classrooms', path: '/student/classrooms', icon: BookOpen },
   { label: 'Physique Analysis', path: '/student/physique-analysis', icon: Sparkles },
   { label: 'Fitness Assessment', path: '/student/assessment', icon: ClipboardCheck },
   { label: 'Workout Plan', path: '/student/workout', icon: Dumbbell },
-  { label: 'Check My Form', path: '/student/form-check', icon: ScanLine },
   { label: 'Nutrition', path: '/student/nutrition', icon: Apple },
   { label: 'AI Coach', path: '/student/coach', icon: MessageCircle },
   { label: 'Wellness', path: '/student/wellness', icon: HeartPulse },
@@ -40,6 +41,7 @@ const studentNavItems = [
 
 const teacherNavItems = [
   { label: 'Dashboard', path: '/teacher/dashboard', icon: LayoutDashboard },
+  { label: 'Classrooms', path: '/teacher/classrooms', icon: BookOpen },
   { label: 'Student Insights', path: '/teacher/dashboard#insights', icon: TrendingUp, hash: '#insights' },
   { label: 'Talent Discovery', path: '/teacher/dashboard#talent', icon: Trophy, hash: '#talent' },
   { label: 'Students', path: '/teacher/dashboard#students', icon: Users, hash: '#students' },

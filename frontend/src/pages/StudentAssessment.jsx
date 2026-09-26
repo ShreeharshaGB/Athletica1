@@ -1,6 +1,15 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ClipboardCheck, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react'
+import {
+  ClipboardCheck,
+  CheckCircle2,
+  ArrowRight,
+  ArrowLeft,
+  ScanLine,
+  Video,
+  Play,
+  Sparkles,
+} from 'lucide-react'
 import { apiRequest } from '../lib/api.js'
 import StudentAppLayout from '../components/StudentAppLayout'
 
@@ -57,9 +66,108 @@ export default function StudentAssessment() {
       pageSubtitle="Standardized physiological baseline tests to calculate your certified Fitness Score."
       eyebrow="FITNESS ASSESSMENT"
     >
-      <div style={{ maxWidth: '780px', margin: '0 auto', width: '100%' }}>
+      <div style={{ maxWidth: '820px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* CHECK MY FORM - INTEGRATED CV COMPANION BANNER */}
+        <div
+          className="ath-card"
+          style={{
+            background: 'linear-gradient(135deg, #093f3b 0%, #0f766e 60%, #115e59 100%)',
+            color: '#ffffff',
+            padding: '24px 28px',
+            borderRadius: '18px',
+            border: '1px solid rgba(94, 234, 212, 0.3)',
+            boxShadow: '0 8px 24px rgba(15, 118, 110, 0.15)',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+            <div style={{ flex: 1, minWidth: '280px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.16)', padding: '4px 10px', borderRadius: '14px', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '10px' }}>
+                <ScanLine size={13} color="#5eead4" /> AI VISION POSE TRACKER
+              </div>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 6px', color: '#ffffff' }}>
+                Check Your Form Before Testing
+              </h2>
+              <p style={{ margin: 0, color: '#ccfbf1', fontSize: '0.86rem', lineHeight: 1.5, maxWidth: '520px' }}>
+                Calibrate your biomechanics in real-time. Practice gym exercises, yoga poses, and calisthenics using your webcam with live posture feedback and rep counting.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '180px' }}>
+              <button
+                type="button"
+                className="ath-btn"
+                style={{
+                  background: '#ffffff',
+                  color: '#0f766e',
+                  fontWeight: 800,
+                  padding: '10px 18px',
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+                }}
+                onClick={() => navigate('/student/form-check')}
+              >
+                <Play size={16} fill="#0f766e" /> Launch Form Check
+              </button>
+
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button
+                  type="button"
+                  style={{
+                    flex: 1,
+                    background: 'rgba(255,255,255,0.12)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#ffffff',
+                    padding: '6px 8px',
+                    borderRadius: '8px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => navigate('/student/form-check?exercise=Push-ups')}
+                >
+                  Push-ups
+                </button>
+                <button
+                  type="button"
+                  style={{
+                    flex: 1,
+                    background: 'rgba(255,255,255,0.12)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#ffffff',
+                    padding: '6px 8px',
+                    borderRadius: '8px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => navigate('/student/form-check?exercise=Squats')}
+                >
+                  Squats
+                </button>
+                <button
+                  type="button"
+                  style={{
+                    flex: 1,
+                    background: 'rgba(255,255,255,0.12)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#ffffff',
+                    padding: '6px 8px',
+                    borderRadius: '8px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => navigate('/student/form-check?category=yoga')}
+                >
+                  Yoga
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* STEPPER PROGRESS */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div
               style={{
