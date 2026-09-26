@@ -883,11 +883,71 @@ nav.ath-sidebar-nav {
   }
 
   .ath-topbar {
-    padding: 0 20px;
+    height: auto;
+    min-height: 60px;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .ath-topbar-left {
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ath-topbar-heading h1 {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 190px;
+  }
+
+  .ath-topbar-heading p {
+    display: none;
+  }
+
+  .ath-topbar-right {
+    gap: 8px;
+  }
+
+  .ath-topbar-actions {
+    width: 100%;
+    order: 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0 2px;
+    scrollbar-width: none;
+  }
+
+  .ath-topbar-actions::-webkit-scrollbar {
+    display: none;
   }
 
   .ath-container {
-    padding: 20px 20px 48px;
+    padding: 16px 14px 48px;
+    gap: 16px;
+  }
+
+  .ath-card {
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+
+  .ath-tabs {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .ath-tab {
+    padding: 7px 12px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 }
 
@@ -896,8 +956,37 @@ nav.ath-sidebar-nav {
     display: none;
   }
 
-  .ath-topbar-heading h1 {
-    font-size: 1rem;
+  .ath-user-profile-btn {
+    padding: 3px;
+    background: transparent;
+    border: none;
+  }
+
+  .ath-icon-btn,
+  .ath-theme-toggle-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+  }
+
+  .ath-lang-toggle-btn {
+    height: 34px;
+    padding: 0 8px;
+    font-size: 0.74rem;
+  }
+
+  .ath-metrics-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .ath-metric-card {
+    min-height: auto;
+    padding: 14px 16px;
+  }
+
+  .ath-metric-val {
+    font-size: 1.55rem;
   }
 }
 

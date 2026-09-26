@@ -3,6 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import './Login.css'
 import { apiRequest } from '../lib/api.js'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
+import { Sun, Moon } from 'lucide-react'
 
 const roleOptions = [
   { value: 'student', label: 'Student' },
@@ -45,6 +47,7 @@ export default function Login({ initialRole = 'student', onLogin }) {
   const navigate = useNavigate()
   const location = useLocation()
   const auth = useAuth()
+  const { isDark, toggleTheme } = useTheme()
 
   const [isRegistering, setIsRegistering] = useState(false)
   const [name, setName] = useState('')
@@ -207,9 +210,21 @@ export default function Login({ initialRole = 'student', onLogin }) {
             <BrandMark />
             <span>ATHLETICA</span>
           </Link>
-          <span className="header-status">
-            <i /> {roleTitle} Portal
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button
+              type="button"
+              className="ath-theme-toggle-btn"
+              onClick={toggleTheme}
+              aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+              title={isDark ? "Switch to light theme" : "Switch to dark theme"}
+              style={{ width: '36px', height: '36px', padding: 0 }}
+            >
+              {isDark ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
+            <span className="header-status">
+              <i /> {roleTitle} Portal
+            </span>
+          </div>
         </header>
 
         <div className="login-intro">
@@ -219,6 +234,54 @@ export default function Login({ initialRole = 'student', onLogin }) {
         </div>
 
         <section className="login-card" aria-label="Sign in to Athletica">
+          {/* 3-USER ROLE TOGGLE SWITCH */}
+          <div className="login-role-toggle-wrap">
+            <div className="login-role-toggle" role="tablist" aria-label="Choose User Role">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={role === 'student'}
+                className={`login-role-tab ${role === 'student' ? 'active' : ''}`}
+                onClick={() => {
+                  setRole('student')
+                  setFeedback('')
+                  navigate('/student/login', { replace: true })
+                }}
+              >
+                <span className="role-tab-icon">🎓</span>
+                <span>Student</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={role === 'teacher'}
+                className={`login-role-tab ${role === 'teacher' ? 'active' : ''}`}
+                onClick={() => {
+                  setRole('teacher')
+                  setFeedback('')
+                  navigate('/teacher/login', { replace: true })
+                }}
+              >
+                <span className="role-tab-icon">🏫</span>
+                <span>Teacher</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={role === 'community'}
+                className={`login-role-tab ${role === 'community' ? 'active' : ''}`}
+                onClick={() => {
+                  setRole('community')
+                  setFeedback('')
+                  navigate('/community/login', { replace: true })
+                }}
+              >
+                <span className="role-tab-icon">🌐</span>
+                <span>Community</span>
+              </button>
+            </div>
+          </div>
+
           <div className="card-topline">
             <span>{isRegistering ? 'NEW ATHLETE REGISTRATION' : `${roleTitle.toUpperCase()} SIGN IN`}</span>
             <div className="card-mark"><BrandMark /></div>
