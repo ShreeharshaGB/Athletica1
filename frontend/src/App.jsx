@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { LanguageProvider } from './context/LanguageContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import ErrorBoundary from './components/ErrorBoundary'
 
 import Welcome from './pages/Welcome.jsx'
 import RoleSelection from './pages/RoleSelection.jsx'
@@ -210,7 +211,9 @@ function App() {
       <LanguageProvider>
         <AuthProvider>
           <BrowserRouter>
-            <AppRoutes />
+            <ErrorBoundary>
+              <AppRoutes />
+            </ErrorBoundary>
           </BrowserRouter>
         </AuthProvider>
       </LanguageProvider>

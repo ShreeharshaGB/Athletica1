@@ -1,3 +1,9 @@
+/* ============================================================
+   ATHLETICA EXERCISE TUTORIAL & KINEMATIC CANVAS STYLES
+   Smooth 60 FPS Procedural Bio-Kinematics
+   Full Dark / Light Theme Support
+   ============================================================ */
+
 .tutorial-backdrop {
   position: fixed;
   inset: 0;
@@ -6,18 +12,26 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.68);
-  backdrop-filter: blur(5px);
+  background: rgba(11, 17, 24, 0.82);
+  backdrop-filter: blur(8px);
 }
 
 .tutorial-dialog {
-  width: min(760px, 100%);
+  width: min(840px, 100%);
   max-height: 92vh;
   overflow: auto;
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
-  animation: tutorial-enter 180ms ease-out;
+  background: var(--ath-surface, #ffffff);
+  border: 1px solid var(--ath-border, #e2e8f0);
+  border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+  animation: tutorial-enter 200ms ease-out;
+  color: var(--ath-text, #1e293b);
+}
+
+[data-theme="dark"] .tutorial-dialog {
+  background: #111a24;
+  border-color: #1e293b;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
 }
 
 .tutorial-header {
@@ -25,24 +39,27 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding: 22px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 22px 26px;
+  border-bottom: 1px solid var(--ath-border, #e2e8f0);
 }
 
 .tutorial-kicker {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #0f766e;
-  font-size: 0.7rem;
+  color: var(--ath-primary, #0f766e);
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .tutorial-header h2 {
-  margin: 8px 0 0;
-  color: #0f172a;
-  font-size: 1.35rem;
+  margin: 6px 0 0;
+  color: var(--ath-dark, #0f172a);
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 .tutorial-close {
@@ -50,131 +67,256 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  color: #64748b;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 9px;
+  color: var(--ath-text-muted, #64748b);
+  background: var(--ath-border-subtle, #f8fafc);
+  border: 1px solid var(--ath-border, #e2e8f0);
+  border-radius: 10px;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.tutorial-close:hover { color: #0f172a; background: #f1f5f9; }
+.tutorial-close:hover {
+  color: var(--ath-dark, #0f172a);
+  background: var(--ath-border, #e2e8f0);
+}
 
 .tutorial-body {
   display: grid;
-  grid-template-columns: minmax(240px, 0.9fr) minmax(280px, 1.1fr);
+  grid-template-columns: minmax(300px, 1fr) minmax(320px, 1.2fr);
   gap: 24px;
-  padding: 24px;
+  padding: 26px;
+}
+
+/* ============================================================
+   CANVAS STAGE & HUD
+   ============================================================ */
+.tutorial-stage-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .tutorial-stage {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #e6f7f2 0%, #ccfbf1 60%, #a7f3d0 100%);
+  border: 1px solid #99f6e4;
+  border-radius: 16px;
+  box-shadow: inset 0 2px 10px rgba(15, 118, 110, 0.08);
+}
+
+[data-theme="dark"] .tutorial-stage {
+  background: radial-gradient(circle at 50% 30%, #162a33 0%, #0d1b22 65%, #081116 100%);
+  border-color: #1e3a47;
+  box-shadow: inset 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+
+.ath-canvas-stage-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.ath-kinematic-canvas {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  aspect-ratio: 340 / 260;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.tutorial-hud-bar {
+  position: absolute;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  color: #2dd4bf;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  max-width: 92%;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hud-phase-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2dd4bf;
+  box-shadow: 0 0 8px #2dd4bf;
+  animation: hud-glow 1.4s ease-in-out infinite alternate;
+  flex-shrink: 0;
+}
+
+@keyframes hud-glow {
+  from { opacity: 0.4; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.15); }
+}
+
+.tutorial-breath-cue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  background: var(--ath-border-subtle, #f1f5f9);
+  border-radius: 9px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ath-text-muted, #64748b);
+  border: 1px dashed var(--ath-border, #cbd5e1);
+  text-align: center;
+}
+
+/* ============================================================
+   DETAILS & FORM CUES
+   ============================================================ */
+.tutorial-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+}
+
+.tutorial-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--ath-primary-light, #e6f7f2);
+  color: var(--ath-primary, #0f766e);
+  border: 1px solid var(--ath-border, #ccfbf1);
+}
+
+.form-focus-card {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--ath-border-subtle, #f8fafc);
+  border: 1px solid var(--ath-border, #e2e8f0);
+}
+
+.form-focus-card h3 {
+  margin: 0 0 6px;
+  font-size: 0.94rem;
+  font-weight: 750;
+  color: var(--ath-dark, #0f172a);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-focus-card p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--ath-text, #475569);
+  line-height: 1.5;
+}
+
+.technique-points {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.technique-points h4 {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ath-text-muted, #64748b);
+}
+
+.cue-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.cue-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ath-primary, #0f766e);
+  color: #ffffff;
   display: grid;
   place-items: center;
-  min-height: 300px;
-  overflow: hidden;
-  background: radial-gradient(circle at 50% 25%, #ecfeff, #ccfbf1 58%, #99f6e4);
-  border: 1px solid #99f6e4;
-  border-radius: 14px;
-}
-
-.tutorial-stage::after {
-  content: '';
-  position: absolute;
-  bottom: 42px;
-  width: 150px;
-  height: 12px;
-  background: rgba(15, 118, 110, 0.2);
-  border-radius: 50%;
-}
-
-.tutorial-stage-label {
-  position: absolute;
-  z-index: 2;
-  bottom: 16px;
-  color: #115e59;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  flex-shrink: 0;
 }
 
-.tutorial-figure {
-  position: relative;
-  z-index: 1;
-  width: 100px;
-  height: 190px;
-  color: #0f766e;
-  animation: tutorial-breathe 2.6s ease-in-out infinite;
+.cue-text {
+  font-size: 0.82rem;
+  color: var(--ath-text, #334155);
+  line-height: 1.45;
 }
 
-.tutorial-head,
-.tutorial-torso,
-.tutorial-arm,
-.tutorial-leg { position: absolute; display: block; background: currentColor; }
-.tutorial-head { top: 4px; left: 35px; width: 30px; height: 30px; border-radius: 50%; }
-.tutorial-torso { top: 42px; left: 38px; width: 24px; height: 72px; border-radius: 12px; transform-origin: 50% 8px; }
-.tutorial-arm { top: 48px; left: 43px; width: 14px; height: 68px; border-radius: 8px; transform-origin: 50% 8px; }
-.tutorial-arm.left { transform: rotate(28deg); }
-.tutorial-arm.right { transform: rotate(-28deg); }
-.tutorial-leg { top: 105px; left: 42px; width: 16px; height: 82px; border-radius: 8px; transform-origin: 50% 8px; }
-.tutorial-leg.left { transform: rotate(8deg); }
-.tutorial-leg.right { left: 48px; transform: rotate(-8deg); }
+.tutorial-form-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 12px 18px;
+  color: #ffffff;
+  background: var(--ath-primary, #0f766e);
+  border: 0;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.25);
+  transition: all 0.2s ease;
+}
 
-.tutorial-figure.squat { animation: tutorial-squat 2.8s ease-in-out infinite; }
-.tutorial-figure.squat .tutorial-leg.left { animation: tutorial-squat-left 2.8s ease-in-out infinite; }
-.tutorial-figure.squat .tutorial-leg.right { animation: tutorial-squat-right 2.8s ease-in-out infinite; }
-.tutorial-figure.push { transform: rotate(90deg) translateY(25px); animation: tutorial-push 2.5s ease-in-out infinite; }
-.tutorial-figure.lunge .tutorial-leg.left { animation: tutorial-lunge-left 2.8s ease-in-out infinite; }
-.tutorial-figure.lunge .tutorial-leg.right { animation: tutorial-lunge-right 2.8s ease-in-out infinite; }
-.tutorial-figure.flow { animation: tutorial-flow 3.4s ease-in-out infinite; }
-.tutorial-figure.cardio { animation: tutorial-cardio 1.2s ease-in-out infinite; }
-.tutorial-figure.hinge { animation: tutorial-hinge 2.8s ease-in-out infinite; }
-.tutorial-figure.controlled { animation: tutorial-controlled 2.6s ease-in-out infinite; }
-.tutorial-figure.bench { transform: rotate(90deg) translateY(26px); animation: tutorial-bench 2.8s ease-in-out infinite; }
-.tutorial-figure.bench .tutorial-arm.left { animation: tutorial-bench-arm 2.8s ease-in-out infinite; }
-.tutorial-figure.bench .tutorial-arm.right { animation: tutorial-bench-arm 2.8s ease-in-out infinite reverse; }
-.tutorial-figure.pull .tutorial-arm.left { animation: tutorial-pull-left 2.8s ease-in-out infinite; }
-.tutorial-figure.pull .tutorial-arm.right { animation: tutorial-pull-right 2.8s ease-in-out infinite; }
-.tutorial-figure.press .tutorial-arm.left { animation: tutorial-press-left 2.8s ease-in-out infinite; }
-.tutorial-figure.press .tutorial-arm.right { animation: tutorial-press-right 2.8s ease-in-out infinite; }
-.tutorial-figure.isolation .tutorial-arm.left { animation: tutorial-isolation-left 2.4s ease-in-out infinite; }
-.tutorial-figure.isolation .tutorial-arm.right { animation: tutorial-isolation-right 2.4s ease-in-out infinite; }
-.tutorial-figure.legpress { animation: tutorial-legpress 2.8s ease-in-out infinite; }
+.tutorial-form-button:hover {
+  background: var(--ath-primary-hover, #0d9488);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(15, 118, 110, 0.35);
+}
 
-.tutorial-details { display: flex; flex-direction: column; justify-content: center; }
-.tutorial-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-.tutorial-meta span { padding: 6px 9px; color: #0f766e; background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 7px; font-size: 0.75rem; font-weight: 700; }
-.tutorial-details h3 { margin: 0 0 6px; color: #0f172a; font-size: 1rem; }
-.tutorial-details p { margin: 0; color: #475569; line-height: 1.55; font-size: 0.88rem; }
-.tutorial-steps { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
-.tutorial-steps div { display: flex; align-items: flex-start; gap: 10px; color: #475569; font-size: 0.83rem; line-height: 1.45; }
-.tutorial-steps strong { display: grid; place-items: center; width: 22px; height: 22px; flex: 0 0 22px; color: #ffffff; background: #0f766e; border-radius: 50%; font-size: 0.72rem; }
-.tutorial-note { padding: 10px 12px; color: #64748b !important; background: #f8fafc; border-left: 3px solid #14b8a6; font-size: 0.75rem !important; }
-.tutorial-form-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; margin-top: 14px; padding: 10px 12px; color: #ffffff; background: #0f766e; border: 0; border-radius: 9px; font: inherit; font-size: .8rem; font-weight: 750; cursor: pointer; }
+@keyframes tutorial-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
-@keyframes tutorial-enter { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes tutorial-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-@keyframes tutorial-squat { 0%, 100% { transform: translateY(0); } 45%, 65% { transform: translateY(24px); } }
-@keyframes tutorial-squat-left { 0%, 100% { transform: rotate(8deg); } 45%, 65% { transform: rotate(38deg); } }
-@keyframes tutorial-squat-right { 0%, 100% { transform: rotate(-8deg); } 45%, 65% { transform: rotate(-38deg); } }
-@keyframes tutorial-push { 0%, 100% { translate: 0 0; } 45%, 65% { translate: 14px 0; } }
-@keyframes tutorial-lunge-left { 0%, 100% { transform: rotate(8deg); } 45%, 65% { transform: rotate(55deg); } }
-@keyframes tutorial-lunge-right { 0%, 100% { transform: rotate(-8deg); } 45%, 65% { transform: rotate(-20deg); } }
-@keyframes tutorial-flow { 0%, 100% { transform: rotate(0) translateY(0); } 50% { transform: rotate(-12deg) translateY(18px); } }
-@keyframes tutorial-cardio { 0%, 100% { transform: translateY(0) scaleX(1); } 50% { transform: translateY(-16px) scaleX(0.92); } }
-@keyframes tutorial-hinge { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(22deg) translateY(12px); } }
-@keyframes tutorial-controlled { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
-@keyframes tutorial-bench { 0%, 100% { translate: 0 0; } 45%, 65% { translate: 0 6px; } }
-@keyframes tutorial-bench-arm { 0%, 100% { transform: rotate(30deg); } 45%, 65% { transform: rotate(-22deg); } }
-@keyframes tutorial-pull-left { 0%, 100% { transform: rotate(28deg); } 45%, 65% { transform: rotate(78deg); } }
-@keyframes tutorial-pull-right { 0%, 100% { transform: rotate(-28deg); } 45%, 65% { transform: rotate(-78deg); } }
-@keyframes tutorial-press-left { 0%, 100% { transform: rotate(42deg); } 45%, 65% { transform: rotate(-38deg); } }
-@keyframes tutorial-press-right { 0%, 100% { transform: rotate(-42deg); } 45%, 65% { transform: rotate(38deg); } }
-@keyframes tutorial-isolation-left { 0%, 100% { transform: rotate(28deg); } 45%, 65% { transform: rotate(82deg); } }
-@keyframes tutorial-isolation-right { 0%, 100% { transform: rotate(-28deg); } 45%, 65% { transform: rotate(-82deg); } }
-@keyframes tutorial-legpress { 0%, 100% { transform: translateY(0); } 45%, 65% { transform: translateY(15px) scaleY(0.92); } }
-
-@media (max-width: 640px) {
-  .tutorial-body { grid-template-columns: 1fr; padding: 18px; }
-  .tutorial-stage { min-height: 240px; }
+@media (max-width: 680px) {
+  .tutorial-body {
+    grid-template-columns: 1fr;
+    padding: 18px;
+    gap: 18px;
+  }
+  .tutorial-stage {
+    min-height: 240px;
+  }
 }

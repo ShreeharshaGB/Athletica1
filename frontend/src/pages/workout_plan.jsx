@@ -180,14 +180,14 @@ export default function WorkoutPlan() {
   return (
     <StudentAppLayout
       eyebrow={isCommunity ? 'COMMUNITY FUNCTIONAL MOVEMENT' : 'DAILY TRAINING & CONDITIONING'}
-      pageTitle="Your Personalized Workout Plan"
+      pageTitle="Workout Plan"
       pageSubtitle={
         isCommunity
-          ? 'Calibrated to your occupational physical context, joint mobility, and everyday recovery.'
-          : 'Calibrated to your standardized physical baseline test, stamina, and fitness goals.'
+          ? 'Occupational movement & everyday recovery.'
+          : 'Adaptive daily training calibrated to baseline test.'
       }
       actions={
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'nowrap' }}>
           <button
             type="button"
             className="ath-btn ath-btn-primary"
@@ -195,16 +195,16 @@ export default function WorkoutPlan() {
               setUpdateError(null)
               setShowUpdateModal(true)
             }}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', height: '38px', padding: '0 14px' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', height: '36px', padding: '0 12px', fontSize: '0.82rem', whiteSpace: 'nowrap' }}
           >
-            <Sliders size={15} /> Update Plan
+            <Sliders size={14} /> Update Plan
           </button>
           <Link
             to="/student/custom-workout"
             className="ath-btn ath-btn-secondary"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', height: '38px', padding: '0 14px' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', height: '36px', padding: '0 12px', fontSize: '0.82rem', whiteSpace: 'nowrap' }}
           >
-            <Dumbbell size={15} /> Custom Plan
+            <Dumbbell size={14} /> Custom Plan
           </Link>
           <button
             type="button"
@@ -213,9 +213,9 @@ export default function WorkoutPlan() {
             disabled={loading}
             title="Refresh plan"
             aria-label="Refresh workout plan"
-            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', minWidth: '38px', padding: 0 }}
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', minWidth: '36px', padding: 0 }}
           >
-            <RefreshCw size={15} className={loading ? 'ath-spin' : ''} />
+            <RefreshCw size={14} className={loading ? 'ath-spin' : ''} />
           </button>
         </div>
       }
@@ -658,13 +658,13 @@ export default function WorkoutPlan() {
                     <span className="ath-badge" style={{ textTransform: 'capitalize' }}>{w.dayOfWeek}</span>
                     <span className="ath-badge info">{ex.category}</span>
                   </div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 750, color: '#0f172a', margin: '4px 0' }}>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 750, color: 'var(--ath-dark, #0f172a)', margin: '4px 0' }}>
                     {ex.name}
                   </h4>
-                  <div style={{ fontSize: '0.85rem', color: '#0f766e', fontWeight: 700, margin: '2px 0 8px' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--ath-primary, #0f766e)', fontWeight: 750, margin: '2px 0 8px' }}>
                     {ex.duration ? ex.duration : `${ex.sets} sets × ${ex.reps} reps`}
                   </div>
-                  <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0, lineHeight: 1.45 }}>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--ath-text-muted, #64748b)', margin: 0, lineHeight: 1.45 }}>
                     {ex.instructions || 'Focus on controlled breathing and full range of motion.'}
                   </p>
                   <button type="button" className="exercise-tutorial-link" onClick={() => setTutorialExercise(ex)}>
@@ -672,8 +672,8 @@ export default function WorkoutPlan() {
                   </button>
                 </div>
 
-                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>{ex.equipment || 'Bodyweight'}</span>
+                <div style={{ borderTop: '1px solid var(--ath-border, #f1f5f9)', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--ath-text-light, #94a3b8)' }}>{ex.equipment || 'Bodyweight'}</span>
                   <span className={`ath-badge ${ex.isCompleted ? 'success' : ''}`}>
                     {ex.isCompleted ? 'Completed ✓' : 'Scheduled'}
                   </span>
@@ -746,23 +746,24 @@ export default function WorkoutPlan() {
             style={{
               maxWidth: '520px',
               width: '100%',
-              background: '#ffffff',
+              background: 'var(--ath-card-bg, #ffffff)',
+              border: '1px solid var(--ath-border, #e2e8f0)',
               borderRadius: '20px',
               padding: '28px',
               gap: '18px',
-              boxShadow: '0 20px 48px rgba(0,0,0,0.2)',
+              boxShadow: '0 20px 48px rgba(0,0,0,0.3)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#e6f7f2', color: '#0f766e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--ath-primary-light, #e6f7f2)', color: 'var(--ath-primary, #0f766e)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Sliders size={20} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: 'var(--ath-dark, #0f172a)' }}>
                     Update Workout Plan
                   </h3>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--ath-text-muted, #64748b)' }}>
                     Recalibrate your weekly routine and physical parameters
                   </span>
                 </div>
@@ -771,14 +772,14 @@ export default function WorkoutPlan() {
                 type="button"
                 onClick={() => setShowUpdateModal(false)}
                 disabled={regenerating}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--ath-text-muted, #94a3b8)' }}
               >
                 <X size={20} />
               </button>
             </div>
 
             {updateError && (
-              <div style={{ padding: '10px 14px', borderRadius: '10px', background: '#fef2f2', color: '#b91c1c', fontSize: '0.84rem' }}>
+              <div style={{ padding: '10px 14px', borderRadius: '10px', background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', fontSize: '0.84rem' }}>
                 {updateError}
               </div>
             )}
@@ -786,7 +787,7 @@ export default function WorkoutPlan() {
             <form onSubmit={handleRegeneratePlan} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {/* PRIMARY GOAL */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--ath-text, #334155)', marginBottom: '6px' }}>
                   Primary Fitness Goal
                 </label>
                 <select
@@ -796,10 +797,10 @@ export default function WorkoutPlan() {
                     width: '100%',
                     padding: '10px 12px',
                     borderRadius: '10px',
-                    border: '1px solid #cbd5e1',
+                    border: '1px solid var(--ath-border, #cbd5e1)',
                     fontSize: '0.9rem',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--ath-input-bg, #ffffff)',
+                    color: 'var(--ath-dark, #0f172a)',
                   }}
                 >
                   {GOAL_OPTIONS.map((g) => (
@@ -810,7 +811,7 @@ export default function WorkoutPlan() {
 
               {/* FITNESS LEVEL */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--ath-text, #334155)', marginBottom: '6px' }}>
                   Current Fitness Level
                 </label>
                 <select
@@ -820,10 +821,10 @@ export default function WorkoutPlan() {
                     width: '100%',
                     padding: '10px 12px',
                     borderRadius: '10px',
-                    border: '1px solid #cbd5e1',
+                    border: '1px solid var(--ath-border, #cbd5e1)',
                     fontSize: '0.9rem',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--ath-input-bg, #ffffff)',
+                    color: 'var(--ath-dark, #0f172a)',
                   }}
                 >
                   <option value="beginner">Beginner</option>
@@ -834,7 +835,7 @@ export default function WorkoutPlan() {
 
               {/* AVAILABLE DAILY TIME */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--ath-text, #334155)', marginBottom: '6px' }}>
                   Available Time per Session
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
@@ -846,9 +847,9 @@ export default function WorkoutPlan() {
                       style={{
                         padding: '8px 4px',
                         borderRadius: '8px',
-                        border: updateForm.availableTimeMinutes === t ? '2px solid #0f766e' : '1px solid #cbd5e1',
-                        background: updateForm.availableTimeMinutes === t ? '#e6f7f2' : '#ffffff',
-                        color: updateForm.availableTimeMinutes === t ? '#0f766e' : '#475569',
+                        border: updateForm.availableTimeMinutes === t ? '2px solid var(--ath-primary, #0f766e)' : '1px solid var(--ath-border, #cbd5e1)',
+                        background: updateForm.availableTimeMinutes === t ? 'var(--ath-primary-light, #e6f7f2)' : 'var(--ath-input-bg, #ffffff)',
+                        color: updateForm.availableTimeMinutes === t ? 'var(--ath-primary, #0f766e)' : 'var(--ath-text, #475569)',
                         fontWeight: updateForm.availableTimeMinutes === t ? 750 : 600,
                         fontSize: '0.82rem',
                         cursor: 'pointer',
@@ -863,7 +864,7 @@ export default function WorkoutPlan() {
               {/* COMMUNITY DAILY ACTIVITY CONTEXT */}
               {isCommunity && (
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--ath-text, #334155)', marginBottom: '6px' }}>
                     Daily Physical Activity / Work Context
                   </label>
                   <select
@@ -873,17 +874,17 @@ export default function WorkoutPlan() {
                       width: '100%',
                       padding: '10px 12px',
                       borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
+                      border: '1px solid var(--ath-border, #cbd5e1)',
                       fontSize: '0.9rem',
-                      background: '#ffffff',
-                      color: '#0f172a',
+                      background: 'var(--ath-input-bg, #ffffff)',
+                      color: 'var(--ath-dark, #0f172a)',
                     }}
                   >
                     {COMMUNITY_ACTIVITY_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>{opt}</option>
                     ))}
                   </select>
-                  <p style={{ margin: '6px 0 0', fontSize: '0.78rem', color: '#64748b' }}>
+                  <p style={{ margin: '6px 0 0', fontSize: '0.78rem', color: 'var(--ath-text-muted, #64748b)' }}>
                     Workouts are automatically calibrated to avoid extra fatigue on top of your daily work routine.
                   </p>
                 </div>

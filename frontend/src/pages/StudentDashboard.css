@@ -177,22 +177,26 @@
    TOPBAR
    ============================================================ */
 .ath-topbar {
-  height: 72px;
-  background: #ffffff;
+  height: 68px;
+  background: var(--ath-surface, #ffffff);
   border-bottom: 1px solid var(--ath-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 24px;
   position: sticky;
   top: 0;
   z-index: 90;
+  gap: 14px;
+  flex-wrap: nowrap;
 }
 
 .ath-topbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .ath-mobile-toggle {
@@ -203,26 +207,41 @@
   cursor: pointer;
   padding: 6px;
   border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.ath-topbar-heading {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .ath-topbar-heading h1 {
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 750;
   color: var(--ath-dark);
   margin: 0;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ath-topbar-heading p {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--ath-text-muted);
   margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 440px;
 }
 
 .ath-topbar-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
 }
 
 .ath-icon-btn {

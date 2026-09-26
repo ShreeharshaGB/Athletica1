@@ -425,11 +425,11 @@ export default function StudentDashboard() {
                   </div>
 
                   {todayWorkout.exercises && todayWorkout.exercises.length > 0 && (
-                    <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ background: 'var(--ath-surface-hover, #f8fafc)', border: '1px solid var(--ath-border, #e2e8f0)', borderRadius: '10px', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {todayWorkout.exercises.slice(0, 3).map((ex, i) => (
                         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-                          <span style={{ fontWeight: 600, color: '#334155' }}>{ex.name}</span>
-                          <span style={{ color: '#64748b' }}>{ex.sets} sets × {ex.reps} reps</span>
+                          <span style={{ fontWeight: 600, color: 'var(--ath-text, #334155)' }}>{ex.name}</span>
+                          <span style={{ color: 'var(--ath-text-muted, #64748b)' }}>{ex.sets} sets × {ex.reps} reps</span>
                         </div>
                       ))}
                     </div>
@@ -468,21 +468,21 @@ export default function StudentDashboard() {
                 </div>
 
                 {dashboardData.profile?.dietPreference ? (
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ background: 'var(--ath-surface-hover, #f8fafc)', border: '1px solid var(--ath-border, #e2e8f0)', borderRadius: '14px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 700, fontSize: '0.92rem', color: '#0f172a' }}>Dietary Profile</span>
+                      <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--ath-dark, #0f172a)' }}>Dietary Profile</span>
                       <span className="ath-badge success">{dashboardData.profile.dietPreference.toUpperCase()}</span>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                      <div style={{ background: '#ffffff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                        <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Nutrition Goal</div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 750, color: '#0f172a', marginTop: '2px' }}>
+                      <div style={{ background: 'var(--ath-card-bg, #ffffff)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--ath-border, #e2e8f0)' }}>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--ath-text-muted, #64748b)', fontWeight: 600 }}>Nutrition Goal</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 750, color: 'var(--ath-dark, #0f172a)', marginTop: '2px' }}>
                           {dashboardData.profile.fitnessGoal || 'Balanced Health'}
                         </div>
                       </div>
-                      <div style={{ background: '#ffffff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                        <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Daily Hydration</div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 750, color: '#0f172a', marginTop: '2px' }}>
+                      <div style={{ background: 'var(--ath-card-bg, #ffffff)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--ath-border, #e2e8f0)' }}>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--ath-text-muted, #64748b)', fontWeight: 600 }}>Daily Hydration</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 750, color: 'var(--ath-dark, #0f172a)', marginTop: '2px' }}>
                           2.5 L / day
                         </div>
                       </div>
@@ -566,36 +566,36 @@ export default function StudentDashboard() {
                     <ClipboardCheck size={20} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>Take Assessment</div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>Log test measurements</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--ath-dark, #0f172a)' }}>Take Assessment</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--ath-text-muted, #64748b)', marginTop: '2px' }}>Log test measurements</div>
                   </div>
-                  <ArrowRight size={16} color="#94a3b8" />
+                  <ArrowRight size={16} color="var(--ath-text-muted, #94a3b8)" />
                 </div>
               </Link>
 
               <Link to="/student/physique-analysis" style={{ textDecoration: 'none' }}>
-                <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%', border: '1px solid #ccfbf1' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#e6f7f2', color: '#0f766e', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%', border: '1px solid var(--ath-border, #ccfbf1)' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--ath-primary-light, #e6f7f2)', color: 'var(--ath-primary, #0f766e)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Sparkles size={20} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f766e' }}>AI Physique Analysis</div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>Visual posture & conditioning</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--ath-primary, #0f766e)' }}>AI Physique Analysis</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--ath-text-muted, #64748b)', marginTop: '2px' }}>Visual posture & conditioning</div>
                   </div>
-                  <ArrowRight size={16} color="#0f766e" />
+                  <ArrowRight size={16} color="var(--ath-primary, #0f766e)" />
                 </div>
               </Link>
 
               <Link to="/student/workout" style={{ textDecoration: 'none' }}>
                 <div className="ath-card" style={{ padding: '16px', borderRadius: '12px', flexDirection: 'row', alignItems: 'center', gap: '14px', cursor: 'pointer', height: '100%' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff7ed', color: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--ath-orange-light, #fff7ed)', color: 'var(--ath-orange, #f97316)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Dumbbell size={20} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>View Workout</div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>AI tailored regimen</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--ath-dark, #0f172a)' }}>View Workout</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--ath-text-muted, #64748b)', marginTop: '2px' }}>AI tailored regimen</div>
                   </div>
-                  <ArrowRight size={16} color="#94a3b8" />
+                  <ArrowRight size={16} color="var(--ath-text-muted, #94a3b8)" />
                 </div>
               </Link>
 

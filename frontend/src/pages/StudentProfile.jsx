@@ -81,16 +81,22 @@ export default function StudentProfile() {
     }
   }
 
+  const isCommunity = user?.role === 'community'
+
   return (
     <StudentAppLayout
-      pageTitle="Athlete Profile Settings"
-      pageSubtitle="Manage your physical baseline measurements, dietary preferences, and training aspirations."
-      eyebrow="ACCOUNT & BIOMETRICS"
+      pageTitle={isCommunity ? 'Community Profile Settings' : 'Athlete Profile Settings'}
+      pageSubtitle={
+        isCommunity
+          ? 'Manage your physical baseline measurements, daily activity routine, and wellness goals.'
+          : 'Manage your physical baseline measurements, dietary preferences, and training aspirations.'
+      }
+      eyebrow={isCommunity ? 'COMMUNITY ACCOUNT & BIOMETRICS' : 'ACCOUNT & BIOMETRICS'}
     >
       <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         {loading ? (
           <div className="ath-card" style={{ textAlign: 'center', padding: '40px' }}>
-            <p style={{ color: '#64748b', margin: 0 }}>Loading profile metrics...</p>
+            <p style={{ color: 'var(--ath-text-muted)', margin: 0 }}>Loading profile metrics...</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -134,14 +140,16 @@ export default function StudentProfile() {
                 </div>
 
                 <div className="ath-form-group" style={{ gridColumn: '1 / -1' }}>
-                  <label className="ath-label">School / Training Location (optional)</label>
+                  <label className="ath-label">
+                    {isCommunity ? 'Residential / Community Location (City, Town or Village)' : 'School / College / Training Location (optional)'}
+                  </label>
                   <input
                     type="text"
                     name="location"
                     className="ath-input"
                     value={formData.location}
                     onChange={handleChange}
-                    placeholder="e.g. KV School Sports Wing"
+                    placeholder={isCommunity ? 'e.g. Indiranagar, Bengaluru or Dharwad Rural' : 'e.g. KV School Sports Wing'}
                   />
                 </div>
               </div>

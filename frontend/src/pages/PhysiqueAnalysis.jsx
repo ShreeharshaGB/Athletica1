@@ -14,8 +14,10 @@ import {
   X,
   Eye,
   Info,
+  Camera,
 } from 'lucide-react'
 import StudentAppLayout from '../components/StudentAppLayout'
+import CameraCaptureModal from '../components/CameraCaptureModal'
 import { apiRequest, API_BASE_URL } from '../lib/api.js'
 import './PhysiqueAnalysis.css'
 
@@ -27,7 +29,9 @@ export default function PhysiqueAnalysis() {
   const [analysis, setAnalysis] = useState(null)
   const [error, setError] = useState('')
   const [dragActive, setDragActive] = useState(false)
+  const [cameraModalOpen, setCameraModalOpen] = useState(false)
   const fileInputRef = useRef(null)
+  const nativeCameraInputRef = useRef(null)
 
   // Fetch student's latest completed analysis on mount without re-running Gemini
   useEffect(() => {
@@ -119,6 +123,9 @@ export default function PhysiqueAnalysis() {
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
+    if (nativeCameraInputRef.current) {
+      nativeCameraInputRef.current.value = ''
+    }
   }
 
   const handleAnalyze = async () => {
@@ -206,7 +213,7 @@ export default function PhysiqueAnalysis() {
               )}
             </div>
 
-            {/* Hidden File Input */}
+            {/* Hidden File Input for Gallery */}
             <input
               ref={fileInputRef}
               type="file"
@@ -216,37 +223,81 @@ export default function PhysiqueAnalysis() {
               disabled={analyzing}
             />
 
-            {/* Dropzone or Preview */}
+            {/* Hidden File Input for Native Camera */}
+            <input
+              ref={nativeCameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="user"
+              style={{ display: 'none' }}
+              onChange={(e) => handleFileChange(e.target.files?.[0])}
+              disabled={analyzing}
+            />
+
+            {/* Camera Capture Modal */}
+            <CameraCaptureModal
+              isOpen={cameraModalOpen}
+              onClose={() => setCameraModalOpen(false)}
+              onCapture={(capturedFile) => handleFileChange(capturedFile)}
+              title="Capture Physique Photo"
+              subtitle="Stand 6-8 feet away in upright posture with good ambient lighting."
+              initialFacingMode="user"
+            />
+
+            {/* DUAL SELECTION OPTIONS (When no preview yet) */}
             {!previewUrl ? (
-              <div
-                className={`physique-dropzone ${dragActive ? 'drag-active' : ''}`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    fileInputRef.current?.click()
-                  }
-                }}
-              >
-                <div className="physique-upload-icon-circle">
-                  <Upload size={24} />
-                </div>
-                <div className="physique-dropzone-prompt">
-                  <h3>Drag & drop your photo here, or browse</h3>
-                  <p>Supports JPG, PNG, and WEBP formats up to 5MB</p>
-                </div>
-                <button
-                  type="button"
-                  className="ath-btn ath-btn-primary"
-                  style={{ pointerEvents: 'none', marginTop: '4px' }}
+              <div className="ath-upload-options-grid">
+                {/* OPTION 1: SELECT FROM GALLERY */}
+                <div
+                  className={`ath-upload-option-card ${dragActive ? 'drag-active' : ''}`}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click()
+                  }}
                 >
-                  Select Photo
-                </button>
+                  <div className="ath-upload-option-icon">
+                    <ImageIcon size={28} />
+                  </div>
+                  <div>
+                    <h4 className="ath-upload-option-title">Select from Gallery</h4>
+                    <p className="ath-upload-option-desc">
+                      Upload an existing front or side posture photo from your device (JPG, PNG, WEBP).
+                    </p>
+                  </div>
+                  <button type="button" className="ath-btn ath-btn-secondary ath-upload-option-btn">
+                    <Upload size={15} /> Browse Gallery
+                  </button>
+                </div>
+
+                {/* OPTION 2: TAKE PHOTO WITH CAMERA */}
+                <div
+                  className="ath-upload-option-card"
+                  onClick={() => setCameraModalOpen(true)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') setCameraModalOpen(true)
+                  }}
+                >
+                  <div className="ath-upload-option-icon" style={{ background: '#f0fdfa', color: '#0f766e', borderColor: '#ccfbf1' }}>
+                    <Camera size={28} />
+                  </div>
+                  <div>
+                    <h4 className="ath-upload-option-title">Take Photo with Camera</h4>
+                    <p className="ath-upload-option-desc">
+                      Activate camera directly, line up your frame, and snap your posture photo on the spot.
+                    </p>
+                  </div>
+                  <button type="button" className="ath-btn ath-btn-primary ath-upload-option-btn">
+                    <Camera size={15} /> Open Camera
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="physique-preview-wrap">
@@ -260,8 +311,28 @@ export default function PhysiqueAnalysis() {
                     className="ath-btn ath-btn-secondary"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={analyzing}
+                    title="Select different image from gallery"
                   >
-                    <ImageIcon size={16} /> Change Photo
+                    <ImageIcon size={16} /> Gallery
+                  </button>
+
+                  <button
+                    type="button"
+                    className="ath-btn ath-btn-secondary"
+                    onClick={() => setCameraModalOpen(true)}
+                    disabled={analyzing}
+                    title="Take new photo with camera"
+                  >
+                    <Camera size={16} /> Camera
+                  </button>
+
+                  <button
+                    type="button"
+                    className="ath-btn ath-btn-secondary"
+                    onClick={handleRemoveImage}
+                    disabled={analyzing}
+                  >
+                    <RotateCcw size={16} /> Clear
                   </button>
 
                   <button

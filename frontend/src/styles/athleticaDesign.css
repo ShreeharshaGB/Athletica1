@@ -307,22 +307,26 @@ nav.ath-sidebar-nav {
 
 /* Unified Topbar */
 .ath-topbar {
-  height: 72px;
+  height: 68px;
   background: var(--ath-surface);
   border-bottom: 1px solid var(--ath-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 24px;
   position: sticky;
   top: 0;
   z-index: 90;
+  gap: 14px;
+  flex-wrap: nowrap;
 }
 
 .ath-topbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .ath-mobile-toggle {
@@ -335,26 +339,67 @@ nav.ath-sidebar-nav {
   padding: 7px;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.ath-topbar-heading {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .ath-topbar-heading h1 {
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 750;
   color: var(--ath-dark);
   margin: 0;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ath-topbar-heading p {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--ath-text-muted);
   margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 440px;
 }
 
 .ath-topbar-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+}
+
+.ath-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 1280px) {
+  .ath-topbar-heading p {
+    max-width: 280px;
+  }
+  .ath-user-profile-btn .ath-user-role {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .ath-topbar-heading p {
+    display: none;
+  }
+  .ath-user-profile-btn .ath-user-meta {
+    display: none;
+  }
 }
 
 .ath-icon-btn {

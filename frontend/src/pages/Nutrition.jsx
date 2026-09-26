@@ -30,6 +30,7 @@ import {
   INDIAN_REGIONAL_FOODS,
   REGIONAL_FOOD_CATEGORIES,
 } from '../data/indianRegionalFoods.js'
+import CameraCaptureModal from '../components/CameraCaptureModal'
 import './Nutrition.css'
 
 export default function Nutrition() {
@@ -58,7 +59,9 @@ export default function Nutrition() {
   const [photoResult, setPhotoResult] = useState(null)
   const [photoError, setPhotoError] = useState('')
   const [dragActive, setDragActive] = useState(false)
+  const [cameraModalOpen, setCameraModalOpen] = useState(false)
   const fileInputRef = useRef(null)
+  const nativeCameraInputRef = useRef(null)
 
   // --- METHOD 2: ✍️ DESCRIBE FOOD STATE ---
   const [mealDescription, setMealDescription] = useState('')
@@ -195,6 +198,9 @@ export default function Nutrition() {
     setPhotoError('')
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
+    }
+    if (nativeCameraInputRef.current) {
+      nativeCameraInputRef.current.value = ''
     }
   }
 
@@ -568,7 +574,7 @@ export default function Nutrition() {
               ======================================================= */}
           {activeLogTab === 'photo' && (
             <div>
-              {/* Hidden File Input */}
+              {/* Hidden File Input for Gallery */}
               <input
                 type="file"
                 ref={fileInputRef}
@@ -577,22 +583,79 @@ export default function Nutrition() {
                 style={{ display: 'none' }}
               />
 
-              {/* UPLOAD / DROPZONE STATE (When no preview) */}
+              {/* Hidden File Input for Direct Native Camera */}
+              <input
+                type="file"
+                ref={nativeCameraInputRef}
+                onChange={(e) => handleFileChange(e.target.files?.[0])}
+                accept="image/*"
+                capture="environment"
+                style={{ display: 'none' }}
+              />
+
+              {/* Camera Capture Modal with live preview & shutter */}
+              <CameraCaptureModal
+                isOpen={cameraModalOpen}
+                onClose={() => setCameraModalOpen(false)}
+                onCapture={(capturedFile) => handleFileChange(capturedFile)}
+                title="Scan Meal with Camera"
+                subtitle="Frame your meal plate clearly in the viewfinder and click capture."
+                initialFacingMode="environment"
+              />
+
+              {/* DUAL SELECTION OPTIONS (When no preview yet) */}
               {!previewUrl && (
-                <div
-                  className={`scanner-dropzone ${dragActive ? 'drag-active' : ''}`}
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <div className="scanner-icon-circle">
-                    <Upload size={26} />
+                <div className="ath-upload-options-grid">
+                  {/* OPTION 1: SELECT FROM GALLERY */}
+                  <div
+                    className={`ath-upload-option-card ${dragActive ? 'drag-active' : ''}`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click()
+                    }}
+                  >
+                    <div className="ath-upload-option-icon">
+                      <ImageIcon size={28} />
+                    </div>
+                    <div>
+                      <h4 className="ath-upload-option-title">Select from Gallery</h4>
+                      <p className="ath-upload-option-desc">
+                        Browse meal photos from your device, or drag and drop image here (JPG, PNG, WEBP).
+                      </p>
+                    </div>
+                    <button type="button" className="ath-btn ath-btn-secondary ath-upload-option-btn">
+                      <Upload size={15} /> Browse Gallery
+                    </button>
                   </div>
-                  <div className="scanner-prompt">
-                    <h3>Take or upload a photo of your meal</h3>
-                    <p>Drag and drop, or click to browse. Supports JPG, PNG, WEBP (Max 5MB).</p>
+
+                  {/* OPTION 2: TAKE PHOTO WITH CAMERA */}
+                  <div
+                    className="ath-upload-option-card"
+                    onClick={() => setCameraModalOpen(true)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') setCameraModalOpen(true)
+                    }}
+                  >
+                    <div className="ath-upload-option-icon" style={{ background: '#f0fdf4', color: '#16a34a', borderColor: '#bbf7d0' }}>
+                      <Camera size={28} />
+                    </div>
+                    <div>
+                      <h4 className="ath-upload-option-title">Take Photo with Camera</h4>
+                      <p className="ath-upload-option-desc">
+                        Open live camera viewfinder directly, snap your meal plate, and auto-detect ingredients.
+                      </p>
+                    </div>
+                    <button type="button" className="ath-btn ath-btn-primary ath-upload-option-btn">
+                      <Camera size={15} /> Open Camera
+                    </button>
                   </div>
                 </div>
               )}
@@ -610,9 +673,21 @@ export default function Nutrition() {
                       className="ath-btn ath-btn-secondary"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={analyzingPhoto}
+                      title="Choose from gallery"
                     >
                       <ImageIcon size={16} />
-                      Change Photo
+                      Gallery
+                    </button>
+
+                    <button
+                      type="button"
+                      className="ath-btn ath-btn-secondary"
+                      onClick={() => setCameraModalOpen(true)}
+                      disabled={analyzingPhoto}
+                      title="Take new photo with camera"
+                    >
+                      <Camera size={16} />
+                      Camera
                     </button>
 
                     <button

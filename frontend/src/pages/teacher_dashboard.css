@@ -20,7 +20,7 @@
   flex: 1;
   min-width: 260px;
   max-width: 440px;
-  background: #ffffff;
+  background: var(--ath-surface, #ffffff);
   border: 1px solid var(--ath-border, #e2e8f0);
   border-radius: var(--ath-radius-md, 12px);
   padding: 8px 14px;
@@ -56,7 +56,7 @@
   padding: 8px 14px;
   border: 1px solid var(--ath-border, #e2e8f0);
   border-radius: var(--ath-radius-md, 12px);
-  background: #ffffff;
+  background: var(--ath-input-bg, #ffffff);
   color: var(--ath-text, #1e293b);
   font-family: inherit;
   font-size: 0.88rem;
@@ -75,7 +75,7 @@
   overflow-x: auto;
   border-radius: var(--ath-radius-md, 14px);
   border: 1px solid var(--ath-border, #e2e8f0);
-  background: #ffffff;
+  background: var(--ath-card-bg, #ffffff);
 }
 
 .teacher-table {
@@ -87,7 +87,7 @@
 
 .teacher-table th {
   padding: 13px 18px;
-  background: #f8fafc;
+  background: var(--ath-surface-hover, #f8fafc);
   color: var(--ath-text-muted, #64748b);
   font-weight: 700;
   font-size: 0.76rem;
@@ -109,7 +109,7 @@
 }
 
 .teacher-table tbody tr:hover {
-  background: #f8fafc;
+  background: var(--ath-surface-hover, #f8fafc);
 }
 
 .student-meta-col {
@@ -150,7 +150,7 @@
   padding: 6px 14px;
   border-radius: var(--ath-radius-sm, 8px);
   border: 1px solid var(--ath-border, #e2e8f0);
-  background: #ffffff;
+  background: var(--ath-surface, #ffffff);
   color: var(--ath-primary, #0f766e);
   font-weight: 600;
   font-size: 0.82rem;
@@ -214,7 +214,7 @@
   justify-content: center;
   padding: 48px 24px;
   text-align: center;
-  background: #ffffff;
+  background: var(--ath-surface, #ffffff);
   border-radius: var(--ath-radius-md, 14px);
   border: 1px dashed var(--ath-border, #e2e8f0);
 }
@@ -365,7 +365,7 @@
 }
 
 .teacher-activity-card {
-  background: #ffffff;
+  background: var(--ath-card-bg, #ffffff);
   border: 1px solid var(--ath-border, #e2e8f0);
   border-radius: 14px;
   padding: 18px 20px;
@@ -451,8 +451,8 @@
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.88rem;
-  color: #0f172a;
-  background: #ffffff;
+  color: var(--ath-dark, #0f172a);
+  background: var(--ath-input-bg, #ffffff);
   outline: none;
   transition: border-color 0.15s;
 }
@@ -521,7 +521,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px;
-  background: #ffffff;
+  background: var(--ath-surface, #ffffff);
   border: 1px solid #fed7aa;
   border-left: 4px solid #f97316;
   border-radius: 10px;
@@ -533,8 +533,8 @@
   align-items: flex-start;
   gap: 12px;
   padding: 12px 14px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--ath-surface, #ffffff);
+  border: 1px solid var(--ath-border, #e2e8f0);
   border-radius: 10px;
 }
 
