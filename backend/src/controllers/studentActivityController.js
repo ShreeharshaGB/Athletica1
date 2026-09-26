@@ -155,6 +155,58 @@ export const joinActivity = async (req, res) => {
 };
 
 /**
+ * POST /api/student/activities/:activityId/complete
+ * Marks a joined activity as completed and ensures XP/points are awarded once.
+ */
+export const completeActivity = async (req, res) => {
+  try {
+    const student = await User.findById(req.user.id).select('institutionId role');
+    if (!student || student.role !== 'student') {
+      return res.status(403).json({ message: 'Student access required' });
+    }
+
+    const { activityId } = req.params;
+    const activity = await Activity.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ message: 'Activity not found' });
+    }
+
+    let participation = await ActivityParticipation.findOne({
+      activityId: activity._id,
+      studentId: student._id,
+    });
+
+    if (!participation) {
+      return res.status(400).json({ message: 'Please join the challenge before completing it.' });
+    }
+
+    if (participation.status === 'completed') {
+      return res.status(200).json({
+        message: 'You have already completed this activity. XP was previously awarded.',
+        alreadyCompleted: true,
+        pointsAwarded: participation.pointsAwarded,
+      });
+    }
+
+    participation.status = 'completed';
+    participation.completedAt = new Date();
+    if (!participation.pointsAwarded || participation.pointsAwarded === 0) {
+      participation.pointsAwarded = activity.points || 50;
+    }
+    await participation.save();
+
+    return res.status(200).json({
+      message: `Challenge completed! +${participation.pointsAwarded} XP awarded.`,
+      pointsAwarded: participation.pointsAwarded,
+      status: 'completed',
+    });
+  } catch (error) {
+    console.error('Error completing activity:', error);
+    return res.status(500).json({ message: 'Server error while completing activity' });
+  }
+};
+
+/**
  * GET /api/student/activities/joined
  * Returns list of activities the authenticated student has joined
  */

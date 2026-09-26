@@ -21,8 +21,12 @@ import {
   MessageCircle,
   ScanLine,
   BookOpen,
+  Sun,
+  Moon,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
+import { useLanguage } from '../context/LanguageContext'
 
 const studentNavItems = [
   { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
@@ -61,6 +65,28 @@ const communityNavItems = [
   { label: 'Progress', path: '/student/progress', icon: TrendingUp },
 ]
 
+const navKeyMap = {
+  'Dashboard': 'nav_dashboard',
+  'Classrooms': 'nav_classrooms',
+  'Physique Analysis': 'nav_physique_analysis',
+  'Fitness Assessment': 'nav_fitness_assessment',
+  'Workout Plan': 'nav_workout_plan',
+  'Nutrition': 'nav_nutrition',
+  'AI Coach': 'nav_coach',
+  'Wellness': 'nav_wellness',
+  'Progress': 'nav_progress',
+  'Talent Discovery': 'nav_talent_discovery',
+  'Gamification': 'nav_gamification',
+  'Fitness Passport': 'nav_fitness_passport',
+  'Student Insights': 'nav_student_insights',
+  'Students': 'nav_students',
+  'Activities': 'nav_activities',
+  'Community Hub': 'nav_community_hub',
+  'Challenges': 'nav_challenges',
+  'Leaderboard': 'nav_leaderboard',
+  'Members': 'nav_members',
+}
+
 export default function StudentAppLayout({
   children,
   pageTitle,
@@ -72,16 +98,18 @@ export default function StudentAppLayout({
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const { theme, isDark, toggleTheme } = useTheme()
+  const { language, toggleLanguage, t } = useLanguage()
 
   const isTeacher = user?.role === 'teacher'
   const isCommunity = user?.role === 'community'
   const userName = user?.name || (isTeacher ? 'Faculty Coach' : isCommunity ? 'Community Athlete' : 'Athlete')
   const navItems = isTeacher ? teacherNavItems : isCommunity ? communityNavItems : studentNavItems
   const defaultEyebrow = isTeacher
-    ? 'ATHLETICA FACULTY PORTAL'
+    ? t('teacher_portal', 'ATHLETICA FACULTY PORTAL')
     : isCommunity
       ? `ATHLETICA COMMUNITY • ${user?.communityId || 'MEMBER'}`
-      : 'ATHLETICA STUDENT PORTAL'
+      : t('student_portal', 'ATHLETICA STUDENT PORTAL')
 
   const handleNavClick = (path) => {
     setMobileMenuOpen(false)
@@ -138,7 +166,7 @@ export default function StudentAppLayout({
         </Link>
 
         <p className="ath-sidebar-menu-kicker">
-          {isTeacher ? 'Faculty Portal' : isCommunity ? 'Community Hub' : 'Menu'}
+          {isTeacher ? t('teacher_portal', 'Faculty Portal') : isCommunity ? t('community_portal', 'Community Hub') : t('student_workspace', 'Student Portal')}
         </p>
 
         <nav className="ath-sidebar-nav" aria-label={isTeacher ? 'Faculty Navigation' : 'Student Navigation'}>
@@ -147,6 +175,7 @@ export default function StudentAppLayout({
             const isActive =
               location.pathname === item.path ||
               (item.hash && location.pathname + location.hash === item.path)
+            const itemLabel = navKeyMap[item.label] ? t(navKeyMap[item.label], item.label) : item.label
             return (
               <button
                 key={item.label}
@@ -157,7 +186,7 @@ export default function StudentAppLayout({
                 <div className="ath-nav-icon-wrap">
                   <Icon size={19} />
                 </div>
-                <span className="ath-nav-label">{item.label}</span>
+                <span className="ath-nav-label">{itemLabel}</span>
               </button>
             )
           })}
@@ -173,7 +202,7 @@ export default function StudentAppLayout({
               <div className="ath-nav-icon-wrap">
                 <User size={19} />
               </div>
-              <span className="ath-nav-label">Profile</span>
+              <span className="ath-nav-label">{t('nav_profile', 'Profile')}</span>
             </button>
           )}
           <button
@@ -185,7 +214,7 @@ export default function StudentAppLayout({
             <div className="ath-nav-icon-wrap">
               <LogOut size={19} />
             </div>
-            <span className="ath-nav-label">Sign Out</span>
+            <span className="ath-nav-label">{t('nav_signOut', 'Sign Out')}</span>
           </button>
         </div>
       </aside>
@@ -204,14 +233,14 @@ export default function StudentAppLayout({
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
             <div className="ath-topbar-heading">
-              <h1>{pageTitle || `Good day, ${userName} 👋`}</h1>
+              <h1>{pageTitle || `${t('good_day', 'Good day')}, ${userName} 👋`}</h1>
               <p>
                 {pageSubtitle ||
                   (isTeacher
                     ? `Faculty Portal • Institution: ${user?.institutionId || 'General'}`
                     : isCommunity
                       ? `Community Portal • ${user?.communityId || 'General'}`
-                      : 'Ready to improve your fitness today?')}
+                      : t('ready_to_improve', 'Ready to improve your fitness today?'))}
               </p>
             </div>
           </div>
@@ -219,11 +248,36 @@ export default function StudentAppLayout({
           <div className="ath-topbar-right">
             {actions && <div className="ath-topbar-actions">{actions}</div>}
 
+            {/* Theme Control */}
+            <button
+              className="ath-theme-toggle-btn"
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? t('switch_to_light', 'Switch to light theme') : t('switch_to_dark', 'Switch to dark theme')}
+              title={isDark ? t('switch_to_light', 'Switch to light theme') : t('switch_to_dark', 'Switch to dark theme')}
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            {/* Language Control */}
+            <button
+              className="ath-lang-toggle-btn"
+              type="button"
+              onClick={toggleLanguage}
+              aria-label="Toggle language English or Kannada"
+              title={language === 'en' ? 'ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಿ' : 'Switch to English'}
+            >
+              <span className={language === 'en' ? 'ath-lang-active' : ''}>EN</span>
+              <span className="ath-lang-divider">|</span>
+              <span className={language === 'kn' ? 'ath-lang-active' : ''}>ಕನ್ನಡ</span>
+            </button>
+
+            {/* Notifications */}
             <button
               className="ath-icon-btn"
               type="button"
-              aria-label="Notifications"
-              onClick={() => alert('No new notifications today. Keep moving!')}
+              aria-label={t('notifications', 'Notifications')}
+              onClick={() => alert(t('no_notifications', 'No new notifications today. Keep moving!'))}
             >
               <Bell size={18} />
               <span className="ath-notify-dot" />
@@ -249,7 +303,7 @@ export default function StudentAppLayout({
                     ? `Teacher • ${user?.institutionId || 'Faculty'}`
                     : isCommunity
                       ? `Community • ${user?.communityId || 'Member'}`
-                      : 'Student Athlete'}
+                      : t('athlete', 'Student Athlete')}
                 </span>
               </div>
             </div>

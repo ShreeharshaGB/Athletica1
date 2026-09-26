@@ -12,9 +12,11 @@ import {
 } from 'lucide-react'
 import { apiRequest } from '../lib/api.js'
 import StudentAppLayout from '../components/StudentAppLayout'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function StudentAssessment() {
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     pushUps: '25',
@@ -62,9 +64,9 @@ export default function StudentAssessment() {
 
   return (
     <StudentAppLayout
-      pageTitle="Physical Fitness Assessment"
-      pageSubtitle="Standardized physiological baseline tests to calculate your certified Fitness Score."
-      eyebrow="FITNESS ASSESSMENT"
+      pageTitle={t('fitness_assessment_title', 'Physical Fitness Assessment')}
+      pageSubtitle={t('fitness_assessment_subtitle', 'Standardized physiological baseline tests to calculate your certified Fitness Score.')}
+      eyebrow={t('fitness_assessment', 'FITNESS ASSESSMENT')}
     >
       <div style={{ maxWidth: '820px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {/* CHECK MY FORM - INTEGRATED CV COMPANION BANNER */}
@@ -82,13 +84,13 @@ export default function StudentAssessment() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
             <div style={{ flex: 1, minWidth: '280px' }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.16)', padding: '4px 10px', borderRadius: '14px', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '10px' }}>
-                <ScanLine size={13} color="#5eead4" /> AI VISION POSE TRACKER
+                <ScanLine size={13} color="#5eead4" /> {t('ai_vision_coach', 'AI VISION POSE TRACKER')}
               </div>
               <h2 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 6px', color: '#ffffff' }}>
-                Check Your Form Before Testing
+                {t('check_form_before_testing', 'Check Your Form Before Testing')}
               </h2>
               <p style={{ margin: 0, color: '#ccfbf1', fontSize: '0.86rem', lineHeight: 1.5, maxWidth: '520px' }}>
-                Calibrate your biomechanics in real-time. Practice gym exercises, yoga poses, and calisthenics using your webcam with live posture feedback and rep counting.
+                {t('form_check_desc', 'Calibrate your biomechanics in real-time. Practice gym exercises, yoga poses, and calisthenics using your webcam with live posture feedback and rep counting.')}
               </p>
             </div>
 
@@ -106,7 +108,7 @@ export default function StudentAssessment() {
                 }}
                 onClick={() => navigate('/student/form-check')}
               >
-                <Play size={16} fill="#0f766e" /> Launch Form Check
+                <Play size={16} fill="#0f766e" /> {t('launch_form_check', 'Launch Form Check')}
               </button>
 
               <div style={{ display: 'flex', gap: '6px' }}>

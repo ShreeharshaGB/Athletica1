@@ -12,6 +12,7 @@ import communityRoutes from './routes/communityRoutes.js';
 import coachRoutes from './routes/coachRoutes.js';
 import { teacherRouter as teacherClassroomRoutes, studentRouter as studentClassroomRoutes } from './routes/classroomRoutes.js';
 import dietPlanRoutes from './routes/dietPlanRoutes.js';
+import gamificationRoutes from './routes/gamificationRoutes.js';
 
 const app = express();
 
@@ -79,6 +80,8 @@ app.use('/api/student/coach', coachRoutes);
 app.use('/api/teacher/classrooms', teacherClassroomRoutes);
 app.use('/api/student/classrooms', studentClassroomRoutes);
 app.use('/api/student/diet-plans', dietPlanRoutes);
+app.use('/api/gamification', gamificationRoutes);
+app.use('/api/student/gamification', gamificationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

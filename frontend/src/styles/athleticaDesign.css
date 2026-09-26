@@ -3,7 +3,53 @@
    Professional, Modern, Cohesive Fitness & Wellness Application
    ============================================================ */
 
-:root {
+:root,
+[data-theme="dark"] {
+  /* Brand Colors */
+  --ath-primary: #14b8a6;
+  --ath-primary-hover: #0d9488;
+  --ath-primary-light: rgba(20, 184, 166, 0.16);
+  --ath-primary-subtle: rgba(20, 184, 166, 0.08);
+
+  /* Secondary Accents */
+  --ath-blue: #3b82f6;
+  --ath-blue-light: rgba(59, 130, 246, 0.16);
+  --ath-purple: #a855f7;
+  --ath-purple-light: rgba(168, 85, 247, 0.16);
+  --ath-orange: #f97316;
+  --ath-orange-light: rgba(249, 115, 22, 0.16);
+  --ath-green: #10b981;
+  --ath-green-light: rgba(16, 185, 129, 0.16);
+
+  /* Neutral Spectrum - Dark Theme (Athletica Default) */
+  --ath-dark: #f8fafc;
+  --ath-text: #e2e8f0;
+  --ath-text-muted: #94a3b8;
+  --ath-text-light: #64748b;
+  --ath-border: #1e293b;
+  --ath-border-subtle: #15202d;
+  --ath-bg: #0b1118;
+  --ath-surface: #111a24;
+  --ath-surface-hover: #162230;
+  --ath-card-bg: #111a24;
+  --ath-input-bg: #0d151d;
+
+  /* Geometry & Spacing */
+  --ath-radius-sm: 8px;
+  --ath-radius-md: 14px;
+  --ath-radius-lg: 20px;
+  --ath-radius-pill: 9999px;
+
+  /* Shadows */
+  --ath-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --ath-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.25);
+  --ath-shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.55);
+
+  /* Sidebar Dimension */
+  --ath-sidebar-w: 275px;
+}
+
+[data-theme="light"] {
   /* Brand Colors */
   --ath-primary: #0f766e;
   --ath-primary-hover: #0d655e;
@@ -20,7 +66,7 @@
   --ath-green: #10b981;
   --ath-green-light: #ecfdf5;
 
-  /* Neutral Spectrum */
+  /* Neutral Spectrum - Light Theme */
   --ath-dark: #0f172a;
   --ath-text: #1e293b;
   --ath-text-muted: #64748b;
@@ -29,20 +75,14 @@
   --ath-border-subtle: #f1f5f9;
   --ath-bg: #f8fafc;
   --ath-surface: #ffffff;
-
-  /* Geometry & Spacing */
-  --ath-radius-sm: 8px;
-  --ath-radius-md: 14px;
-  --ath-radius-lg: 20px;
-  --ath-radius-pill: 9999px;
+  --ath-surface-hover: #f1f5f9;
+  --ath-card-bg: #ffffff;
+  --ath-input-bg: #ffffff;
 
   /* Shadows */
   --ath-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
   --ath-shadow-md: 0 4px 16px rgba(15, 23, 42, 0.05), 0 2px 6px rgba(15, 23, 42, 0.03);
   --ath-shadow-lg: 0 10px 28px rgba(15, 23, 42, 0.08);
-
-  /* Sidebar Dimension */
-  --ath-sidebar-w: 275px;
 }
 
 /* Base resets & typography */
@@ -330,6 +370,60 @@ nav.ath-sidebar-nav {
   cursor: pointer;
   transition: all 0.15s ease;
   position: relative;
+}
+
+.ath-theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ath-radius-sm);
+  border: 1px solid var(--ath-border);
+  background: var(--ath-surface);
+  color: var(--ath-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ath-theme-toggle-btn:hover {
+  background: var(--ath-border-subtle);
+  border-color: var(--ath-primary);
+  color: var(--ath-primary);
+}
+
+.ath-lang-toggle-btn {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: var(--ath-radius-sm);
+  border: 1px solid var(--ath-border);
+  background: var(--ath-surface);
+  color: var(--ath-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ath-lang-toggle-btn:hover {
+  border-color: var(--ath-primary);
+  background: var(--ath-border-subtle);
+}
+
+.ath-lang-active {
+  color: var(--ath-primary);
+  font-weight: 800;
+}
+
+.ath-lang-divider {
+  opacity: 0.35;
+  font-size: 0.72rem;
+  user-select: none;
 }
 
 .ath-icon-btn:hover {
@@ -678,9 +772,9 @@ nav.ath-sidebar-nav {
 }
 
 .ath-tab.active {
-  background: #ffffff;
+  background: var(--ath-surface);
   color: var(--ath-dark);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* Forms System */
@@ -693,7 +787,7 @@ nav.ath-sidebar-nav {
 .ath-label {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--ath-text);
 }
 
 .ath-input,
@@ -701,8 +795,8 @@ nav.ath-sidebar-nav {
   width: 100%;
   padding: 11px 14px;
   border-radius: var(--ath-radius-sm);
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
+  border: 1px solid var(--ath-border);
+  background: var(--ath-input-bg, var(--ath-surface));
   color: var(--ath-dark);
   font-size: 0.92rem;
   outline: none;
@@ -712,7 +806,7 @@ nav.ath-sidebar-nav {
 .ath-input:focus,
 .ath-select:focus {
   border-color: var(--ath-primary);
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
 }
 
 /* Empty State */

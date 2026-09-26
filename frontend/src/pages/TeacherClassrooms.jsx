@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import {
   BookOpen,
   Check,
@@ -14,17 +15,24 @@ import {
   Clock,
   Dumbbell,
   FileText,
+  Info,
+  ShieldCheck,
 } from 'lucide-react'
 import StudentAppLayout from '../components/StudentAppLayout'
+import { useLanguage } from '../context/LanguageContext'
 import { apiRequest } from '../lib/api.js'
 import './Classrooms.css'
 
 export default function TeacherClassrooms() {
+  const { classroomId } = useParams()
+  const navigate = useNavigate()
+  const { t } = useLanguage()
+
   const [classrooms, setClassrooms] = useState([])
-  const [selectedClassroomId, setSelectedClassroomId] = useState(null)
+  const [selectedClassroomId, setSelectedClassroomId] = useState(classroomId || null)
   const [classroomDetail, setClassroomDetail] = useState(null)
   const [detailLoading, setDetailLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState('tasks') // 'tasks' | 'students'
+  const [activeTab, setActiveTab] = useState('overview') // 'overview' | 'tasks' | 'students'
 
   // Classroom creation form
   const [form, setForm] = useState({ name: '', description: '' })
@@ -62,6 +70,7 @@ export default function TeacherClassrooms() {
   }, [])
 
   const loadClassroomDetail = async (id) => {
+    if (!id) return
     setDetailLoading(true)
     setError('')
     try {
@@ -70,10 +79,20 @@ export default function TeacherClassrooms() {
       setSelectedClassroomId(id)
     } catch (err) {
       setError(err.message || 'Could not load classroom details.')
+      setClassroomDetail(null)
     } finally {
       setDetailLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (classroomId) {
+      loadClassroomDetail(classroomId)
+    } else {
+      setSelectedClassroomId(null)
+      setClassroomDetail(null)
+    }
+  }, [classroomId])
 
   const handleCreate = async (event) => {
     event.preventDefault()
@@ -107,7 +126,8 @@ export default function TeacherClassrooms() {
     setError('')
     setTaskMsg('')
     try {
-      const res = await apiRequest(`/teacher/classrooms/${selectedClassroomId}/tasks`, {
+      const targetId = selectedClassroomId || classroomId
+      const res = await apiRequest(`/teacher/classrooms/${targetId}/tasks`, {
         method: 'POST',
         body: taskForm,
       })
@@ -115,7 +135,7 @@ export default function TeacherClassrooms() {
       setShowTaskForm(false)
       setTaskForm({ title: '', description: '', type: 'challenge', points: 50, dueDate: '' })
       // Reload detail to see new task
-      await loadClassroomDetail(selectedClassroomId)
+      await loadClassroomDetail(targetId)
       // Also reload classrooms list for task count
       loadClassrooms()
     } catch (err) {
@@ -134,16 +154,55 @@ export default function TeacherClassrooms() {
   // ==========================================
   // VIEW: SINGLE CLASSROOM DETAIL VIEW
   // ==========================================
-  if (selectedClassroomId && classroomDetail) {
-    const isCopied = copiedCode === classroomDetail.inviteCode
-    const tasks = classroomDetail.tasks || []
-    const members = classroomDetail.members || []
+  if (selectedClassroomId || classroomId) {
+    if (detailLoading) {
+      return (
+        <StudentAppLayout
+          eyebrow={t('teacher_workspace', 'TEACHER WORKSPACE')}
+          pageTitle={t('loading', 'Loading Classroom...')}
+        >
+          <div className="classroom-page" style={{ textAlign: 'center', padding: '60px 20px' }}>
+            <RefreshCw size={28} className="ath-spin" style={{ color: 'var(--ath-primary)', margin: '0 auto 12px' }} />
+            <p style={{ color: 'var(--ath-text-muted)' }}>{t('loading', 'Loading classroom details...')}</p>
+          </div>
+        </StudentAppLayout>
+      )
+    }
+
+    if (!classroomDetail && error) {
+      return (
+        <StudentAppLayout
+          eyebrow={t('teacher_workspace', 'TEACHER WORKSPACE')}
+          pageTitle={t('classrooms_title', 'Classroom Access Error')}
+        >
+          <div className="classroom-page">
+            <button
+              type="button"
+              className="classroom-back-btn"
+              onClick={() => navigate('/teacher/classrooms')}
+            >
+              <ArrowLeft size={16} /> {t('back_to_classrooms', 'Back to all classrooms')}
+            </button>
+            <div className="classroom-error" style={{ margin: '20px 0', padding: '18px' }}>
+              <p style={{ margin: 0, fontWeight: 700 }}>{error}</p>
+              <p style={{ margin: '6px 0 0', fontSize: '0.84rem' }}>
+                You may only view classrooms created under your teacher account.
+              </p>
+            </div>
+          </div>
+        </StudentAppLayout>
+      )
+    }
+
+    const tasks = classroomDetail?.tasks || []
+    const members = classroomDetail?.members || []
+    const isCopied = copiedCode === classroomDetail?.inviteCode
 
     return (
       <StudentAppLayout
-        eyebrow="CLASSROOM MANAGEMENT"
-        pageTitle={classroomDetail.name}
-        pageSubtitle={classroomDetail.description || 'Manage tasks, assign physical challenges, and track student submissions.'}
+        eyebrow={t('teacher_workspace', 'TEACHER WORKSPACE')}
+        pageTitle={classroomDetail?.name || t('classrooms_title', 'Classroom Details')}
+        pageSubtitle={classroomDetail?.description || 'Manage tasks, assign physical challenges, and track student submissions.'}
       >
         <div className="classroom-page">
           <button
@@ -152,23 +211,24 @@ export default function TeacherClassrooms() {
             onClick={() => {
               setSelectedClassroomId(null)
               setClassroomDetail(null)
+              navigate('/teacher/classrooms')
             }}
           >
-            <ArrowLeft size={16} /> Back to all classrooms
+            <ArrowLeft size={16} /> {t('back_to_classrooms', 'Back to all classrooms')}
           </button>
 
           {/* CLASSROOM HERO */}
-          <div className="classroom-detail-hero">
+          <div className="classroom-detail-hero" style={{ background: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)', borderRadius: '18px', padding: '24px 28px', color: '#ffffff', marginBottom: '22px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
               <div>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.18)', padding: '4px 10px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '8px' }}>
-                  <BookOpen size={13} /> FACULTY CLASSROOM
+                  <BookOpen size={13} /> {t('teacher_workspace', 'FACULTY CLASSROOM')}
                 </div>
                 <h1 style={{ margin: '0 0 6px', fontSize: '1.6rem', fontWeight: 800, color: '#ffffff' }}>
-                  {classroomDetail.name}
+                  {classroomDetail?.name}
                 </h1>
                 <p style={{ margin: 0, color: '#ccfbf1', fontSize: '0.88rem', maxWidth: '600px' }}>
-                  {classroomDetail.description || 'Active physical education and wellness classroom space.'}
+                  {classroomDetail?.description || 'Active physical education and wellness classroom space.'}
                 </p>
               </div>
 
@@ -187,15 +247,15 @@ export default function TeacherClassrooms() {
               >
                 <div>
                   <span style={{ display: 'block', fontSize: '0.66rem', color: '#99f6e4', fontWeight: 800, letterSpacing: '0.08em' }}>
-                    STUDENT INVITE CODE
+                    {t('student_invite_code', 'STUDENT INVITE CODE')}
                   </span>
                   <strong style={{ fontSize: '1.3rem', color: '#ffffff', letterSpacing: '0.12em' }}>
-                    {classroomDetail.inviteCode}
+                    {classroomDetail?.inviteCode}
                   </strong>
                 </div>
                 <button
                   type="button"
-                  onClick={() => copyCode(classroomDetail.inviteCode)}
+                  onClick={() => copyCode(classroomDetail?.inviteCode)}
                   style={{
                     background: '#ffffff',
                     color: '#0f766e',
@@ -210,43 +270,50 @@ export default function TeacherClassrooms() {
                     gap: '4px',
                   }}
                 >
-                  {isCopied ? <Check size={14} /> : <Clipboard size={14} />} {isCopied ? 'Copied' : 'Copy'}
+                  {isCopied ? <Check size={14} /> : <Clipboard size={14} />} {isCopied ? t('copied', 'Copied') : t('copy', 'Copy')}
                 </button>
               </div>
             </div>
 
             {/* METRICS ROW */}
-            <div style={{ display: 'flex', gap: '20px', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
+            <div style={{ display: 'flex', gap: '20px', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.15)', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Users size={16} color="#99f6e4" />
                 <span style={{ fontSize: '0.84rem' }}>
-                  <strong>{members.length}</strong> Enrolled Students
+                  <strong>{members.length}</strong> {t('enrolled_students', 'Enrolled Students')}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Award size={16} color="#99f6e4" />
                 <span style={{ fontSize: '0.84rem' }}>
-                  <strong>{tasks.length}</strong> Assigned Challenges & Tasks
+                  <strong>{tasks.length}</strong> {t('assigned_activities', 'Assigned Activities')}
                 </span>
               </div>
             </div>
           </div>
 
           {/* TABS */}
-          <div className="classroom-tabs">
+          <div className="classroom-tabs" style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+            <button
+              type="button"
+              className={`classroom-tab ${activeTab === 'overview' ? 'active' : ''}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              <Info size={16} /> Overview
+            </button>
             <button
               type="button"
               className={`classroom-tab ${activeTab === 'tasks' ? 'active' : ''}`}
               onClick={() => setActiveTab('tasks')}
             >
-              <Award size={16} /> Challenges & Tasks ({tasks.length})
+              <Award size={16} /> {t('assigned_activities', 'Tasks & Challenges')} ({tasks.length})
             </button>
             <button
               type="button"
               className={`classroom-tab ${activeTab === 'students' ? 'active' : ''}`}
               onClick={() => setActiveTab('students')}
             >
-              <Users size={16} /> Enrolled Students ({members.length})
+              <Users size={16} /> {t('student_roster', 'Students')} ({members.length})
             </button>
           </div>
 
@@ -262,12 +329,97 @@ export default function TeacherClassrooms() {
             </div>
           )}
 
+          {/* TAB 0: CLASSROOM OVERVIEW */}
+          {activeTab === 'overview' && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+              <div className="ath-card" style={{ gap: '14px' }}>
+                <div className="ath-card-header">
+                  <h3>
+                    <BookOpen size={18} color="var(--ath-primary)" />
+                    Classroom Information
+                  </h3>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem' }}>
+                  <div>
+                    <span style={{ color: 'var(--ath-text-muted)', fontSize: '0.76rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {t('classroom_name', 'Classroom Name')}
+                    </span>
+                    <div style={{ fontWeight: 700, color: 'var(--ath-dark)' }}>{classroomDetail?.name}</div>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--ath-text-muted)', fontSize: '0.76rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {t('classroom_desc', 'Description')}
+                    </span>
+                    <div style={{ color: 'var(--ath-text)' }}>{classroomDetail?.description || 'No description provided.'}</div>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--ath-text-muted)', fontSize: '0.76rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Institution
+                    </span>
+                    <div style={{ fontWeight: 700, color: 'var(--ath-dark)' }}>{classroomDetail?.institutionId || 'General'}</div>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--ath-text-muted)', fontSize: '0.76rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Created Date
+                    </span>
+                    <div style={{ color: 'var(--ath-text)' }}>{classroomDetail?.createdAt ? new Date(classroomDetail.createdAt).toLocaleDateString() : 'N/A'}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="ath-card" style={{ gap: '14px' }}>
+                <div className="ath-card-header">
+                  <h3>
+                    <ShieldCheck size={18} color="var(--ath-primary)" />
+                    Access & Membership
+                  </h3>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem' }}>
+                  <div>
+                    <span style={{ color: 'var(--ath-text-muted)', fontSize: '0.76rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {t('invite_code', 'Invite Code')}
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                      <code style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--ath-primary)', background: 'var(--ath-bg)', padding: '4px 10px', borderRadius: '6px' }}>
+                        {classroomDetail?.inviteCode}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => copyCode(classroomDetail?.inviteCode)}
+                        className="ath-btn ath-btn-secondary"
+                        style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                      >
+                        {isCopied ? t('copied', 'Copied') : t('copy', 'Copy')}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--ath-text-muted)', fontSize: '0.76rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Total Enrolled Students
+                    </span>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--ath-dark)' }}>
+                      {members.length} {t('nav_students', 'Students')}
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--ath-text-muted)', fontSize: '0.76rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Total Assigned Tasks
+                    </span>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--ath-primary)' }}>
+                      {tasks.length} {t('assigned_activities', 'Tasks')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* TAB 1: CHALLENGES & TASKS */}
           {activeTab === 'tasks' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#0f172a' }}>
-                  Assigned Activities
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--ath-dark)' }}>
+                  {t('assigned_activities', 'Assigned Activities')}
                 </h3>
                 <button
                   type="button"
@@ -275,23 +427,23 @@ export default function TeacherClassrooms() {
                   onClick={() => setShowTaskForm(!showTaskForm)}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                 >
-                  <Plus size={16} /> {showTaskForm ? 'Cancel' : 'Assign New Challenge or Task'}
+                  <Plus size={16} /> {showTaskForm ? t('cancel', 'Cancel') : t('assign_new_task', 'Assign New Challenge or Task')}
                 </button>
               </div>
 
               {/* TASK ASSIGNMENT FORM */}
               {showTaskForm && (
-                <div className="classroom-panel" style={{ marginBottom: '22px', border: '1px solid #0f766e' }}>
+                <div className="classroom-panel" style={{ marginBottom: '22px', border: '1px solid var(--ath-primary)' }}>
                   <div className="classroom-panel-heading">
                     <div>
                       <Plus size={18} />
-                      <h3>Create New Classroom Assignment</h3>
+                      <h3>{t('assign_new_task', 'Create New Classroom Assignment')}</h3>
                     </div>
                   </div>
                   <form onSubmit={handleAssignTask} className="classroom-form">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
                       <label>
-                        Task / Challenge Title *
+                        {t('task_title', 'Task / Challenge Title')} *
                         <input
                           required
                           value={taskForm.title}
@@ -302,17 +454,10 @@ export default function TeacherClassrooms() {
                       </label>
 
                       <label>
-                        Activity Category
+                        {t('activity_category', 'Activity Category')}
                         <select
                           value={taskForm.type}
                           onChange={(e) => setTaskForm({ ...taskForm, type: e.target.value })}
-                          style={{
-                            padding: '11px 12px',
-                            background: '#f8fafc',
-                            border: '1px solid #cbd5e1',
-                            borderRadius: '9px',
-                            font: 'inherit',
-                          }}
                         >
                           <option value="challenge">⚡ Challenge</option>
                           <option value="task">📋 Daily Task</option>
@@ -325,7 +470,7 @@ export default function TeacherClassrooms() {
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
                       <label>
-                        Reward XP / Points
+                        {t('reward_xp', 'Reward XP / Points')}
                         <input
                           type="number"
                           min="10"
@@ -337,7 +482,7 @@ export default function TeacherClassrooms() {
                       </label>
 
                       <label>
-                        Due Date <span>(optional)</span>
+                        {t('due_date', 'Due Date')} <span>(optional)</span>
                         <input
                           type="date"
                           value={taskForm.dueDate}
@@ -347,31 +492,27 @@ export default function TeacherClassrooms() {
                     </div>
 
                     <label>
-                      Description & Instructions <span>(optional)</span>
+                      {t('instructions', 'Description & Instructions')} <span>(optional)</span>
                       <textarea
                         value={taskForm.description}
                         onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                        placeholder="Provide details on sets, distance, target time, or form requirements..."
+                        placeholder="Detail performance targets, form guidelines, or completion criteria"
                         rows={3}
                         maxLength={500}
                       />
                     </label>
 
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                      <button type="submit" className="ath-btn ath-btn-primary" disabled={taskSubmitting}>
+                        {taskSubmitting ? <RefreshCw size={15} className="ath-spin" /> : <Plus size={15} />}
+                        {taskSubmitting ? t('submitting', 'Submitting...') : t('assign_new_task', 'Assign to Classroom')}
+                      </button>
                       <button
                         type="button"
                         className="ath-btn ath-btn-secondary"
                         onClick={() => setShowTaskForm(false)}
                       >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        className="ath-btn ath-btn-primary"
-                        disabled={taskSubmitting}
-                      >
-                        {taskSubmitting ? <RefreshCw size={16} className="ath-spin" /> : <Plus size={16} />}
-                        {taskSubmitting ? 'Assigning...' : 'Assign to Class'}
+                        {t('cancel', 'Cancel')}
                       </button>
                     </div>
                   </form>
@@ -380,43 +521,45 @@ export default function TeacherClassrooms() {
 
               {/* TASKS LIST */}
               {tasks.length === 0 ? (
-                <div className="classroom-empty-state">
-                  <Award size={36} color="#94a3b8" />
-                  <p style={{ fontWeight: 700, color: '#334155' }}>No tasks or challenges assigned yet.</p>
-                  <p style={{ fontSize: '0.8rem' }}>
-                    Click "Assign New Challenge or Task" above to publish your first activity to enrolled students.
+                <div className="classroom-empty-state" style={{ background: 'var(--ath-surface)', border: '1px dashed var(--ath-border)', borderRadius: '14px', padding: '36px 20px', textAlign: 'center' }}>
+                  <Award size={36} color="var(--ath-text-muted)" style={{ margin: '0 auto 8px' }} />
+                  <p style={{ fontWeight: 700, color: 'var(--ath-dark)' }}>
+                    {t('no_tasks_created', 'No tasks have been created for this classroom yet.')}
+                  </p>
+                  <p style={{ fontSize: '0.84rem', color: 'var(--ath-text-muted)' }}>
+                    Click "Assign New Challenge or Task" above to publish drills, fitness challenges, or routines for your students.
                   </p>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div className="classroom-tasks-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {tasks.map((task) => {
-                    const isDue = task.dueDate ? new Date(task.dueDate) < new Date() : false
+                    const isDue = task.dueDate && new Date(task.dueDate) < new Date()
                     return (
-                      <article className="classroom-task-card" key={task.id}>
-                        <div className="classroom-task-header">
+                      <article className="classroom-task-card" key={task.id} style={{ background: 'var(--ath-surface)', border: '1px solid var(--ath-border)', borderRadius: '12px', padding: '16px 20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
                           <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                              <span className={`task-type-badge ${task.type}`}>
+                              <span className="classroom-task-pill" style={{ textTransform: 'capitalize' }}>
                                 {task.type === 'challenge' ? '⚡ Challenge' : task.type === 'workout' ? '🏋️ Workout' : task.type === 'yoga' ? '🧘 Yoga' : '📋 Task'}
                               </span>
-                              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0f766e' }}>
+                              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--ath-primary)' }}>
                                 +{task.points} PTS
                               </span>
                             </div>
-                            <h4 style={{ margin: '0 0 4px', fontSize: '1.05rem', color: '#0f172a' }}>
+                            <h4 style={{ margin: '0 0 4px', fontSize: '1.05rem', color: 'var(--ath-dark)' }}>
                               {task.title}
                             </h4>
-                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem', lineHeight: 1.45 }}>
+                            <p style={{ margin: 0, color: 'var(--ath-text-muted)', fontSize: '0.85rem', lineHeight: 1.45 }}>
                               {task.description || 'Complete this task to fulfill PE curriculum targets and earn athletic XP.'}
                             </p>
                           </div>
 
                           <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#059669', background: '#ecfdf5', padding: '4px 10px', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
-                              {task.completedCount} / {members.length} Completed
+                            <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#10b981', background: 'var(--ath-primary-light)', padding: '4px 10px', borderRadius: '12px', border: '1px solid var(--ath-primary)' }}>
+                              {task.completedCount} / {members.length} {t('completed', 'Completed')}
                             </div>
                             {task.dueDate && (
-                              <div style={{ fontSize: '0.72rem', color: isDue ? '#dc2626' : '#64748b', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
+                              <div style={{ fontSize: '0.72rem', color: isDue ? '#ef4444' : 'var(--ath-text-muted)', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
                                 <Clock size={12} /> Due: {new Date(task.dueDate).toLocaleDateString()}
                               </div>
                             )}
@@ -425,8 +568,8 @@ export default function TeacherClassrooms() {
 
                         {/* STUDENT SUBMISSIONS EXPANDER */}
                         {task.completions && task.completions.length > 0 && (
-                          <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #e2e8f0' }}>
-                            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748b', letterSpacing: '0.06em' }}>
+                          <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px dashed var(--ath-border)' }}>
+                            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--ath-text-muted)', letterSpacing: '0.06em' }}>
                               COMPLETED BY:
                             </span>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
@@ -435,11 +578,11 @@ export default function TeacherClassrooms() {
                                   key={idx}
                                   style={{
                                     fontSize: '0.74rem',
-                                    background: '#f8fafc',
-                                    border: '1px solid #cbd5e1',
+                                    background: 'var(--ath-bg)',
+                                    border: '1px solid var(--ath-border)',
                                     padding: '3px 8px',
                                     borderRadius: '6px',
-                                    color: '#0f172a',
+                                    color: 'var(--ath-dark)',
                                   }}
                                 >
                                   ✓ {comp.student?.name || 'Student'} ({new Date(comp.completedAt).toLocaleDateString()})
@@ -460,34 +603,36 @@ export default function TeacherClassrooms() {
           {activeTab === 'students' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#0f172a' }}>
-                  Student Roster ({members.length})
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--ath-dark)' }}>
+                  {t('student_roster', 'Student Roster')} ({members.length})
                 </h3>
               </div>
 
               {members.length === 0 ? (
-                <div className="classroom-empty-state">
-                  <Users size={36} color="#94a3b8" />
-                  <p style={{ fontWeight: 700, color: '#334155' }}>No students enrolled yet.</p>
-                  <p style={{ fontSize: '0.8rem' }}>
-                    Share the invite code <strong>{classroomDetail.inviteCode}</strong> with your students so they can join from their portal.
+                <div className="classroom-empty-state" style={{ background: 'var(--ath-surface)', border: '1px dashed var(--ath-border)', borderRadius: '14px', padding: '36px 20px', textAlign: 'center' }}>
+                  <Users size={36} color="var(--ath-text-muted)" style={{ margin: '0 auto 8px' }} />
+                  <p style={{ fontWeight: 700, color: 'var(--ath-dark)' }}>
+                    {t('no_students_joined', 'No students have joined this classroom yet.')}
+                  </p>
+                  <p style={{ fontSize: '0.84rem', color: 'var(--ath-text-muted)' }}>
+                    {t('share_code_with_students', 'Share the invite code with your students so they can join from their portal.')}
                   </p>
                 </div>
               ) : (
-                <div className="classroom-roster-grid">
+                <div className="classroom-roster-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
                   {members.map((member) => (
-                    <div className="classroom-student-item" key={member.id}>
-                      <div className="classroom-student-avatar">
+                    <div className="classroom-student-item" key={member.id} style={{ background: 'var(--ath-surface)', border: '1px solid var(--ath-border)', borderRadius: '12px', padding: '14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div className="classroom-student-avatar" style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'linear-gradient(135deg, #0f766e, #14b8a6)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, flexShrink: 0 }}>
                         {(member.name || 'S').charAt(0).toUpperCase()}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--ath-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {member.name}
                         </div>
-                        <div style={{ fontSize: '0.72rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--ath-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {member.email}
                         </div>
-                        <div style={{ fontSize: '0.68rem', color: '#0f766e', marginTop: '2px' }}>
+                        <div style={{ fontSize: '0.68rem', color: 'var(--ath-primary)', marginTop: '2px' }}>
                           Enrolled: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString() : 'Active'}
                         </div>
                       </div>
@@ -507,9 +652,9 @@ export default function TeacherClassrooms() {
   // ==========================================
   return (
     <StudentAppLayout
-      eyebrow="FACULTY CLASSROOMS"
-      pageTitle="Classrooms"
-      pageSubtitle="Create a space for your students, open classrooms to view enrolled students, and assign targeted challenges."
+      eyebrow={t('teacher_workspace', 'FACULTY CLASSROOMS')}
+      pageTitle={t('classrooms_title', 'Classrooms')}
+      pageSubtitle={t('classrooms_subtitle_teacher', 'Create a space for your students, open classrooms to view enrolled students, and assign targeted challenges.')}
     >
       <div className="classroom-page">
         <section className="classroom-hero">
@@ -517,7 +662,7 @@ export default function TeacherClassrooms() {
             <BookOpen size={25} />
           </div>
           <div>
-            <p className="classroom-eyebrow">TEACHER WORKSPACE</p>
+            <p className="classroom-eyebrow">{t('teacher_workspace', 'TEACHER WORKSPACE')}</p>
             <h2>Manage your physical classes and assign challenges.</h2>
             <p>
               Create classrooms for sections, sports teams, or training groups. Click on any classroom to view enrolled students and assign weekly physical challenges and tasks.
@@ -531,12 +676,12 @@ export default function TeacherClassrooms() {
             <div className="classroom-panel-heading">
               <div>
                 <Plus size={18} />
-                <h3>Create Classroom</h3>
+                <h3>{t('create_classroom', 'Create Classroom')}</h3>
               </div>
             </div>
             <form onSubmit={handleCreate} className="classroom-form">
               <label>
-                Classroom Name *
+                {t('classroom_name', 'Classroom Name')} *
                 <input
                   value={form.name}
                   onChange={(event) => setForm({ ...form, name: event.target.value })}
@@ -545,7 +690,7 @@ export default function TeacherClassrooms() {
                 />
               </label>
               <label>
-                Description <span>(optional)</span>
+                {t('classroom_desc', 'Description')} <span>(optional)</span>
                 <textarea
                   value={form.description}
                   onChange={(event) => setForm({ ...form, description: event.target.value })}
@@ -556,7 +701,7 @@ export default function TeacherClassrooms() {
               </label>
               <button type="submit" className="ath-btn ath-btn-primary" disabled={submitting}>
                 {submitting ? <RefreshCw size={16} className="ath-spin" /> : <Plus size={16} />}
-                {submitting ? 'Creating...' : 'Create Classroom'}
+                {submitting ? t('submitting', 'Creating...') : t('create_classroom', 'Create Classroom')}
               </button>
             </form>
           </section>
@@ -566,14 +711,14 @@ export default function TeacherClassrooms() {
             <div className="classroom-panel-heading">
               <div>
                 <BookOpen size={18} />
-                <h3>Your Classrooms</h3>
+                <h3>{t('your_classrooms', 'Your Classrooms')}</h3>
               </div>
               <button
                 type="button"
                 className="classroom-icon-button"
                 onClick={loadClassrooms}
                 disabled={loading}
-                title="Refresh classrooms"
+                title={t('refresh', 'Refresh classrooms')}
               >
                 <RefreshCw size={16} className={loading ? 'ath-spin' : ''} />
               </button>
@@ -584,7 +729,7 @@ export default function TeacherClassrooms() {
               </p>
             )}
             {loading ? (
-              <p className="classroom-empty">Loading classrooms...</p>
+              <p className="classroom-empty">{t('loading', 'Loading classrooms...')}</p>
             ) : classrooms.length === 0 ? (
               <p className="classroom-empty">You have not created a classroom yet.</p>
             ) : (
@@ -600,17 +745,17 @@ export default function TeacherClassrooms() {
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
                           <span className="classroom-member-count">
-                            <Users size={14} /> {classroom.memberCount} students
+                            <Users size={14} /> {classroom.memberCount} {t('nav_students', 'students')}
                           </span>
-                          <span style={{ fontSize: '0.72rem', color: '#0f766e', fontWeight: 700 }}>
-                            <Award size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> {classroom.tasksCount || 0} activities
+                          <span style={{ fontSize: '0.72rem', color: 'var(--ath-primary)', fontWeight: 700 }}>
+                            <Award size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> {classroom.tasksCount || 0} {t('nav_activities', 'activities')}
                           </span>
                         </div>
                       </div>
 
                       <div className="classroom-code-row">
                         <div>
-                          <span>INVITE CODE</span>
+                          <span>{t('invite_code', 'INVITE CODE')}</span>
                           <strong>{classroom.inviteCode}</strong>
                         </div>
                         <div style={{ display: 'flex', gap: '6px' }}>
@@ -619,16 +764,16 @@ export default function TeacherClassrooms() {
                             onClick={() => copyCode(classroom.inviteCode)}
                             title="Copy code to clipboard"
                           >
-                            {copied ? <Check size={14} /> : <Clipboard size={14} />} {copied ? 'Copied' : 'Copy'}
+                            {copied ? <Check size={14} /> : <Clipboard size={14} />} {copied ? t('copied', 'Copied') : t('copy', 'Copy')}
                           </button>
                           <button
                             type="button"
                             className="ath-btn ath-btn-primary"
                             style={{ padding: '7px 14px', fontSize: '0.78rem' }}
-                            onClick={() => loadClassroomDetail(classroom.id)}
+                            onClick={() => navigate(`/teacher/classrooms/${classroom.id}`)}
                             disabled={detailLoading}
                           >
-                            Open Classroom →
+                            {t('open_classroom', 'Open Classroom')} →
                           </button>
                         </div>
                       </div>

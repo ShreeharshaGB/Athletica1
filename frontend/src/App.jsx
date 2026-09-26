@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
+import { LanguageProvider } from './context/LanguageContext'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import Welcome from './pages/Welcome.jsx'
@@ -189,6 +191,7 @@ function AppRoutes() {
         <Route path="/student/gamification" element={<Gamification />} />
         <Route path="/student/profile" element={<StudentProfile />} />
         <Route path="/student/classrooms" element={<StudentClassrooms />} />
+        <Route path="/student/classrooms/:classroomId" element={<StudentClassrooms />} />
         <Route path="/student/custom-workout" element={<CustomWorkoutPlan />} />
         <Route path="/student/diet-plans" element={<CustomDietPlans />} />
       </Route>
@@ -197,6 +200,7 @@ function AppRoutes() {
       <Route element={<ProtectedRoute allowedRoles={['teacher']} redirectTo="/teacher/login" />}>
         <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
         <Route path="/teacher/classrooms" element={<TeacherClassrooms />} />
+        <Route path="/teacher/classrooms/:classroomId" element={<TeacherClassrooms />} />
       </Route>
 
       {/* Protected Community Routes */}
@@ -213,11 +217,15 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </AuthProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   )
 }
 
