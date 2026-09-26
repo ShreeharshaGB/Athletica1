@@ -689,9 +689,31 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: 14px 18px;
   border-radius: 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--ath-surface, #ffffff);
+  border: 1px solid var(--ath-border, #e2e8f0);
   gap: 12px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.my-activity-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  border-color: #cbd5e1;
+}
+
+.my-activity-title {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--ath-dark, #0f172a);
+}
+
+.my-activity-meta {
+  font-size: 0.76rem;
+  color: var(--ath-text-muted, #64748b);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
 }

@@ -53,8 +53,33 @@ export default function Gamification() {
         apiRequest('/student/activities'),
         apiRequest('/student/activities/joined')
       ])
-      setActivities(actRes.activities || [])
-      setJoinedActivities(joinedRes.participations || [])
+      const actList = actRes.activities || []
+      const joinedList = joinedRes.joinedActivities || joinedRes.participations || []
+
+      // If joinedList returned empty, fallback to activities marked hasJoined
+      if (joinedList.length === 0 && actList.some((a) => a.hasJoined)) {
+        const fallbackJoined = actList
+          .filter((a) => a.hasJoined)
+          .map((a) => ({
+            id: a.id,
+            participationId: a.id,
+            activityId: a.id,
+            title: a.title,
+            description: a.description,
+            type: a.type,
+            points: a.points,
+            pointsAwarded: a.points,
+            joinedAt: a.createdAt,
+            startDate: a.startDate,
+            endDate: a.endDate,
+            status: a.status || 'Active',
+            activity: a,
+          }))
+        setJoinedActivities(fallbackJoined)
+      } else {
+        setJoinedActivities(joinedList)
+      }
+      setActivities(actList)
     } catch (err) {
       console.error('Failed to load student activities:', err)
       setError(err.message || 'Unable to load institution challenges.')
@@ -82,8 +107,32 @@ export default function Gamification() {
         apiRequest('/student/activities'),
         apiRequest('/student/activities/joined')
       ])
-      setActivities(actRes.activities || [])
-      setJoinedActivities(joinedRes.participations || [])
+      const actList = actRes.activities || []
+      const joinedList = joinedRes.joinedActivities || joinedRes.participations || []
+
+      if (joinedList.length === 0 && actList.some((a) => a.hasJoined)) {
+        const fallbackJoined = actList
+          .filter((a) => a.hasJoined)
+          .map((a) => ({
+            id: a.id,
+            participationId: a.id,
+            activityId: a.id,
+            title: a.title,
+            description: a.description,
+            type: a.type,
+            points: a.points,
+            pointsAwarded: a.points,
+            joinedAt: a.createdAt,
+            startDate: a.startDate,
+            endDate: a.endDate,
+            status: a.status || 'Active',
+            activity: a,
+          }))
+        setJoinedActivities(fallbackJoined)
+      } else {
+        setJoinedActivities(joinedList)
+      }
+      setActivities(actList)
     } catch (err) {
       setError(err.message || 'Could not join activity.')
     } finally {
@@ -92,7 +141,7 @@ export default function Gamification() {
   }
 
   // Calculate points from joined challenges
-  const activityPoints = joinedActivities.reduce((acc, curr) => acc + (curr.pointsAwarded || 0), 0)
+  const activityPoints = joinedActivities.reduce((acc, curr) => acc + (curr.pointsAwarded || curr.points || 0), 0)
   const totalXP = 1250 + activityPoints
 
   return (
@@ -235,7 +284,7 @@ export default function Gamification() {
             {activities.map((act) => {
               const statusClass = act.status ? act.status.toLowerCase() : 'active'
               const isEvent = act.type === 'event'
-              const isJoined = act.hasJoined || joinedActivities.some((j) => (j.activity?.id || j.activityId) === act.id)
+              const isJoined = act.hasJoined || joinedActivities.some((j) => (j.activity?.id || j.activityId || j.id || j.participationId) === act.id)
 
               return (
                 <div key={act.id} className={`student-act-card ${isJoined ? 'joined' : ''}`}>
@@ -332,25 +381,57 @@ export default function Gamification() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {joinedActivities.map((part) => {
               const act = part.activity || {}
+              const title = part.title || act.title || 'Institution Challenge'
+              const points = part.pointsAwarded ?? part.points ?? act.points ?? 0
+              const isEvent = (part.type || act.type) === 'event'
+              const partKey = part.participationId || part.id || part.activityId || title
+              const statusText = part.status || 'Active'
+
               return (
-                <div key={part.id} className="my-activity-item">
+                <div key={partKey} className="my-activity-item">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#ecfdf5', color: '#0f766e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
-                      ⚡
+                    <div
+                      style={{
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: '10px',
+                        background: isEvent ? 'rgba(124, 58, 237, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+                        color: isEvent ? '#7c3aed' : '#0f766e',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.15rem',
+                        fontWeight: 800,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {isEvent ? '📅' : '⚡'}
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#0f172a' }}>
-                        {act.title || 'Institution Challenge'}
+                      <div className="my-activity-title" style={{ fontSize: '0.94rem', fontWeight: 700, color: '#0f172a' }}>
+                        {title}
                       </div>
-                      <div style={{ fontSize: '0.76rem', color: '#64748b' }}>
-                        Joined {part.joinedAt ? new Date(part.joinedAt).toLocaleDateString() : 'Recently'} • Status: <strong style={{ color: '#059669', textTransform: 'capitalize' }}>{part.status || 'joined'}</strong>
+                      <div className="my-activity-meta" style={{ fontSize: '0.76rem', color: '#64748b', display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
+                        <span>Joined {part.joinedAt ? new Date(part.joinedAt).toLocaleDateString() : 'Recently'}</span>
+                        <span>•</span>
+                        <span>
+                          Status: <strong style={{ color: '#059669', textTransform: 'capitalize' }}>{statusText}</strong>
+                        </span>
+                        {(part.startDate || act.startDate) && (
+                          <>
+                            <span>•</span>
+                            <span>
+                              {new Date(part.startDate || act.startDate).toLocaleDateString()} - {new Date(part.endDate || act.endDate).toLocaleDateString()}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span className="ath-badge success" style={{ fontWeight: 800 }}>
-                      +{part.pointsAwarded || act.points || 0} PTS
+                    <span className="ath-badge success" style={{ fontWeight: 800, fontSize: '0.82rem' }}>
+                      +{points} PTS
                     </span>
                   </div>
                 </div>

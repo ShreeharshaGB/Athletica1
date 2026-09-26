@@ -179,6 +179,7 @@ export const getJoinedActivities = async (req, res) => {
         else if (now > end) status = 'Completed';
 
         return {
+          id: p._id,
           participationId: p._id,
           activityId: act._id,
           title: act.title,
@@ -189,12 +190,24 @@ export const getJoinedActivities = async (req, res) => {
           joinedAt: p.joinedAt,
           startDate: act.startDate,
           endDate: act.endDate,
-          status,
+          status: p.status || status,
+          activity: {
+            id: act._id,
+            title: act.title,
+            description: act.description,
+            type: act.type,
+            points: act.points,
+            startDate: act.startDate,
+            endDate: act.endDate,
+            institutionId: act.institutionId,
+            status,
+          },
         };
       });
 
     return res.status(200).json({
       joinedActivities: joined,
+      participations: joined,
     });
   } catch (error) {
     console.error('Error fetching joined activities:', error);
