@@ -21,10 +21,12 @@ import {
   Heart,
   ShieldCheck,
   X,
+  PlayCircle,
 } from 'lucide-react'
 import StudentAppLayout from '../components/StudentAppLayout'
 import { useAuth } from '../context/AuthContext'
 import { apiRequest } from '../lib/api.js'
+import ExerciseTutorial from '../components/ExerciseTutorial.jsx'
 import './workout_plan.css'
 
 const COMMUNITY_ACTIVITY_OPTIONS = [
@@ -61,6 +63,7 @@ export default function WorkoutPlan() {
   const [togglingId, setTogglingId] = useState(null)
   const [error, setError] = useState(null)
   const [pointsToast, setPointsToast] = useState(null)
+  const [tutorialExercise, setTutorialExercise] = useState(null)
 
   // Tabs
   const [activeTab, setActiveTab] = useState('Weekly Plan')
@@ -196,6 +199,13 @@ export default function WorkoutPlan() {
           >
             <Sliders size={15} /> Update Plan
           </button>
+          <Link
+            to="/student/custom-workout"
+            className="ath-btn ath-btn-secondary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
+            <Dumbbell size={15} /> Create Your Own Plan
+          </Link>
           <button
             type="button"
             className="ath-btn ath-btn-secondary"
@@ -586,6 +596,14 @@ export default function WorkoutPlan() {
                                 {exercise.instructions}
                               </p>
                             )}
+
+                            <button
+                              type="button"
+                              className="exercise-tutorial-link"
+                              onClick={() => setTutorialExercise(exercise)}
+                            >
+                              <PlayCircle size={15} /> How to
+                            </button>
                           </div>
                         </div>
 
@@ -647,6 +665,9 @@ export default function WorkoutPlan() {
                   <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0, lineHeight: 1.45 }}>
                     {ex.instructions || 'Focus on controlled breathing and full range of motion.'}
                   </p>
+                  <button type="button" className="exercise-tutorial-link" onClick={() => setTutorialExercise(ex)}>
+                    <PlayCircle size={15} /> How to perform
+                  </button>
                 </div>
 
                 <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -694,6 +715,10 @@ export default function WorkoutPlan() {
             </p>
           </div>
         </div>
+      )}
+
+      {tutorialExercise && (
+        <ExerciseTutorial exercise={tutorialExercise} onClose={() => setTutorialExercise(null)} />
       )}
 
       {/* UPDATE / REGENERATE PLAN MODAL */}

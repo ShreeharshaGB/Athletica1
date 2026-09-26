@@ -1,0 +1,7 @@
+.instruction-step { display: flex; gap: 9px; align-items: flex-start; }
+.instruction-step strong { display: grid; place-items: center; width: 20px; height: 20px; flex: 0 0 20px; color: #fff; background: #0f766e; border-radius: 50%; font-size: .7rem; }
+.analysis-result { margin-top: 18px; padding: 14px; background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 10px; }
+.analysis-result h3 { margin: 0 0 7px; color: #0f766e; font-size: .95rem; }
+.analysis-result strong { color: #115e59; font-size: .85rem; }
+.analysis-result p { margin: 7px 0; color: #475569; font-size: .78rem; line-height: 1.45; }
+.analysis-result span { color: #64748b; font-size: .7rem; }

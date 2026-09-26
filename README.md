@@ -122,6 +122,27 @@ The frontend API client uses `VITE_API_BASE_URL` when it is provided and otherwi
 - `GET /api/student/workout-plan/history`
 - `PUT /api/student/workout-plan/:planId`
 
+### Classrooms
+
+Teachers can create classrooms and share the generated invite code with students:
+
+- `POST /api/teacher/classrooms`
+- `GET /api/teacher/classrooms`
+- `POST /api/student/classrooms/join`
+- `GET /api/student/classrooms`
+
+Classroom creation requires a teacher JWT. Joining and listing classrooms requires a student or community JWT.
+
+### Saved plans and history
+
+- `GET /api/student/workout-plan/history`
+- `GET /api/student/workout-plan/activity-history?period=day|week|month`
+- `POST /api/student/diet-plans`
+- `GET /api/student/diet-plans`
+- `GET /api/student/diet-plans/active`
+
+Workout completion timestamps and logged meals are scoped to the authenticated user. Custom diet plans archive the previous active plan when a new one is saved.
+
 All student endpoints require a JWT access token in the `Authorization` header:
 
 ```text

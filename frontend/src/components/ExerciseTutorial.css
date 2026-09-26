@@ -1,0 +1,180 @@
+.tutorial-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(5px);
+}
+
+.tutorial-dialog {
+  width: min(760px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+  animation: tutorial-enter 180ms ease-out;
+}
+
+.tutorial-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tutorial-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f766e;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.tutorial-header h2 {
+  margin: 8px 0 0;
+  color: #0f172a;
+  font-size: 1.35rem;
+}
+
+.tutorial-close {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.tutorial-close:hover { color: #0f172a; background: #f1f5f9; }
+
+.tutorial-body {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(280px, 1.1fr);
+  gap: 24px;
+  padding: 24px;
+}
+
+.tutorial-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 25%, #ecfeff, #ccfbf1 58%, #99f6e4);
+  border: 1px solid #99f6e4;
+  border-radius: 14px;
+}
+
+.tutorial-stage::after {
+  content: '';
+  position: absolute;
+  bottom: 42px;
+  width: 150px;
+  height: 12px;
+  background: rgba(15, 118, 110, 0.2);
+  border-radius: 50%;
+}
+
+.tutorial-stage-label {
+  position: absolute;
+  z-index: 2;
+  bottom: 16px;
+  color: #115e59;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tutorial-figure {
+  position: relative;
+  z-index: 1;
+  width: 100px;
+  height: 190px;
+  color: #0f766e;
+  animation: tutorial-breathe 2.6s ease-in-out infinite;
+}
+
+.tutorial-head,
+.tutorial-torso,
+.tutorial-arm,
+.tutorial-leg { position: absolute; display: block; background: currentColor; }
+.tutorial-head { top: 4px; left: 35px; width: 30px; height: 30px; border-radius: 50%; }
+.tutorial-torso { top: 42px; left: 38px; width: 24px; height: 72px; border-radius: 12px; transform-origin: 50% 8px; }
+.tutorial-arm { top: 48px; left: 43px; width: 14px; height: 68px; border-radius: 8px; transform-origin: 50% 8px; }
+.tutorial-arm.left { transform: rotate(28deg); }
+.tutorial-arm.right { transform: rotate(-28deg); }
+.tutorial-leg { top: 105px; left: 42px; width: 16px; height: 82px; border-radius: 8px; transform-origin: 50% 8px; }
+.tutorial-leg.left { transform: rotate(8deg); }
+.tutorial-leg.right { left: 48px; transform: rotate(-8deg); }
+
+.tutorial-figure.squat { animation: tutorial-squat 2.8s ease-in-out infinite; }
+.tutorial-figure.squat .tutorial-leg.left { animation: tutorial-squat-left 2.8s ease-in-out infinite; }
+.tutorial-figure.squat .tutorial-leg.right { animation: tutorial-squat-right 2.8s ease-in-out infinite; }
+.tutorial-figure.push { transform: rotate(90deg) translateY(25px); animation: tutorial-push 2.5s ease-in-out infinite; }
+.tutorial-figure.lunge .tutorial-leg.left { animation: tutorial-lunge-left 2.8s ease-in-out infinite; }
+.tutorial-figure.lunge .tutorial-leg.right { animation: tutorial-lunge-right 2.8s ease-in-out infinite; }
+.tutorial-figure.flow { animation: tutorial-flow 3.4s ease-in-out infinite; }
+.tutorial-figure.cardio { animation: tutorial-cardio 1.2s ease-in-out infinite; }
+.tutorial-figure.hinge { animation: tutorial-hinge 2.8s ease-in-out infinite; }
+.tutorial-figure.controlled { animation: tutorial-controlled 2.6s ease-in-out infinite; }
+.tutorial-figure.bench { transform: rotate(90deg) translateY(26px); animation: tutorial-bench 2.8s ease-in-out infinite; }
+.tutorial-figure.bench .tutorial-arm.left { animation: tutorial-bench-arm 2.8s ease-in-out infinite; }
+.tutorial-figure.bench .tutorial-arm.right { animation: tutorial-bench-arm 2.8s ease-in-out infinite reverse; }
+.tutorial-figure.pull .tutorial-arm.left { animation: tutorial-pull-left 2.8s ease-in-out infinite; }
+.tutorial-figure.pull .tutorial-arm.right { animation: tutorial-pull-right 2.8s ease-in-out infinite; }
+.tutorial-figure.press .tutorial-arm.left { animation: tutorial-press-left 2.8s ease-in-out infinite; }
+.tutorial-figure.press .tutorial-arm.right { animation: tutorial-press-right 2.8s ease-in-out infinite; }
+.tutorial-figure.isolation .tutorial-arm.left { animation: tutorial-isolation-left 2.4s ease-in-out infinite; }
+.tutorial-figure.isolation .tutorial-arm.right { animation: tutorial-isolation-right 2.4s ease-in-out infinite; }
+.tutorial-figure.legpress { animation: tutorial-legpress 2.8s ease-in-out infinite; }
+
+.tutorial-details { display: flex; flex-direction: column; justify-content: center; }
+.tutorial-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.tutorial-meta span { padding: 6px 9px; color: #0f766e; background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 7px; font-size: 0.75rem; font-weight: 700; }
+.tutorial-details h3 { margin: 0 0 6px; color: #0f172a; font-size: 1rem; }
+.tutorial-details p { margin: 0; color: #475569; line-height: 1.55; font-size: 0.88rem; }
+.tutorial-steps { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+.tutorial-steps div { display: flex; align-items: flex-start; gap: 10px; color: #475569; font-size: 0.83rem; line-height: 1.45; }
+.tutorial-steps strong { display: grid; place-items: center; width: 22px; height: 22px; flex: 0 0 22px; color: #ffffff; background: #0f766e; border-radius: 50%; font-size: 0.72rem; }
+.tutorial-note { padding: 10px 12px; color: #64748b !important; background: #f8fafc; border-left: 3px solid #14b8a6; font-size: 0.75rem !important; }
+.tutorial-form-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; margin-top: 14px; padding: 10px 12px; color: #ffffff; background: #0f766e; border: 0; border-radius: 9px; font: inherit; font-size: .8rem; font-weight: 750; cursor: pointer; }
+
+@keyframes tutorial-enter { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes tutorial-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes tutorial-squat { 0%, 100% { transform: translateY(0); } 45%, 65% { transform: translateY(24px); } }
+@keyframes tutorial-squat-left { 0%, 100% { transform: rotate(8deg); } 45%, 65% { transform: rotate(38deg); } }
+@keyframes tutorial-squat-right { 0%, 100% { transform: rotate(-8deg); } 45%, 65% { transform: rotate(-38deg); } }
+@keyframes tutorial-push { 0%, 100% { translate: 0 0; } 45%, 65% { translate: 14px 0; } }
+@keyframes tutorial-lunge-left { 0%, 100% { transform: rotate(8deg); } 45%, 65% { transform: rotate(55deg); } }
+@keyframes tutorial-lunge-right { 0%, 100% { transform: rotate(-8deg); } 45%, 65% { transform: rotate(-20deg); } }
+@keyframes tutorial-flow { 0%, 100% { transform: rotate(0) translateY(0); } 50% { transform: rotate(-12deg) translateY(18px); } }
+@keyframes tutorial-cardio { 0%, 100% { transform: translateY(0) scaleX(1); } 50% { transform: translateY(-16px) scaleX(0.92); } }
+@keyframes tutorial-hinge { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(22deg) translateY(12px); } }
+@keyframes tutorial-controlled { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+@keyframes tutorial-bench { 0%, 100% { translate: 0 0; } 45%, 65% { translate: 0 6px; } }
+@keyframes tutorial-bench-arm { 0%, 100% { transform: rotate(30deg); } 45%, 65% { transform: rotate(-22deg); } }
+@keyframes tutorial-pull-left { 0%, 100% { transform: rotate(28deg); } 45%, 65% { transform: rotate(78deg); } }
+@keyframes tutorial-pull-right { 0%, 100% { transform: rotate(-28deg); } 45%, 65% { transform: rotate(-78deg); } }
+@keyframes tutorial-press-left { 0%, 100% { transform: rotate(42deg); } 45%, 65% { transform: rotate(-38deg); } }
+@keyframes tutorial-press-right { 0%, 100% { transform: rotate(-42deg); } 45%, 65% { transform: rotate(38deg); } }
+@keyframes tutorial-isolation-left { 0%, 100% { transform: rotate(28deg); } 45%, 65% { transform: rotate(82deg); } }
+@keyframes tutorial-isolation-right { 0%, 100% { transform: rotate(-28deg); } 45%, 65% { transform: rotate(-82deg); } }
+@keyframes tutorial-legpress { 0%, 100% { transform: translateY(0); } 45%, 65% { transform: translateY(15px) scaleY(0.92); } }
+
+@media (max-width: 640px) {
+  .tutorial-body { grid-template-columns: 1fr; padding: 18px; }
+  .tutorial-stage { min-height: 240px; }
+}

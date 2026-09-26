@@ -9,6 +9,9 @@ import physiqueAnalysisRoutes from './routes/physiqueAnalysisRoutes.js';
 import studentActivityRoutes from './routes/studentActivityRoutes.js';
 import nutritionRoutes from './routes/nutritionRoutes.js';
 import communityRoutes from './routes/communityRoutes.js';
+import coachRoutes from './routes/coachRoutes.js';
+import { teacherRouter as teacherClassroomRoutes, studentRouter as studentClassroomRoutes } from './routes/classroomRoutes.js';
+import dietPlanRoutes from './routes/dietPlanRoutes.js';
 
 const app = express();
 
@@ -72,6 +75,10 @@ app.use('/api/student/activities', studentActivityRoutes);
 app.use('/api/student/nutrition', nutritionRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/student/coach', coachRoutes);
+app.use('/api/teacher/classrooms', teacherClassroomRoutes);
+app.use('/api/student/classrooms', studentClassroomRoutes);
+app.use('/api/student/diet-plans', dietPlanRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

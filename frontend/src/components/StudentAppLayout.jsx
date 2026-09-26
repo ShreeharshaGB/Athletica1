@@ -18,6 +18,8 @@ import {
   Menu,
   X,
   Sparkles,
+  MessageCircle,
+  ScanLine,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
@@ -26,7 +28,9 @@ const studentNavItems = [
   { label: 'Physique Analysis', path: '/student/physique-analysis', icon: Sparkles },
   { label: 'Fitness Assessment', path: '/student/assessment', icon: ClipboardCheck },
   { label: 'Workout Plan', path: '/student/workout', icon: Dumbbell },
+  { label: 'Check My Form', path: '/student/form-check', icon: ScanLine },
   { label: 'Nutrition', path: '/student/nutrition', icon: Apple },
+  { label: 'AI Coach', path: '/student/coach', icon: MessageCircle },
   { label: 'Wellness', path: '/student/wellness', icon: HeartPulse },
   { label: 'Progress', path: '/student/progress', icon: TrendingUp },
   { label: 'Talent Discovery', path: '/student/talent', icon: Trophy },
@@ -50,6 +54,7 @@ const communityNavItems = [
   { label: 'Fitness Assessment', path: '/student/assessment', icon: ClipboardCheck },
   { label: 'Physique Analysis', path: '/student/physique-analysis', icon: Sparkles },
   { label: 'Nutrition', path: '/student/nutrition', icon: Apple },
+  { label: 'AI Coach', path: '/student/coach', icon: MessageCircle },
   { label: 'Workout Plan', path: '/student/workout', icon: Dumbbell },
   { label: 'Progress', path: '/student/progress', icon: TrendingUp },
 ]

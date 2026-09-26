@@ -18,6 +18,12 @@ import Gamification from './pages/gamification.jsx'
 import TalentDiscovery from './pages/talent_discovery.jsx'
 import PhysiqueAnalysis from './pages/PhysiqueAnalysis.jsx'
 import CommunityDashboard from './pages/CommunityDashboard.jsx'
+import Coach from './pages/Coach.jsx'
+import TeacherClassrooms from './pages/TeacherClassrooms.jsx'
+import StudentClassrooms from './pages/StudentClassrooms.jsx'
+import CustomWorkoutPlan from './pages/CustomWorkoutPlan.jsx'
+import CustomDietPlans from './pages/CustomDietPlans.jsx'
+import FormCheck from './pages/FormCheck.jsx'
 
 function DashboardRedirect() {
   const { isAuthenticated, user, isInitializing } = useAuth()
@@ -149,6 +155,18 @@ function AppRoutes() {
       <Route path="/community/login" element={<Login initialRole="community" />} />
       <Route path="/login" element={<Navigate to="/roles" replace />} />
 
+      {/* Local camera testing only; production always requires authentication. */}
+      <Route
+        path="/student/form-check"
+        element={import.meta.env.DEV ? <FormCheck /> : <Navigate to="/student/login" replace />}
+      />
+
+      {/* Local AI Coach UI testing only; production always requires authentication. */}
+      <Route
+        path="/student/coach"
+        element={import.meta.env.DEV ? <Coach /> : <Navigate to="/student/login" replace />}
+      />
+
       {/* Universal Dashboard Redirect */}
       <Route path="/dashboard" element={<DashboardRedirect />} />
 
@@ -169,11 +187,15 @@ function AppRoutes() {
         <Route path="/student/talent" element={<TalentDiscovery />} />
         <Route path="/student/gamification" element={<Gamification />} />
         <Route path="/student/profile" element={<StudentProfile />} />
+        <Route path="/student/classrooms" element={<StudentClassrooms />} />
+        <Route path="/student/custom-workout" element={<CustomWorkoutPlan />} />
+        <Route path="/student/diet-plans" element={<CustomDietPlans />} />
       </Route>
 
       {/* Protected Teacher Routes */}
       <Route element={<ProtectedRoute allowedRoles={['teacher']} redirectTo="/teacher/login" />}>
         <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+        <Route path="/teacher/classrooms" element={<TeacherClassrooms />} />
       </Route>
 
       {/* Protected Community Routes */}

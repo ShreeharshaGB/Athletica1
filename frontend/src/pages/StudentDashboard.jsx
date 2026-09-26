@@ -16,6 +16,7 @@ import {
   RefreshCw,
   Sparkles,
   Trophy,
+  BookOpen,
 } from 'lucide-react'
 import { apiRequest } from '../lib/api.js'
 import { useAuth } from '../context/AuthContext'
@@ -257,9 +258,14 @@ export default function StudentDashboard() {
 
             <div style={{ flexShrink: 0 }}>
               {dashboardData.assessment ? (
-                <Link to="/student/workout" className="ath-btn" style={{ background: '#ffffff', color: '#0f766e', fontWeight: 700, padding: '12px 20px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-                  <Play size={15} fill="currentColor" /> View Today&apos;s Plan
-                </Link>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <Link to="/student/workout" className="ath-btn" style={{ background: '#ffffff', color: '#0f766e', fontWeight: 700, padding: '12px 20px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                    <Play size={15} fill="currentColor" /> View Today&apos;s Plan
+                  </Link>
+                  <Link to="/student/classrooms" className="ath-btn" style={{ background: 'rgba(255,255,255,0.16)', color: '#ffffff', fontWeight: 700, padding: '12px 16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.3)' }}>
+                    <BookOpen size={15} /> Classrooms
+                  </Link>
+                </div>
               ) : (
                 <Link to="/student/assessment" className="ath-btn" style={{ background: '#ffffff', color: '#0f766e', fontWeight: 700, padding: '12px 20px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                   Take Assessment <ArrowRight size={15} />

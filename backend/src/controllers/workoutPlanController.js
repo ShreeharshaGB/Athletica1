@@ -544,6 +544,44 @@ export const getPlanHistory = async (req, res) => {
   }
 };
 
+export const getActivityHistory = async (req, res) => {
+  try {
+    if (req.user.role !== 'student' && req.user.role !== 'community') {
+      return res.status(403).json({ message: 'Only students and community members can access workout activity history' });
+    }
+
+    const period = String(req.query.period || 'week').toLowerCase();
+    const days = period === 'day' ? 1 : period === 'month' ? 30 : 7;
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const plans = await WorkoutPlan.find({ userId: req.user.id }).sort({ updatedAt: -1 }).lean();
+    const activities = [];
+
+    for (const plan of plans) {
+      for (const workout of plan.workouts || []) {
+        for (const exercise of workout.exercises || []) {
+          if (exercise.isCompleted && exercise.completedAt && new Date(exercise.completedAt) >= since) {
+            activities.push({
+              id: `${plan._id}-${exercise.id}-${new Date(exercise.completedAt).getTime()}`,
+              planId: plan._id,
+              planGoal: plan.goal,
+              dayOfWeek: workout.dayOfWeek,
+              workoutTitle: workout.title,
+              exerciseName: exercise.name,
+              completedAt: exercise.completedAt,
+            });
+          }
+        }
+      }
+    }
+
+    activities.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+    return res.status(200).json({ period, activities });
+  } catch (error) {
+    console.error('Get workout activity history error:', error);
+    return res.status(500).json({ message: 'Server error while fetching workout activity history' });
+  }
+};
+
 export const updatePlan = async (req, res) => {
   try {
     if (req.user.role !== 'student' && req.user.role !== 'community') {

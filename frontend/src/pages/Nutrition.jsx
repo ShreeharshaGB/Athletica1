@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Flame,
   Dumbbell,
@@ -45,6 +46,7 @@ export default function Nutrition() {
   // Recent Meals State
   const [recentMeals, setRecentMeals] = useState([])
   const [loadingMeals, setLoadingMeals] = useState(true)
+  const [mealHistoryPeriod, setMealHistoryPeriod] = useState('all')
 
   // ACTIVE LOGGING METHOD: 'photo' | 'describe' | 'choose'
   const [activeLogTab, setActiveLogTab] = useState('photo')
@@ -136,6 +138,13 @@ export default function Nutrition() {
       console.warn('Failed to refresh nutrition data:', err.message)
     }
   }
+
+  const visibleMeals = useMemo(() => {
+    if (mealHistoryPeriod === 'all') return recentMeals
+    const days = mealHistoryPeriod === 'day' ? 1 : 7
+    const since = Date.now() - days * 24 * 60 * 60 * 1000
+    return recentMeals.filter((meal) => meal.analyzedAt && new Date(meal.analyzedAt).getTime() >= since)
+  }, [mealHistoryPeriod, recentMeals])
 
   // =========================================================
   // HANDLERS FOR METHOD 1: 📷 UPLOAD PHOTO
@@ -415,9 +424,14 @@ export default function Nutrition() {
             <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
               Today&apos;s Nutrition
             </h2>
-            <div className="nutrition-estimate-pill">
-              <Info size={13} />
-              <span>Calculated from saved meal analyses</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <Link to="/student/diet-plans" className="ath-btn ath-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 12px', fontSize: '0.78rem' }}>
+                <PenLine size={14} /> Create Your Own Diet Plan
+              </Link>
+              <div className="nutrition-estimate-pill">
+                <Info size={13} />
+                <span>Calculated from saved meal analyses</span>
+              </div>
             </div>
           </div>
 
@@ -1248,16 +1262,28 @@ export default function Nutrition() {
             </div>
             {recentMeals.length > 0 && (
               <span className="ath-badge" style={{ background: '#f0fdfa', color: '#0f766e' }}>
-                {recentMeals.length} logged
+                {visibleMeals.length} logged
               </span>
             )}
+          </div>
+
+          <div className="ath-tabs" style={{ marginBottom: '16px' }}>
+            {[
+              ['all', 'All'],
+              ['day', 'Last 24 hours'],
+              ['week', 'Last 7 days'],
+            ].map(([period, label]) => (
+              <button key={period} type="button" className={`ath-tab ${mealHistoryPeriod === period ? 'active' : ''}`} onClick={() => setMealHistoryPeriod(period)}>
+                {label}
+              </button>
+            ))}
           </div>
 
           {loadingMeals ? (
             <div style={{ textAlign: 'center', padding: '30px', color: '#64748b' }}>
               Loading your recent meals...
             </div>
-          ) : recentMeals.length === 0 ? (
+          ) : visibleMeals.length === 0 ? (
             /* EMPTY STATE - NO FAKE RECORDS */
             <div className="empty-state-box">
               <div className="empty-state-icon">
@@ -1270,7 +1296,7 @@ export default function Nutrition() {
             </div>
           ) : (
             <div className="recent-meals-grid">
-              {recentMeals.map((meal) => {
+              {visibleMeals.map((meal) => {
                 const dateStr = meal.analyzedAt
                   ? new Date(meal.analyzedAt).toLocaleDateString('en-US', {
                       month: 'short',

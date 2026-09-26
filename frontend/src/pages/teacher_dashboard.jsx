@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Users,
   ClipboardCheck,
@@ -24,6 +25,7 @@ import {
   Zap,
   TrendingUp,
   Info,
+  BookOpen,
 } from 'lucide-react'
 import StudentAppLayout from '../components/StudentAppLayout'
 import { apiRequest } from '../lib/api'
@@ -642,6 +644,14 @@ export default function TeacherDashboard() {
             <Plus size={16} />
             Create Activity
           </button>
+          <Link
+            to="/teacher/classrooms"
+            className="ath-btn ath-btn-secondary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
+            <BookOpen size={16} />
+            Manage Classrooms
+          </Link>
           <button
             type="button"
             className="ath-btn ath-btn-secondary"

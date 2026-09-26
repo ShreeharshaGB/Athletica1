@@ -6,6 +6,7 @@ import {
   generateOrUpdatePlan,
   toggleActivityCompletion,
   getPlanHistory,
+  getActivityHistory,
   updatePlan,
 } from '../controllers/workoutPlanController.js';
 
@@ -23,6 +24,7 @@ router.post('/activity/toggle', toggleActivityCompletion);
 router.post('/toggle-activity', toggleActivityCompletion);
 
 router.get('/history', getPlanHistory);
+router.get('/activity-history', getActivityHistory);
 router.put('/:planId', updatePlan);
 
 export default router;
