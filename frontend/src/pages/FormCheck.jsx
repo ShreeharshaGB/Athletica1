@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   ChevronRight,
   Info,
+  SwitchCamera,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import StudentAppLayout from '../components/StudentAppLayout'
@@ -541,6 +542,7 @@ export default function FormCheck() {
   const [liveReps, setLiveReps] = useState(0)
   const [feedback, setFeedback] = useState({ message: 'Start the camera to begin posture check.', tone: 'neutral' })
   const [error, setError] = useState('')
+  const [facingMode, setFacingMode] = useState('user')
 
   // Filtered exercises list
   const filteredExercises = useMemo(() => {
@@ -667,7 +669,7 @@ export default function FormCheck() {
     setLoadingModel(true)
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: 1280, height: 720 },
+        video: { facingMode: facingMode, width: 1280, height: 720 },
         audio: true,
       })
       streamRef.current = stream
@@ -704,6 +706,53 @@ export default function FormCheck() {
     streamRef.current = null
     setCameraReady(false)
     setRecording(false)
+  }
+
+  const switchCamera = async () => {
+    const newMode = facingMode === 'user' ? 'environment' : 'user'
+    setFacingMode(newMode)
+    // Stop existing stream and restart with new facing mode
+    cancelAnimationFrame(animationRef.current)
+    streamRef.current?.getTracks().forEach((track) => track.stop())
+    streamRef.current = null
+    setCameraReady(false)
+    setError('')
+    setLoadingModel(true)
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: newMode, width: 1280, height: 720 },
+        audio: true,
+      })
+      streamRef.current = stream
+      videoRef.current.srcObject = stream
+      await videoRef.current.play()
+      setCameraReady(true)
+
+      // Re-use existing landmarker if available, otherwise create new
+      if (!landmarkerRef.current) {
+        try {
+          const vision = await FilesetResolver.forVisionTasks('/mediapipe/wasm')
+          landmarkerRef.current = await PoseLandmarker.createFromOptions(vision, {
+            baseOptions: { modelAssetPath: '/mediapipe/pose_landmarker_lite.task', delegate: 'GPU' },
+            runningMode: 'VIDEO',
+            numPoses: 1,
+          })
+        } catch (modelError) {
+          setError(`Camera switched, but pose model could not load: ${modelError.message || 'Check connection'}`)
+        }
+      }
+      animationRef.current = requestAnimationFrame(trackFrame)
+    } catch (cameraError) {
+      setError(
+        cameraError.name === 'NotAllowedError'
+          ? 'Camera permission was denied. Please allow camera access in your browser settings.'
+          : cameraError.name === 'OverconstrainedError'
+            ? 'This device does not have a rear camera, or the requested camera is not available.'
+            : cameraError.message || 'Could not switch camera.'
+      )
+    } finally {
+      setLoadingModel(false)
+    }
   }
 
   const startRecording = () => {
@@ -939,9 +988,22 @@ export default function FormCheck() {
                   {loadingModel ? 'Preparing tracker...' : 'Start Camera'}
                 </button>
               ) : (
-                <button type="button" className="ath-btn ath-btn-secondary" onClick={stopCamera}>
-                  <X size={16} /> Stop Camera
-                </button>
+                <>
+                  <button type="button" className="ath-btn ath-btn-secondary" onClick={stopCamera}>
+                    <X size={16} /> Stop Camera
+                  </button>
+                  <button
+                    type="button"
+                    className="ath-btn ath-btn-secondary"
+                    onClick={switchCamera}
+                    disabled={loadingModel}
+                    title={facingMode === 'user' ? 'Switch to rear camera' : 'Switch to front camera'}
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <SwitchCamera size={16} />
+                    {facingMode === 'user' ? 'Rear Cam' : 'Front Cam'}
+                  </button>
+                </>
               )}
 
               {cameraReady && !recording && (
