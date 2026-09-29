@@ -28,5 +28,18 @@ button {
   cursor: pointer;
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+}
 
+[data-theme="light"] {
+  color-scheme: light;
+}
 
+/* Global autofill reset to prevent jarring browser tint transitions */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000000s ease-in-out 0s, color 5000000s ease-in-out 0s;
+}

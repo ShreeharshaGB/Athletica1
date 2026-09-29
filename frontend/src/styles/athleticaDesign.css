@@ -1077,6 +1077,28 @@ nav.ath-sidebar-nav {
   border-color: var(--ath-border) !important;
 }
 
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--ath-dark, #f8fafc) !important;
+  caret-color: var(--ath-dark, #f8fafc) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--ath-input-bg, #0d151d) inset !important;
+  box-shadow: 0 0 0 1000px var(--ath-input-bg, #0d151d) inset !important;
+  transition: background-color 5000000s ease-in-out 0s;
+}
+
+[data-theme="light"] input:-webkit-autofill,
+[data-theme="light"] input:-webkit-autofill:hover,
+[data-theme="light"] input:-webkit-autofill:focus,
+[data-theme="light"] input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--ath-dark, #0f172a) !important;
+  caret-color: var(--ath-dark, #0f172a) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--ath-input-bg, #ffffff) inset !important;
+  box-shadow: 0 0 0 1000px var(--ath-input-bg, #ffffff) inset !important;
+  transition: background-color 5000000s ease-in-out 0s;
+}
+
 [data-theme="dark"] input::placeholder,
 [data-theme="dark"] textarea::placeholder {
   color: var(--ath-text-light) !important;
